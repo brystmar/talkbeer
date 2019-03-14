@@ -1,10 +1,13 @@
-#############################################################
-### Stores posts from a talkbeer.com thread in a local db ###
-#############################################################
+#########################################################
+# Stores posts from a talkbeer.com thread in a local db #
+#########################################################
 
 from bs4 import BeautifulSoup
-import sqlite3, re, html, datetime, requests
-#from agg_posts import get_userdata, write_users
+import datetime
+import re
+import requests
+import sqlite3
+# from agg_posts import get_userdata, write_users
 
 time_start = datetime.datetime.now()
 time_start = time_start.isoformat(timespec='seconds')
@@ -14,6 +17,7 @@ print(" Start:", time_start)
 print("***** ***** **** ***** *****")
 print("")
 filename = __file__
+
 
 def pause(): input("[====]")
 def bs(html): return BeautifulSoup(html, 'html.parser')
@@ -58,12 +62,10 @@ def to_timestamp(ds):
     day = int(re.findall(' (\d+),', ds)[0])
     minute = int(re.findall(' at \d+:(\d+) ', ds)[0])
     hour = int(re.findall(' at (\d+):', ds)[0])
-
     # update to 24-hour time
     if ds[-2].lower() == 'p' and hour != 12: hour += 12
     elif ds[-2].lower() == 'a' and hour == 12: hour -= 12
     else: pass
-
     return datetime.datetime(year, month, day, hour, minute)
 def to_date(ds):
     # converts a text date string to ISO-8601 formatting: 'Mar 26, 2018' --> '2018-03-26'
@@ -98,7 +100,7 @@ def remlist(data):
     #returns a list of strings instead of a list of lists/tuples
     l = list()
     t = tuple()
-    if data == None or len(data) == 0: return None
+    if data is None or len(data) == 0: return None
     if type(data) != type(l): return data
     if type(data[0]) != type(l) and type(data[0]) != type(t):
         print(type(data), type(data[0]))
@@ -113,37 +115,10 @@ def db_value(val):
     t = tuple()
     if type(val) == type(t) or type(val) == type(l): return val[0]
     else: return val
-def month_to_num(m):
-    if m == 'Jan': return '01'
-    elif m == 'Feb': return '02'
-    elif m == 'Mar': return '03'
-    elif m == 'Apr': return '04'
-    elif m == 'May': return '05'
-    elif m == 'Jun': return '06'
-    elif m == 'Jul': return '07'
-    elif m == 'Aug': return '08'
-    elif m == 'Sep': return '09'
-    elif m == 'Oct': return '10'
-    elif m == 'Nov': return '11'
-    elif m == 'Dec': return '12'
-    else: return 'Month Error'
-def to_timestamp(ds):
-    # converts a text date/time sting to ISO-8601 formatting: 'Mar 26, 2018 at 9:48 PM' --> '2018-03-26 21:48:00'
-    if " at " not in ds: ds += " at 0:01 AM"
-    year = int(re.findall(', (20\d\d) at', ds)[0])
-    month = int(month_to_num(ds[:3]))
-    day = int(re.findall(' (\d+),', ds)[0])
-    minute = int(re.findall(' at \d+:(\d+) ', ds)[0])
-    hour = int(re.findall(' at (\d+):', ds)[0])
-    # update to 24-hour time
-    if ds[-2].lower() == 'p' and hour != 12: hour += 12
-    elif ds[-2].lower() == 'a' and hour == 12: hour -= 12
-    else: pass
-    return datetime.datetime(year, month, day, hour, minute)
 def next_link(url, num): return url + 'page-' + str(num)
 def delete_url(url): tbdb.execute('DELETE FROM thread_page WHERE url = ? and html is null', (url,))
 def find_last_post(html):
-    soup = bs(html) #make soup
+    soup = bs(html)
     # focus on the specific div
     posts = soup('div', class_="publicControls")
     # carve out info about the last post on the page
@@ -153,12 +128,12 @@ def find_last_post(html):
     # system id for the last post
     last_post_id = int(re.findall('#post-(\d+)', lpinfo.get('href'))[0])
     return [last_post_num, last_post_id, page]
-def first_post_data(html): #returns the post date and user_id for the first post on a page
-    soup = bs(html) #make soup
-    first_post = soup('ol', class_="messageList")[0]('li')[0] #returns the first post from the <ol> parent of the post <li>s
+def first_post_data(html):  # returns the post date and user_id for the first post on a page
+    soup = bs(html)
+    first_post = soup('ol', class_="messageList")[0]('li')[0]  # returns first post from <ol> parent of the post <li>s
     data = soup('div', class_="titleBar")[0]
     user_id = int(re.findall('\.(\d+)\/', str(data('a', class_="username")[0]['href']))[0])
-    start = to_timestamp(data.span['title'])
+    start = to_timestamp(data.abbr.text)
 
     return [str(start)[:10], user_id]
 def write_thread(name, page, url, html, last_post):
@@ -166,7 +141,7 @@ def write_thread(name, page, url, html, last_post):
     tbdb.execute('SELECT page, url, last_post_num, last_post_id FROM thread_page WHERE page = ? and url = ?', (page, url))
     val = tbdb.fetchone()
 
-    if val == None:
+    if val is None:
         tbdb.execute('INSERT INTO thread_page (name, page, url, html, last_post_num, last_post_id) VALUES ' + qmarks(6), (name, page, url, html, last_post[0], last_post[1]))
     else:
         tbdb.execute('DELETE FROM thread_page WHERE name = ? and page = ?', (name, page))
@@ -183,14 +158,14 @@ def remove_pscroll(html):
     # delete the <div> with the first-time-user notice
     soup = bs(html)
     try: soup.find('div', class_="PanelScroller Notices").decompose()
-    except: html = html #this div was recently removed from the base tb template
+    except: html = html  # this div was recently removed from the base tb template
     return str(soup)
-def add_biffers(thread_name, biffers): #adds new BIF participants to the biffers table
+def add_biffers(thread_name, biffers):  # adds new BIF participants to the biffers table
     for b in biffers:
         # validation
         tbdb.execute('SELECT count(*) FROM biffers WHERE thread_name = ? and user_id = ?', (thread_name, b[0]))
         val = db_value(tbdb.fetchone())
-        if val == 1: #user is already marked as BIF participant
+        if val == 1:  # user is already marked as BIF participant
             print("User is already in this BIF:", b)
             continue
 
@@ -202,16 +177,16 @@ def add_biffers(thread_name, biffers): #adds new BIF participants to the biffers
         tbdb.execute('SELECT distinct id FROM users WHERE id = ?', (b[0],))
         val = db_value(tbdb.fetchone())
 
-        if val == None: #need to add this user
-            write_users(get_userdata([b[0],b[1]]))
+        if val is None:  # need to add this user
+            write_users(get_userdata([b[0], b[1]]))
         commit(conn_tbdb)
-def find_biffers(thread_name, html): #finds the post with the most users tagged (first page only)
+def find_biffers(thread_name, html):  # finds the post with the most users tagged (first page only)
     # find the post and store the users in a variable
     soup = bs(html)
     lis = soup.find('ol', class_="messageList").find_all('li') #collect all <li>s underneath the primary <ol>
-    max_users = 8 #the post we're looking for should have dozens of users tagged.  starting at 8 to ignore posts with random user tagging
+    max_users = 8  # the post we're looking for should have dozens of users tagged.  starting at 8 to ignore posts with random user tagging
     biffers = []
-    ignore = [-1,3611] #ignore the 'mods' account
+    ignore = [-1,3611]  # ignore the 'mods' account
     teams = [[]]
     post_id = 0
     for l in lis:
@@ -256,7 +231,7 @@ def write_users(ulist):
         tbdb.execute('SELECT distinct id, username, joindate FROM users WHERE id = ?', (u['id'],))
         val = tbdb.fetchone()
 
-        if val == None:
+        if val is None:
             tbdb.execute('INSERT INTO users (id, username, location, joindate) VALUES ' + qmarks(4), (u['id'], u['username'], u['location'], u['joindate']))
             print("Added user", u['username'] + ", id:", u['id'])
         elif None in val:
@@ -288,12 +263,13 @@ def get_userdata(user):
     # return user data as a dictionary
     return {'id': user[0], 'username': user[1], 'joindate': joindate, 'location': location}
 
+
 # open & initialize the http session
 s = requests.session()
-s.headers.update({'User-Agent': 'Mozilla/59.0'}) #talkbeer's forum software doesn't allow scraping, so mask the request as a different user agent
-s.verify = False #disable SSL verification
+s.headers.update({'User-Agent': 'Mozilla/65.0.1'})  # mask the request as a different user agent
+s.verify = False  # disable SSL verification
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning) #suppress SSL warning messages
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # suppress SSL warning messages
 
 # set credentials for the talkbeets account so we can log in when the time comes
 from tbcred import url_login, user_sys, pw_sys
@@ -308,10 +284,10 @@ tbdb = conn_tbdb.cursor()
 tbdb.execute('SELECT distinct name, url FROM threads WHERE ongoing = ? order by start', ('Y',))
 toscrape = tbdb.fetchall()
 
-if len(toscrape) == 0: #no ongoing threads
+if len(toscrape) == 0:  # no ongoing threads
     # retrieve list of all thread nicknames
     tbdb.execute('SELECT distinct name FROM threads order by 1')
-    thread_names = remlist(tbdb.fetchall()) #returns a list of strings (instead of a list of tuples)
+    thread_names = remlist(tbdb.fetchall())  # returns a list of strings (instead of a list of tuples)
     new_thread = False
 
     # show existing threads
@@ -320,17 +296,17 @@ if len(toscrape) == 0: #no ongoing threads
     print("")
 
     # get the thread URL & nickname to scrape
-    toscrape = input("Enter an existing thread nickname or a new URL to scrape: ")
-    if toscrape == None: stop('') #validate input length
-    elif 'http' in toscrape: #user entered a URL
+    toscrape = str(input("Enter an existing thread nickname or a new URL to scrape: "))
+    if toscrape is None: stop('')  # validate input length
+    elif 'http' in toscrape:  # user entered a URL
         url = toscrape
         # does this URL already have a nickname?
         tbdb.execute('SELECT distinct name FROM threads WHERE url = ? order by 1', (url,))
-        oldname = remlist(tbdb.fetchall()) #returns a list of strings
-        if oldname == None: #new thread, so it needs a nickname
+        oldname = remlist(tbdb.fetchall())  # returns a list of strings
+        if oldname is None:  # new thread, so it needs a nickname
             new_thread = True
             name = input("Create a nickname for this thread: ")
-            if name == None or len(name) <= 2: stop('Input was either null or too short')
+            if name is None or len(name) <= 2: stop('Input was either null or too short')
             while name in thread_names:
                 name = input('Nickname is already taken.  Choose a different one: ')
         elif len(oldname) > 1: stop('More than one thread matches that URL')
@@ -340,12 +316,12 @@ if len(toscrape) == 0: #no ongoing threads
         else: name = toscrape
         tbdb.execute('SELECT min(url) FROM thread_page WHERE url is not null AND url <> "" AND name = ?', (name,))
         url = db_value(tbdb.fetchone())
-        if url == None: #new thread that hasn't been scraped yet
+        if url is None:  # new thread that hasn't been scraped yet
             tbdb.execute('SELECT min(url) FROM threads WHERE name = ?', (name,))
             url = db_value(tbdb.fetchone())
         elif 'http' not in url: stop('Invalid URL from the db: ' + str(url))
     else: stop('Invalid nickname or URL')
-else: #at least one ongoing thread
+else:  # at least one ongoing thread
     new_thread = False
     for ts in toscrape:
         name = ts[0]
@@ -358,14 +334,18 @@ else: stop("Unable to determine page# from the entered url: " + url)
 page = 1
 
 # see if thread data already exists in the db
-tbdb.execute("SELECT distinct last_post_num, last_post_id, page, html FROM thread_page WHERE last_post_num = (SELECT max(last_post_num) FROM thread_page WHERE name = ?)", (name,))
+query = "SELECT distinct last_post_num, last_post_id, page, html" \
+        " FROM thread_page" \
+        " WHERE last_post_num = (SELECT max(last_post_num) FROM thread_page WHERE name = ?)"
+print(query)
+tbdb.execute(query, (name,))
 last_post_data = tbdb.fetchone()
 
 # log in with the provided credentials
 s.post(url_login, data=creds)
 login_status = True
 
-if last_post_data == None or None in last_post_data: #data either doesn't exist or is incomplete
+if last_post_data is None or None in last_post_data: #data either doesn't exist or is incomplete
     print("Data either doesn't exist or is incomplete.")
     # delete any data that may exist
     delete_url(url)
@@ -385,7 +365,7 @@ else: #data exists
 soup = BeautifulSoup(html, 'html.parser')
 
 # does this thread have more than 1 page?
-if soup.find('span', class_="pageNavHeader") == None: stop("This is a single-page thread.")
+if soup.find('span', class_="pageNavHeader") is None: stop("This is a single-page thread.")
 
 # determine the current & max pages
 page_range = soup.find_all('span', class_="pageNavHeader")[0].text.strip()
@@ -393,6 +373,7 @@ current_page = int(re.findall('Page (\d+)', page_range)[0])
 max_page = int(re.findall('Page \d+ of (\d+)', page_range)[0])
 
 count = 1
+first = True
 while current_page <= max_page:
     delete_url(current_url)
     html = remove_pscroll(s.get(current_url).text)
@@ -401,9 +382,16 @@ while current_page <= max_page:
     if new_thread and current_page == 1:
         # add to the master thread table
         new_thread = False
-        html0 = html[:html.index('<ol class="messageList"')] + '<ol class="messageList" id="messageList">\n</ol>\n<hr>\n\n</form>\n<i>fin</i>\n</body>\n</html>'
-        tbdb.execute('INSERT into thread_page (name, page, html) VALUES (?,?,?)', (name, 0, html0)) #write page 0
-        write_thread_master(name, url, html) #write page 1
+        html0 = html[:html.index('<ol class="messageList"')]
+        html0 += '<ol class="messageList" id="messageList">\n</ol>\n<hr>\n\n</form>\n<i>fin</i>\n</body>\n</html>'
+        tbdb.execute('INSERT into thread_page (name, page, html) VALUES (?,?,?)', (name, 0, html0))  # write page 0
+
+        if first is True:
+            with open("first_post_debug.html", 'w') as file:
+                file.write(html)
+            first = False
+
+        write_thread_master(name, url, html)  # write page 1
         commit(conn_tbdb)
         print("Wrote pages 0 & 1")
         find_biffers(name, html)
@@ -411,16 +399,16 @@ while current_page <= max_page:
         """tbdb.execute('SELECt count(distinct user_id) FROM biffers WHERE thread_name = ' + name)
         bcount = db_value(tbdb.fetchone())
 
-        if bcount == None or bcount == 0:
+        if bcount is None or bcount == 0:
             print("Needs biffers!")
             find_biffers(name, html)"""
 
     print("Reading page", current_page, "of", max_page)
     write_thread(name, current_page, current_url, html, find_last_post(html))
 
-    if count % 25 == 0: #don't scrape the world
+    if count % 25 == 0:  # don't scrape the world
         x = input("Continue? ")
-        if x == None or x.lower() not in['y','yes','1']: break
+        if x is None or x.lower() not in['y','yes','1']: break
 
     count += 1
     current_page += 1
