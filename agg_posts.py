@@ -19,19 +19,33 @@ print("***** ***** **** ***** *****\n")
 
 
 def pause(): input("[====]")
-def bs(html): return BeautifulSoup(html, 'html.parser')
-def find(text, char): return [i for i, letter in enumerate(text) if letter == char]
+
+
+def bs(html):
+    return BeautifulSoup(html, 'html.parser')
+
+
+def find(text, char):
+    return [i for i, letter in enumerate(text) if letter == char]
+
+
 def commit(db):
     db.commit()
     return 0
+
+
 def pp(item):
     print("")
     print(item)
     pause()
+
+
 def pl(items):
     for i in items: print(i)
     print("Total items:",len(items))
     pause()
+
+
 def pl_sorted(items):
     newlist = list()
     ditems = set(items)
@@ -41,18 +55,24 @@ def pl_sorted(items):
     for n in newlist:
         print(items.count(n), n)
     pause()
+
+
 def pd(items):
     #if 'card' not in str(items): return 0
     for i in items:
         print(str(i) + ':', items[i])
     pause()
     print("")
+
+
 def is_int(s):
     try:
         int(s)
         return True
     except ValueError:
         return False
+
+
 def qmarks(num):
     # returns a string of question marks in the length requested, ex: (?,?,?,?)
     i = 0
@@ -61,6 +81,8 @@ def qmarks(num):
         q += "?,"
         i += 1
     return q[:-1] + ")"
+
+
 def stop(text):
     global name, ongoing
     print(text)
@@ -80,25 +102,42 @@ def stop(text):
     print("  End:", time_end, "[stop function]")
     print("***** ***** **** ***** *****\n")
     quit()
-def remlist(data): #returns a list of strings instead of a list of tuples
+
+
+def remlist(data):
+    # returns a list of strings instead of a list of tuples
     l = list()
     t = tuple()
-    if data is None or len(data) == 0: return None
-    if type(data) != type(l): return data
+    if data is None or len(data) == 0:
+        return None
+    if type(data) != type(l):
+        return data
     if type(data[0]) != type(l) and type(data[0]) != type(t):
         print(type(data), type(data[0]))
-        print("NOPE")
         return data
-    for d in data: l.append(d[0])
+
+    for d in data:
+        l.append(d[0])
+
     return l
+
+
 def db_value(val):
-    # if the returned data is a tuple or list, this returns the first value in that set
-    # otherwise, it returns the input value untouched
-    if type(val) == type(list()) or type(val) == type(tuple()): return val[0]
-    else: return val
+    # returns the first value in the set if input is a list or tuple
+    # otherwise, it returns the input untouched
+    if isinstance(val, (list, tuple)) and len(val) > 0:
+        return val[0]
+    else:
+        return val
+
+
 def to_int(val):
-    if val is None: return None
-    else: return int(val)
+    if val is None:
+        return None
+    else:
+        return int(val)
+
+
 def remove_newlines(text):
     text = str(text)
 
@@ -115,6 +154,8 @@ def remove_newlines(text):
     while br3 in text: text = text.replace(br3, br2)
     while br3nl in text: text = text.replace(br3nl, br2nl)
     return text
+
+
 def find_last_post(html):
     # make soup
     soup = BeautifulSoup(html, 'html.parser')
@@ -136,6 +177,8 @@ def find_last_post(html):
         else: page = None
 
     return [last_post, last_post_id, page]
+
+
 def month_to_num(m):
     if m == 'Jan': return '01'
     elif m == 'Feb': return '02'
@@ -150,6 +193,8 @@ def month_to_num(m):
     elif m == 'Nov': return '11'
     elif m == 'Dec': return '12'
     else: return 'Month Error'
+
+
 def to_timestamp(ds):
     # converts a text date/time sting to ISO-8601 formatting: 'Mar 26, 2018 at 9:48 PM' --> '2018-03-26 21:48:00'
     year = int(re.findall(', (20\d\d) at', ds)[0])
@@ -164,28 +209,34 @@ def to_timestamp(ds):
     else: pass
 
     return datetime.datetime(year, month, day, hour, minute)
+
+
 def to_date(ds):
     # converts a text date string to ISO-8601 formatting: 'Mar 26, 2018' --> '2018-03-26'
     year = int(re.findall(', (20\d\d)', ds)[0])
     month = int(month_to_num(ds[:3]))
     day = int(re.findall(' (\d+),', ds)[0])
     return datetime.datetime(year, month, day)
+
+
 def replace_goto(p):
     i = 0
-    #print('entering goto...')
+    # print('entering goto...')
     quotes = p.find_all('div', class_="attribution type")
     p = str(p)
     while i < len(quotes):
         # grab the anchor's post id
-        if 'class="AttributionLink"' in quotes[i]: qid = re.findall('href=\".+?#post-(\d+)\"', str(quotes[i].find('a', class_="AttributionLink")))[0]
-        else: #when a post gets deleted, it has no AttLink
-            i +=1
+        if 'class="AttributionLink"' in quotes[i]:
+            qid = re.findall('href=\".+?#post-(\d+)\"', str(quotes[i].find('a', class_="AttributionLink")))[0]
+        else:
+            # when a post gets deleted, it has no AttLink
+            i += 1
             continue
         # save the original before we make any edits
         old_quote = str(quotes[i])
         new_quote = quotes[i]
-        #print("OLD quote:", "\n", old_quote)
-        #print("")
+        # print("OLD quote:", "\n", old_quote)
+        # print("")
         # delete the existing hyperlink
         goto_link = str(new_quote.find('a', class_="AttributionLink"))
         goto_id = re.findall('href=\".+?#post-(\d+?)\"', goto_link)[0]
@@ -194,31 +245,41 @@ def replace_goto(p):
         new_quote = new_quote.replace('\n','')
 
         # add the new hyperlink + js
-        #new_quote = new_quote.replace('</div>', "\n<a id='post" + qid + "' class='AttributionLink'></a>" + js + "</div>")
+        # new_quote = new_quote.replace('</div>', "\n<a id='post" + qid + "' class='AttributionLink'></a>" + js + "</div>")
 
-        #print("\n", "NEW quote:", "\n", new_quote)
-        #pp("*=*=*=*=*=*=*=*=*=*=*=*=*")
-        #print(str(old_quote) in p)
-        #print(str(new_quote) in p)
+        # print("\n", "NEW quote:", "\n", new_quote)
+        # pp("*=*=*=*=*=*=*=*=*=*=*=*=*")
+        # print(str(old_quote) in p)
+        # print(str(new_quote) in p)
         p = p.replace(str(old_quote), str(new_quote))
-        #print(str(old_quote) in p)
-        #pp(str(new_quote) in p)
+        # print(str(old_quote) in p)
+        # pp(str(new_quote) in p)
         i += 1
-    #print("#########################")
-    #print(p)
-    #pp('exiting goto...')
+    # print("#########################")
+    # print(p)
+    # pp('exiting goto...')
     return p
-def remove_ols(p): return str(p).replace('<ol>', '<ul>').replace('</ol>', '</ul>')
+
+
+def remove_ols(p):
+    return str(p).replace('<ol>', '<ul>').replace('</ol>', '</ul>')
+
+
 def write_post_raw(post_id, thread_name, p):
     # validation
     tbdb.execute('SELECT distinct id, thread_name, soup FROM posts_soup WHERE id = ?', (post_id,))
     val = tbdb.fetchone()
 
-    if val is None: #new post
+    if val is None:
+        # new post
         tbdb.execute('INSERT INTO posts_soup (id, thread_name, soup) VALUES ' + qmarks(3), (post_id, thread_name, p))
-    elif None in val: #overwrite incomplete data
+    elif None in val:
+        # overwrite incomplete data
         tbdb.execute('UPDATE posts_soup SET thread_name = ?, soup = ? WHERE id = ?', (thread_name, p, post_id))
-    else: return 0
+    else:
+        return 0
+
+
 def write_post(p, post_id, username, message, timestamp, gifs, pics, other_media, num, thread_page, thread_name, url, user_id, hint):
     # validation
     tbdb.execute('SELECT * FROM posts WHERE id = ?', (post_id,))
@@ -231,6 +292,8 @@ def write_post(p, post_id, username, message, timestamp, gifs, pics, other_media
         tbdb.execute('''UPDATE posts SET username = ?, text = ?, timestamp = ?, gifs = ?, pics = ?, other_media = ?, num = ?, thread_page = ?, thread_name = ?, url = ?, user_id = ?, hint = ?
             WHERE id = ?''', (username, message, timestamp, gifs, pics, other_media, num, thread_page, thread_name, url, user_id, post_id, hint))
         print("Post " + str(post_id) + " was updated.")
+
+
 def write_users(ulist):
     # ensure the input is properly formatted as a list of dictionaries
     if type(ulist) != type([]): ulist = [ulist]
@@ -248,6 +311,8 @@ def write_users(ulist):
                 tbdb.execute('UPDATE users SET username = ?, location = ?, joindate = ? WHERE id = ?', (u['username'], u['location'], u['joindate'], u['id']))
             else:
                 tbdb.execute('UPDATE users SET username = ?, joindate = ? WHERE id = ?', (u['username'], u['joindate'], u['id']))
+
+
 def get_userdata(uid):
     # read & soupify the html for this user's page
     url = 'https://www.talkbeer.com/community/members/' + str(uid)
@@ -272,12 +337,16 @@ def get_userdata(uid):
 
     # return user data as a dictionary
     return {'id': user_id, 'username': username, 'joindate': joindate, 'location': location}
+
+
 def add_post_details(panel, postinfo):
     # adds new items in the detail panel to the left of each post
     #  postinfo must be a list of tuples: (label,value)
     for pi in postinfo:
         panel = panel.replace('</div>', '<dl class="pairsJustified"><dt>' + str(pi[0]) + ':</dt><dd>' + str(pi[1]) + '</dd></dl>\n</div>')
     return panel
+
+
 def elkhunter(data, name, postinfo):
     # validation
     if data is None: stop("No data returned")
@@ -306,6 +375,8 @@ def elkhunter(data, name, postinfo):
                 i += 1
             except: continue
     return guesses
+
+
 def run_raffle(num_winners, name):
     return 0
     if num_winners == 1: noun = "winner"
@@ -319,6 +390,8 @@ def run_raffle(num_winners, name):
     for r in raffle: num_posts.append(r[0]) #new list for counting how many posts each user submitted
     print("Raffle", noun, "from the", len(raffle), "entries:")
     for w in winners: print(raffle[w], "--", num_posts.count(raffle[w][0]), "user posts.")
+
+
 def update_file(name):
     # prompt user for which posts to include and the display order
     options = {0: '[Skip]', 1: 'All posts in order', 2: 'Hauls only (known)', 3: 'Hauls only (derived)', 4: 'Possible senders to brystmar', 5: 'BYO SQL'}
@@ -512,17 +585,24 @@ def update_file(name):
     with open('html-output/' + name + ' ' + options[option] + '.html', 'w') as file: file.write(html)
 
     print('Done.\n')
+
+
 def update_likes(name):
     # prompt to update
-    if 'ssf' in name.lower() or 'fest' in name.lower(): likes_input = input("Update likes? ")
-    else: return 0
-    if likes_input.lower() not in ['y', 'yes', '1']: return 0
+    if 'ssf' in name.lower() or 'fest' in name.lower():
+        likes_input = input("Update likes? ")
+    else:
+        return 0
+
+    if likes_input.lower() not in ['y', 'yes', '1']:
+        return 0
 
     # must be logged in to view likes
     global login_status
-    if login_status is False and True is False:
+    if login_status is False:
+        # log in using the provided credentials
         global url_login, creds
-        s.post(url_login, data=creds)  # log in using the provided credentials
+        s.post(url_login, data=creds)
         login_status = True
 
     # get post_id & timestamp for the most recently-recorded 'liked' post
@@ -531,33 +611,45 @@ def update_likes(name):
     tbdb.execute(query, (name,))
     last_like = db_value(tbdb.fetchall())
 
-    # how many days ago was that 'like' timestamp?
-    time_ago = datetime.datetime.now() - dateutil.parser.parse(last_like[1])
-    days_ago = time_ago.days + round(time_ago.seconds/(24*60*60), 2)
+    if len(last_like) == 0:
+        # no liked posts yet
+        recent_post_text = "No likes found for {}.".format(name)
+    else:
+        # how many days ago was that 'like' timestamp?
+        time_ago = datetime.datetime.now() - dateutil.parser.parse(last_like[1])
+        days_ago = time_ago.days + round(time_ago.seconds/(24*60*60), 2)
 
-    print("Most recently-liked", name, "post was", str(days_ago), "days ago: id=" + str(last_like[0]), "at", last_like[1] + ".")
-    print("")
+        recent_post_text = "Most recently-liked {} post was {} days "
+        recent_post_text += "ago: id={} at {}.".format(name, days_ago, last_like[0], last_like[1])
+
+    print(recent_post_text + "\n")
     starting_post = input("Enter post_id, timestamp, or # days to retrieve posts from: ")
+
+    # figure out what the user entered, then submit the right query
     try:
-        if int(starting_post) > 180:  # user entered a post_id
+        if int(starting_post) > 180:
+            # user entered a post_id
             query = 'SELECT distinct id, timestamp FROM posts where id >= ? and thread_name = ? ORDER BY id LIMIT 1500'
             tbdb.execute(query, (starting_post, name))
-        else:  # user entered a number of days
+        else:
+            # user entered a number of days
             cutoff_date = str(datetime.datetime.now() + datetime.timedelta(-starting_post))[:10]
             query = 'SELECT distinct id, timestamp FROM posts where timestamp >= ? and thread_name = ? '
             query += 'ORDER BY id LIMIT 1500'
             tbdb.execute(query, (cutoff_date, name))
     except:
-        if '-' in starting_post:  # user entered a timestamp
+        if '-' in starting_post:
+            # user entered a timestamp
             query = 'SELECT distinct id, timestamp FROM posts where timestamp >= ? and '
             query += 'thread_name = ? ORDER BY id LIMIT 1500'
             tbdb.execute(query, (starting_post, name))
-        else: return 0
+        else:
+            return 0
 
     # load post_ids into memory
     post_ids = tbdb.fetchall()
 
-    i=0
+    i = 0
     if post_ids is not None:
         for pid in post_ids:
             read_likes(pid[0])
@@ -573,11 +665,14 @@ def update_likes(name):
     query = 'SELECT distinct user_id FROM likes WHERE user_id not in (SELECT distinct id FROM users) ORDER BY user_id'
     tbdb.execute(query)
     users = tbdb.fetchall()
-    print(users, "||", type(users))
-    if users is None or len(users) < 1: return 0
-    else:  # add missing users to the 'users' table
+    if users is None or len(users) < 1:
+        return 0
+    else:
+        # add missing users to the 'users' table
         for u in users:
             write_users(get_userdata(u[0]))
+
+
 def read_likes(post_id):
     global s
     url = 'https://www.talkbeer.com/community/posts/' + str(post_id) + '/likes'
@@ -592,6 +687,8 @@ def read_likes(post_id):
         user_id = int(re.findall('href=\"members/.*\.(\d+?)/\"', str(li))[0])
         #print(timestamp, " <--> ", user_id)
         write_likes(post_id, user_id, timestamp)
+
+
 def write_likes(post_id, user_id, timestamp):
     # validation
     tbdb.execute('SELECT post_id, user_id, timestamp FROM likes WHERE post_id = ? and user_id = ?', (post_id, user_id))
@@ -602,6 +699,8 @@ def write_likes(post_id, user_id, timestamp):
     else:
         tbdb.execute('DELETE FROM likes WHERE post_id = ? and user_id = ?', (post_id, user_id))
         tbdb.execute('INSERT INTO likes (post_id, user_id, timestamp) VALUES ' + qmarks(3), (post_id, user_id, timestamp))
+
+
 def determine_thread(): #returns the thread name and the highest page number that's been parsed
     # if there's only one thread with new posts scraped, pick that one by default
     tbdb.execute('''WITH tp_maxpost as (SELECT name, max(last_post_id) as last_post FROM thread_page GROUP BY 1 ORDER BY 1),
@@ -667,6 +766,8 @@ def determine_thread(): #returns the thread name and the highest page number tha
         if temp[1] % 20 == 0: page = temp[0] + 1
         else: page = temp[0]
     else: stop("More posts exist in the tb.posts table than raw thread html.  Re-scrape the thread for " + name)
+
+
 def thumbfix(p):
     # adjusts tb-native thumbnails to use the same schema as tb-native full images
     thumbs = p.find('blockquote', class_="messageText SelectQuoteContainer ugc baseHtml").find_all('a', class_="LbTrigger")
@@ -675,10 +776,11 @@ def thumbfix(p):
     pp(p)
     print("")
 
-    i=0
+    i = 0
     p = str(p)
     while i < len(thumbs):
-        a_href = str(thumbs[i].get('href')) #ex: https://www.talkbeer.com/community/attachments/994f94d8-9eba-4450-bff0-d83a3e65c3f7-jpeg.458/
+        # ex: https://www.talkbeer.com/community/attachments/994f94d8-9eba-4450-bff0-d83a3e65c3f7-jpeg.458/
+        a_href = str(thumbs[i].get('href'))
         pic_id = re.findall('.*community\/attachments\/.*\.(\d+)\/', a_href)[0]
 
         img_tag = thumbs[i].find('img')
@@ -688,7 +790,6 @@ def thumbfix(p):
 
         p = p.replace(str(thumbs[i]), new_img)
         i += 1
-    pp(p)
 
     return bs(p)
 
@@ -698,7 +799,7 @@ s = requests.session()
 # talkbeer's forum software doesn't allow scraping, so mask the request as a different user agent
 s.headers.update({'User-Agent': 'Mozilla/65.0.1'})
 s.verify = False  # disable SSL verification
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # suppress SSL warning messages
 
 # set the talkbeets account credentials in case we need to log in later
@@ -734,7 +835,7 @@ biffers_list = tbdb.fetchall()
 # iterate through the thread pages to extract data about each post
 page_counter = 1
 for d in data:
-    #if d[0] > 1: break
+    # if d[0] > 1: break
     print("Parsing page", d[0], "(" + str(page_counter), "of", str(len(data)) + ")")  # + ". Users:", len(ulist))
     # read, soup-ify the page
     soup = bs(d[1])
@@ -942,7 +1043,8 @@ commit(conn_tbdb)
 
 # update the single-page html file
 update_file(name)
-if ongoing: update_likes(name)
+if ongoing:
+    update_likes(name)
 
 # update user data
 if login_status is False:
@@ -961,7 +1063,3 @@ print("***** ***** **** ***** *****")
 print("  End:", time_end, "[normal path]")
 print("***** ***** **** ***** *****")
 print("")
-
-# if platform.system() == 'Windows': conn_tbdb = sqlite3.connect("\\\\greendale\Public\Python\\talkbeer\\talkbeer.sqlite")
-# elif platform.system() == 'Darwin': conn_tbdb = sqlite3.connect('/Volumes/Public/Python/talkbeer/talkbeer.sqlite')
-# """
