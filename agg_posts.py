@@ -582,7 +582,8 @@ def update_file(name):
     # add summary data to the footer
     html = html.replace('</html>', '\n<footer>\n<div class="footerLegal">\n<div class="pageWidth">\n<div class="pageContent">\n<div id="copyright">A mediocre concatenation of ' + str(count) + ' posts by brystmar</div>\n</div>\n</div>\n</div>\n</footer>\n</html>')
     # write the output
-    with open('html-output/' + name + ' ' + options[option] + '.html', 'w') as file: file.write(html)
+    with open('html-output/' + name + '/' + name + ' ' + options[option] + '.html', 'w') as file:
+        file.write(html)
 
     print('Done.\n')
 
