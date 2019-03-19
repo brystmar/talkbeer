@@ -5,7 +5,6 @@
 from bs4 import BeautifulSoup
 import datetime
 import dateutil.parser
-import html
 import re
 import requests
 import sqlite3
@@ -21,11 +20,10 @@ print("***** ***** **** ***** *****\n")
 def pause(): input("[====]")
 
 
-def bs(html):
-    return BeautifulSoup(html, 'html.parser')
+def make_soup(html_to_soupify): return BeautifulSoup(html_to_soupify, 'html.parser')
 
 
-def find(text, char):
+def find_substring(text, char):
     return [i for i, letter in enumerate(text) if letter == char]
 
 
@@ -42,7 +40,7 @@ def pp(item):
 
 def pl(items):
     for i in items: print(i)
-    print("Total items:",len(items))
+    print("Total items:", len(items))
     pause()
 
 
@@ -58,19 +56,11 @@ def pl_sorted(items):
 
 
 def pd(items):
-    #if 'card' not in str(items): return 0
-    for i in items:
-        print(str(i) + ':', items[i])
+    # if 'card' not in str(items): return 0
+    for item in items:
+        print(str(item) + ':', items[item])
     pause()
     print("")
-
-
-def is_int(s):
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
 
 
 def qmarks(num):
@@ -87,12 +77,15 @@ def stop(text):
     global name, ongoing
     print(text)
     update_file(name)
-    if ongoing: update_likes(name)
+    if ongoing:
+        update_likes(name)
     commit(conn_tbdb)
     run_raffle(1, name)
 
-    try: conn_tbdb.close()
-    except: pass
+    try:
+        conn_tbdb.close()
+    except:
+        pass
 
     time_end = datetime.datetime.now()
     time_end = time_end.isoformat(timespec='seconds')
@@ -131,13 +124,6 @@ def db_value(val):
         return val
 
 
-def to_int(val):
-    if val is None:
-        return None
-    else:
-        return int(val)
-
-
 def remove_newlines(text):
     text = str(text)
 
@@ -157,7 +143,6 @@ def remove_newlines(text):
 
 
 def find_last_post(html):
-    # make soup
     soup = BeautifulSoup(html, 'html.parser')
     # focus on the specific div
     posts = soup('div', class_="publicControls")
@@ -172,9 +157,12 @@ def find_last_post(html):
     page = str(soup.find('link', rel="canonical"))
     if page is not None:
         page = re.findall('href=\"(.+?)\"', page)[0]
-        if page[-1] == '/': page = 1
-        elif re.search('/page-\d+', page): page = int(re.findall('/page-(\d+)', page)[0])
-        else: page = None
+        if page[-1] == '/':
+            page = 1
+        elif re.search('/page-\d+', page):
+            page = int(re.findall('/page-(\d+)', page)[0])
+        else:
+            page = None
 
     return [last_post, last_post_id, page]
 
@@ -317,7 +305,7 @@ def get_userdata(uid):
     # read & soupify the html for this user's page
     url = 'https://www.talkbeer.com/community/members/' + str(uid)
     html = s.get(url).text
-    soup = bs(html)
+    soup = make_soup(html)
 
     username = soup.find('h1', class_="username").text
     user_id = int(re.findall('/community/members/\S+?\.(\d+?)/', str(soup.find('link', rel="canonical")))[0])
@@ -356,7 +344,7 @@ def elkhunter(data, name, postinfo):
 
     for d in data:
         # r.id, r.soup, p.username, p.timestamp, p.page_number
-        soup = bs(d[1])
+        soup = make_soup(d[1])
 
         # remove quoted posts
         while soup.find('div', class_="bbCodeBlock bbCodeQuote") is not None:
@@ -403,14 +391,12 @@ def update_file(name):
     val = False
     while val is False:
         option = input("Option: ")
-        for i, j in enumerate(options):
-            try:
-                if option == '' or option == '0': return 0
-                option = int(option)
-                if j == option:
-                    val = True
-                    break
-            except: continue
+        try:
+            option = int(option)
+            if option in options:
+                val = True
+        except:
+            continue
 
     # get the first page of the thread
     tbdb.execute('SELECT html FROM thread_page WHERE name = ? and page = 0', (name,))
@@ -421,11 +407,13 @@ def update_file(name):
     maxpage = db_value(tbdb.fetchone())
 
     # remove ads flags
-    if "enable_page_level_ads: true" in html: html = html.replace("enable_page_level_ads: true", "enable_page_level_ads: false")
-    if "adsbygoogle" in html: html = html.replace("adsbygoogle", "ads123byN0Pty")
+    if "enable_page_level_ads: true" in html:
+        html = html.replace("enable_page_level_ads: true", "enable_page_level_ads: false")
+    if "adsbygoogle" in html:
+        html = html.replace("adsbygoogle", "ads123byN0Pty")
 
     # erase the header & quickReply sections
-    soup = bs(html)
+    soup = make_soup(html)
     current_page = int(re.findall('Page (\d+) of \d+', soup.find('span', class_="pageNavHeader").text)[0])
     current_maxpage = int(re.findall('Page \d+ of (\d+)', soup.find('span', class_="pageNavHeader").text)[0])
     if soup.find('a', title="Open quick navigation") is not None: soup.find('a', title="Open quick navigation").decompose()
@@ -441,7 +429,7 @@ def update_file(name):
     html = html.replace('>' + str(current_maxpage) + '<', '>' + str(maxpage) + '<')
     html = html.replace('<div id="headerMover">', '<br/>')
 
-    soup = bs(html)
+    soup = make_soup(html)
     # replace everything after the </ol> with a basic footer
     html = html[:html.index('</ol>') + 5] + '\n<hr>\n\n</form>\n<i>fin</i>\n</body>\n</html>'
 
@@ -451,7 +439,8 @@ def update_file(name):
 
     # 'option' determines which SQL query to use
     if option == 4:  # only hint-related posts by users not ruled out as brystmar's sender, ordered by username
-        if name not in ['SSF14', 'SSF15', 'Fest18']: stop("Possible sender data for brystmar only exists for SSF14+")
+        if name not in ['SSF14', 'SSF15', 'SSF16', 'Fest18']:
+            stop("Possible sender data for brystmar only exists for SSF14+")
 
         tbdb.execute('''SELECT DISTINCT r.id, r.soup, p.username, p.timestamp, p.thread_page
                     FROM posts_soup r
@@ -478,18 +467,19 @@ def update_file(name):
                     FROM posts_soup r
                     JOIN posts p ON r.id = p.id
                     WHERE p.thread_name = ? AND r.soup is not null
-                        AND (p.pics >= 2) --OR p.text like ?) '%\n[instagram]%\n[instagram]%'
+                        AND (p.pics >= 2) OR p.text like '%\n[instagram]%\n[instagram]%'
                     ORDER BY r.id''', (name, ))
     # elif option == 5: #elkhunter LIF
         # tbdb.execute("SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page  FROM posts_soup r  JOIN posts p ON r.id = p.id  WHERE p.thread_name = ? AND lower(p.text) like '%#elkhunterlif%'  AND r.id > 1921012  ORDER BY r.id", (name, ))
         # html = elkhunter(tbdb.fetchall(), name, options[option])
     elif option == 5:  # BYO SQL
-        # print("Last query entered: " + """SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page FROM posts_soup r JOIN posts p ON r.id = p.id WHERE p.thread_name = 'Fest18' AND r.id > 1929291 AND (p.pics > 0 OR p.other_media > 0) ORDER BY r.id""")
         print("Last query entered: " + """SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page FROM posts_soup r JOIN posts p ON r.id = p.id WHERE p.thread_name = 'Fest18' AND r.id > 1929291 AND p.user_id in(SELECT user_id FROM biffers WHERE thread_name = 'Fest18' AND haul_id is null) ORDER BY p.user_id, r.id""" + "\n")
         query = input("Enter SQL to execute: ")
         # Fest18 haul posts: SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page  FROM posts_soup r  JOIN posts p ON r.id = p.id  WHERE p.thread_name = 'Fest18' AND r.id > 1929291 AND (p.pics > 0 OR p.other_media > 0)  ORDER BY r.id
         # Fest18 haul posts: SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page  FROM posts_soup r  JOIN posts p ON r.id = p.id  WHERE p.thread_name = 'Fest18' AND r.id > 1929291 AND (p.pics > 0 OR p.other_media > 0) AND r.id not in(SELECT distinct haul_id FROM biffers) ORDER BY r.id
         tbdb.execute(query)
+    elif option == 0:
+        return 0
 
     data = tbdb.fetchall()
     # validation
@@ -513,7 +503,7 @@ def update_file(name):
         postinfo.append(("Post ID", post_id))
         postinfo.append(("Page", '<a class="page_number" target="_blank" href="' + post_url + post_id + '">' + page_number + '</a>'))
 
-        sp = bs(remove_ols(d[1]))
+        sp = make_soup(remove_ols(d[1]))
         raw = str(sp)
 
         likes_id = 'likes-post-' + str(sp.a['name'])
@@ -541,7 +531,7 @@ def update_file(name):
         if llink is not None:
             loc = llink.text
             if len(loc) > 18:  # truncate the location string if it's too long
-                spaces = list(reversed(find(loc, ' ')))
+                spaces = list(reversed(find_substring(loc, ' ')))
                 for s in spaces:
                     if s <= 18: break
                 loc = loc[:min(s,18)] + '...'
@@ -554,7 +544,7 @@ def update_file(name):
             for media in sp.find_all('div', id="media_blob"):
                 remove.append(str(media))
 
-        r=0
+        r = 0
         while r < len(remove):
             if remove[r] is not None and remove[r] != 'None':
                 raw = raw.replace(remove[r], '')
@@ -580,7 +570,11 @@ def update_file(name):
                 file.write('\n')
         else:"""
     # add summary data to the footer
-    html = html.replace('</html>', '\n<footer>\n<div class="footerLegal">\n<div class="pageWidth">\n<div class="pageContent">\n<div id="copyright">A mediocre concatenation of ' + str(count) + ' posts by brystmar</div>\n</div>\n</div>\n</div>\n</footer>\n</html>')
+    footer_html = '\n<footer>\n<div class="footerLegal">\n<div class="pageWidth">\n<div class="pageContent">\n'
+    footer_html += '<div id="copyright">A mediocre concatenation of {} posts by brystmar</div>\n'.format(count)
+    footer_html += '</div>\n</div>\n</div>\n</footer>\n</html>'
+    html = html.replace('</html>', footer_html)
+
     # write the output
     with open('html-output/' + name + '/' + name + ' ' + options[option] + '.html', 'w') as file:
         file.write(html)
@@ -618,17 +612,18 @@ def update_likes(name):
     else:
         # how many days ago was that 'like' timestamp?
         time_ago = datetime.datetime.now() - dateutil.parser.parse(last_like[1])
-        days_ago = time_ago.days + round(time_ago.seconds/(24*60*60), 2)
+        days_ago = round(time_ago.days + round(time_ago.seconds/(24*60*60), 2), 2)
 
-        recent_post_text = "Most recently-liked {} post was {} days "
-        recent_post_text += "ago: id={} at {}.".format(name, days_ago, last_like[0], last_like[1])
+        recent_post_text = "Most recently-liked {} post was {} days ".format(name, days_ago)
+        recent_post_text += "ago: id={} at {}.".format(last_like[0], last_like[1])
 
     print(recent_post_text + "\n")
     starting_post = input("Enter post_id, timestamp, or # days to retrieve posts from: ")
 
     # figure out what the user entered, then submit the right query
     try:
-        if int(starting_post) > 180:
+        starting_post = int(starting_post)
+        if starting_post > 180:
             # user entered a post_id
             query = 'SELECT distinct id, timestamp FROM posts where id >= ? and thread_name = ? ORDER BY id LIMIT 1500'
             tbdb.execute(query, (starting_post, name))
@@ -678,8 +673,8 @@ def read_likes(post_id):
     global s
     url = 'https://www.talkbeer.com/community/posts/' + str(post_id) + '/likes'
     html = s.get(url).text
-    soup = bs(html)
-    #soup = bs(s.get(url).text)
+    soup = make_soup(html)
+    #soup = make_soup(s.get(url).text)
     likes = soup.find_all('li', class_="primaryContent memberListItem")
 
     for li in likes:
@@ -792,7 +787,7 @@ def thumbfix(p):
         p = p.replace(str(thumbs[i]), new_img)
         i += 1
 
-    return bs(p)
+    return make_soup(p)
 
 
 # open & initialize the http session
@@ -839,7 +834,7 @@ for d in data:
     # if d[0] > 1: break
     print("Parsing page", d[0], "(" + str(page_counter), "of", str(len(data)) + ")")  # + ". Users:", len(ulist))
     # read, soup-ify the page
-    soup = bs(d[1])
+    soup = make_soup(d[1])
     page = d[0]
 
     posts = soup.find_all('li')  # class_="message   ")
@@ -849,7 +844,7 @@ for d in data:
         except: continue
 
         # replace any <ol>s with <ul>s
-        p = bs(remove_ols(p))
+        p = make_soup(remove_ols(p))
 
         # tb-native thumbnails need to be adjusted to use a similar schema to tb-hosted images
         p = thumbfix(p)
@@ -890,7 +885,7 @@ for d in data:
         p = '<div id="' + str(post_id) + '"><a name="' + str(post_id) + '"></a>\n' + str(p) + '\n</div>'
 
         # if there are images, append a text link to the image before the image itself
-        p = bs(p)  # can't be consolidated into the next line of code because BS re-arranges the attributes in each tag
+        p = make_soup(p)  # can't be consolidated into the next line of code because BS re-arranges the attributes in each tag
         pics = p.find('blockquote', class_="messageText SelectQuoteContainer ugc baseHtml").find_all('img')
         p = str(p)
 
@@ -929,7 +924,7 @@ for d in data:
         pic_counter = pic_counter - gifs
 
         # if there are youtube video embeds, add a text link to the video before the video itself
-        p = bs(p)  # can't be consolidated into the next line of code because BS re-arranges the attributes in each tag
+        p = make_soup(p)  # can't be consolidated into the next line of code because BS re-arranges the attributes in each tag
         media = p.find('div', class_="messageContent").find_all('iframe')
         p = str(p)
 
@@ -972,7 +967,7 @@ for d in data:
             m += 1
 
         # if there are quotes, add ASCII formatting for quoted text
-        p = bs(p)  # can't be consolidated into the next line of code because BS re-arranges the attributes in each tag
+        p = make_soup(p)  # can't be consolidated into the next line of code because BS re-arranges the attributes in each tag
         quotes = p.find_all('aside')
         p = str(p)
 
@@ -992,8 +987,8 @@ for d in data:
             q += 1
 
         # extract the post's text into two variables: one with quoted posts, one without
-        message = remove_newlines(str(bs(p).find('blockquote', class_="messageText SelectQuoteContainer ugc baseHtml").text).strip()).replace('Click to expand...', '')
-        message_nq = remove_newlines(str(bs(p_noquotes).find('blockquote', class_="messageText SelectQuoteContainer ugc baseHtml").text).strip()).replace('Click to expand...', '').lower()
+        message = remove_newlines(str(make_soup(p).find('blockquote', class_="messageText SelectQuoteContainer ugc baseHtml").text).strip()).replace('Click to expand...', '')
+        message_nq = remove_newlines(str(make_soup(p_noquotes).find('blockquote', class_="messageText SelectQuoteContainer ugc baseHtml").text).strip()).replace('Click to expand...', '').lower()
 
         if 'hint' in message_nq or 'target' in message_nq:
             for blist in biffers_list:  # only count the post as a hint if it's posted by a BIF participant
