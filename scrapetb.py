@@ -20,18 +20,28 @@ filename = __file__
 
 
 def pause(): input("[====]")
-def bs(html): return BeautifulSoup(html, 'html.parser')
+
+
+def make_soup(html_to_soupify): return BeautifulSoup(html_to_soupify, 'html.parser')
+
+
 def commit(db):
     db.commit()
     return 0
+
+
 def pp(item):
     print("")
     print(item)
     pause()
+
+
 def pl(items):
     for i in items: print(i)
     print("Total items:",len(items))
     pause()
+
+
 def pl_sorted(items):
     newlist = list()
     ditems = set(items)
@@ -41,6 +51,8 @@ def pl_sorted(items):
     for n in newlist:
         print(items.count(n), n)
     pause()
+
+
 def month_to_num(m):
     if m == 'Jan': return '01'
     elif m == 'Feb': return '02'
@@ -55,6 +67,8 @@ def month_to_num(m):
     elif m == 'Nov': return '11'
     elif m == 'Dec': return '12'
     else: return 'Month Error'
+
+
 def to_timestamp(ds):
     # converts a text date/time sting to ISO-8601 formatting: 'Mar 26, 2018 at 9:48 PM' --> '2018-03-26 21:48:00'
     year = int(re.findall(', (20\d\d) at', ds)[0])
@@ -67,12 +81,16 @@ def to_timestamp(ds):
     elif ds[-2].lower() == 'a' and hour == 12: hour -= 12
     else: pass
     return datetime.datetime(year, month, day, hour, minute)
+
+
 def to_date(ds):
     # converts a text date string to ISO-8601 formatting: 'Mar 26, 2018' --> '2018-03-26'
     year = int(re.findall(', (20\d\d)', ds)[0])
     month = int(month_to_num(ds[:3]))
     day = int(re.findall(' (\d+),', ds)[0])
     return datetime.datetime(year, month, day)
+
+
 def qmarks(num):
     # returns a string of question marks in the length requested, ex: (?,?,?,?)
     i = 0
@@ -81,6 +99,8 @@ def qmarks(num):
         q += "?,"
         i += 1
     return q[:-1] + ")"
+
+
 def stop(text):
     print(text)
     print("")
@@ -96,6 +116,8 @@ def stop(text):
     print("***** ***** **** ***** *****")
     print("")
     quit()
+
+
 def remlist(data):
     #returns a list of strings instead of a list of lists/tuples
     l = list()
@@ -108,6 +130,8 @@ def remlist(data):
         return data
     for d in data: l.append(d[0])
     return l
+
+
 def db_value(val):
     # if the returned data is a tuple or list, this returns the first value in that set
     # otherwise, it returns the input value untouched
@@ -115,10 +139,16 @@ def db_value(val):
     t = tuple()
     if type(val) == type(t) or type(val) == type(l): return val[0]
     else: return val
-def next_link(url, num): return url + 'page-' + str(num)
-def delete_url(url): tbdb.execute('DELETE FROM thread_page WHERE url = ? and html is null', (url,))
+
+
+def next_link(base_url, num): return base_url + 'page-' + str(num)
+
+
+def delete_url(url_to_delete): tbdb.execute('DELETE FROM thread_page WHERE url = ? and html is null', (url_to_delete,))
+
+
 def find_last_post(html):
-    soup = bs(html)
+    soup = make_soup(html)
     # focus on the specific div
     posts = soup('div', class_="publicControls")
     # carve out info about the last post on the page
@@ -128,39 +158,57 @@ def find_last_post(html):
     # system id for the last post
     last_post_id = int(re.findall('#post-(\d+)', lpinfo.get('href'))[0])
     return [last_post_num, last_post_id, page]
+
+
 def first_post_data(html):  # returns the post date and user_id for the first post on a page
-    soup = bs(html)
+    soup = make_soup(html)
     first_post = soup('ol', class_="messageList")[0]('li')[0]  # returns first post from <ol> parent of the post <li>s
     data = soup('div', class_="titleBar")[0]
     user_id = int(re.findall('\.(\d+)\/', str(data('a', class_="username")[0]['href']))[0])
     start = to_timestamp(data.abbr.text)
 
     return [str(start)[:10], user_id]
+
+
 def write_thread(name, page, url, html, last_post):
     # validation
-    tbdb.execute('SELECT page, url, last_post_num, last_post_id FROM thread_page WHERE page = ? and url = ?', (page, url))
+    write_thread_query = 'SELECT page, url, last_post_num, last_post_id FROM thread_page WHERE page = ? and url = ?'
+    tbdb.execute(write_thread_query, (page, url))
     val = tbdb.fetchone()
 
-    if val is None:
-        tbdb.execute('INSERT INTO thread_page (name, page, url, html, last_post_num, last_post_id) VALUES ' + qmarks(6), (name, page, url, html, last_post[0], last_post[1]))
-    else:
+    if val is not None:
+        # delete if already exists
         tbdb.execute('DELETE FROM thread_page WHERE name = ? and page = ?', (name, page))
-        tbdb.execute('INSERT INTO thread_page (name, page, url, html, last_post_num, last_post_id) VALUES ' + qmarks(6), (name, page, url, html, last_post[0], last_post[1]))
+
+    write_thread_query = 'INSERT INTO thread_page (name, page, url, html, last_post_num, last_post_id) VALUES '
+    write_thread_query += qmarks(6)
+    tbdb.execute(write_thread_query, (name, page, url, html, last_post[0], last_post[1]))
+
+
 def write_thread_master(name, url, html):
     thread_id = int(re.findall('http.*\.(\d+)\/', url)[0])
     thread_data = first_post_data(html)
-    tbdb.execute('INSERT INTO threads (name, id, url, ongoing, start, organizer_id) VALUES ' + qmarks(6), (name, thread_id, url, 'Y', thread_data[0], thread_data[1]))
-def remove_pscroll(html):
+    write_thread_query = 'INSERT INTO threads (name, id, url, ongoing, start, organizer_id) VALUES '
+    write_thread_query += qmarks(6)
+    tbdb.execute(write_thread_query, (name, thread_id, url, 'Y', thread_data[0], thread_data[1]))
+
+
+def remove_panelscroller_notices(html_blob):
     # remove ads flags
-    html = html.replace("enable_page_level_ads: true", "enable_page_level_ads: false")
-    html = html.replace("adsbygoogle", "ads123byN0Pty")
+    html_blob = html_blob.replace("enable_page_level_ads: true", "enable_page_level_ads: false")
+    html_blob = html_blob.replace("adsbygoogle", "ads123byN0Pty")
 
     # delete the <div> with the first-time-user notice
-    soup = bs(html)
-    try: soup.find('div', class_="PanelScroller Notices").decompose()
-    except: html = html  # this div was recently removed from the base tb template
-    return str(soup)
+    blob_soup = make_soup(html_blob)
+    try:
+        blob_soup.find('div', class_="PanelScroller Notices").decompose()
+    except:
+        pass
+    return str(blob_soup)
+
+
 def add_biffers(thread_name, biffers):  # adds new BIF participants to the biffers table
+    i = 1
     for b in biffers:
         # validation
         tbdb.execute('SELECT count(*) FROM biffers WHERE thread_name = ? and user_id = ?', (thread_name, b[0]))
@@ -170,7 +218,9 @@ def add_biffers(thread_name, biffers):  # adds new BIF participants to the biffe
             continue
 
         # write to db
-        tbdb.execute('INSERT INTO biffers (thread_name, user_id, username, partner, partner_id, list_order) VALUES ' + qmarks(6), (thread_name, b[0], b[1], b[2], b[3], b[4]))
+        add_biffers_query = 'INSERT INTO biffers (thread_name, user_id, username, partner, partner_id, list_order) '
+        add_biffers_query += 'VALUES ' + qmarks(6)
+        tbdb.execute(add_biffers_query, (thread_name, b[0], b[1], b[2], b[3], b[4]))
         print("Added biffer:", b)
 
         # check if user already exists in the users table
@@ -179,10 +229,15 @@ def add_biffers(thread_name, biffers):  # adds new BIF participants to the biffe
 
         if val is None:  # need to add this user
             write_users(get_userdata([b[0], b[1]]))
-        commit(conn_tbdb)
+
+        if i % 10 == 0 or i == len(biffers):
+            commit(conn_tbdb)
+        i += 1
+
+
 def find_biffers(thread_name, html):  # finds the post with the most users tagged (first page only)
     # find the post and store the users in a variable
-    soup = bs(html)
+    soup = make_soup(html)
     lis = soup.find('ol', class_="messageList").find_all('li') #collect all <li>s underneath the primary <ol>
     max_users = 8  # the post we're looking for should have dozens of users tagged.  starting at 8 to ignore posts with random user tagging
     biffers = []
@@ -222,6 +277,8 @@ def find_biffers(thread_name, html):  # finds the post with the most users tagge
                 max_users = num_users
         else: continue #ignore <li>s that don't contain a forum post
     add_biffers(thread_name, biffers)
+
+
 def write_users(ulist):
     # ensure the input is properly formatted as a list of dictionaries
     if type(ulist) != type([]): ulist = [ulist]
@@ -239,11 +296,13 @@ def write_users(ulist):
                 tbdb.execute('UPDATE users SET username = ?, location = ?, joindate = ? WHERE id = ?', (u['username'], u['location'], u['joindate'], u['id']))
             else:
                 tbdb.execute('UPDATE users SET username = ?, joindate = ? WHERE id = ?', (u['username'], u['joindate'], u['id']))
+
+
 def get_userdata(user):
     # read & soupify the html for this user's page
     url = 'https://www.talkbeer.com/community/members/' + user[1].replace(' ','-').lower().strip() + '.' + str(user[0]) + '/'
     html = s.get(url).text
-    soup = bs(html)
+    soup = make_soup(html)
     joindate = None # there's no easy way to find the join date
 
     # some users restrict who can view their profile page
@@ -328,16 +387,19 @@ else:  # at least one ongoing thread
         url = ts[1]
 
 # convert to the thread's base URL
-if url[-1] == "/": pass
-elif re.search('/page-\d+', url): url = url.replace(re.findall('/(page-.+)', url)[0], '')
-else: stop("Unable to determine page# from the entered url: " + url)
+if url[-1] == "/":
+    pass
+elif re.search('/page-\d+', url):
+    url = url.replace(re.findall('/(page-.+)', url)[0], '')
+else:
+    stop("Unable to determine page# from url: " + url)
+
 page = 1
 
 # see if thread data already exists in the db
 query = "SELECT distinct last_post_num, last_post_id, page, html" \
         " FROM thread_page" \
         " WHERE last_post_num = (SELECT max(last_post_num) FROM thread_page WHERE name = ?)"
-print(query)
 tbdb.execute(query, (name,))
 last_post_data = tbdb.fetchone()
 
@@ -345,21 +407,24 @@ last_post_data = tbdb.fetchone()
 s.post(url_login, data=creds)
 login_status = True
 
-if last_post_data is None or None in last_post_data: #data either doesn't exist or is incomplete
+if last_post_data is None or None in last_post_data:
     print("Data either doesn't exist or is incomplete.")
     # delete any data that may exist
     delete_url(url)
     current_page = 1
     current_url = url
-    html = remove_pscroll(s.get(current_url).text)
+    html = remove_panelscroller_notices(s.get(current_url).text)
     write_thread(name, current_page, current_url, html, find_last_post(html))
     commit(conn_tbdb)
-else: #data exists
+else:
+    # data exists
     print("Found existing data for this thread.")
     current_page = last_post_data[2]
-    if current_page == 1: current_url = url
-    else: current_url = next_link(url, current_page)
-    html = remove_pscroll(s.get(current_url).text)
+    if current_page == 1:
+        current_url = url
+    else:
+        current_url = next_link(url, current_page)
+    html = remove_panelscroller_notices(s.get(current_url).text)
 
 # read, soup-ify the page
 soup = BeautifulSoup(html, 'html.parser')
@@ -376,7 +441,7 @@ count = 1
 first = True
 while current_page <= max_page:
     delete_url(current_url)
-    html = remove_pscroll(s.get(current_url).text)
+    html = remove_panelscroller_notices(s.get(current_url).text)
 
     # if this is a new thread, create an html entry for page 0
     if new_thread and current_page == 1:

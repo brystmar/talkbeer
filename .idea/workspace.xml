@@ -1,59 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f7beec6f-2a3a-42f1-9a9b-d8f6c8deba15" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/html-output/Fest18/Fest18 All posts in order.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/Fest18/Fest18 BYO SQL.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/Fest18/Fest18 Hauls only (known).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/Fest18/Fest18 Possible senders to brystmar OG.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/Fest18/Fest18 Possible senders to brystmar.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF07/SSF07 Hauls only (known).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF08/SSF08 Hauls only (known).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF09/SSF09 Hauls only (known).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF10/SSF10 Hauls only (derived).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF10/SSF10 Hauls only (known).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF11/SSF11 Hauls only (derived).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF11/SSF11 Hauls only (known).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF12/SSF12 Hauls only (derived).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF12/SSF12 Hauls only (known).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF13/SSF13 Hauls only (derived).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF13/SSF13 Hauls only (known).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF14/SSF14 All posts in order.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF14/SSF14 Hauls only (derived).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF14/SSF14 Hauls only (known).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF14/SSF14 Possible senders to brystmar.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF15/SSF15 All posts in order.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF15/SSF15 Hauls only (derived).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF15/SSF15 Hauls only (known).html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF15/SSF15 Possible senders to brystmar.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html-output/SSF16/SSF16 All posts in order.html" afterDir="false" />
+    <list default="true" id="f7beec6f-2a3a-42f1-9a9b-d8f6c8deba15" name="Default Changelist" comment="more cleanup">
+      <change afterPath="$PROJECT_DIR$/html-output/SSF16/SSF16 Possible senders to brystmar.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/agg_posts.py" beforeDir="false" afterPath="$PROJECT_DIR$/agg_posts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/Fest18 All posts in order.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/Fest18 BYO SQL.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/Fest18 Hauls only (known).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/Fest18 Possible senders to brystmar OG.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/Fest18 Possible senders to brystmar.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF07 Hauls only (known).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF08 Hauls only (known).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF09 Hauls only (known).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF10 Hauls only (derived).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF10 Hauls only (known).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF11 Hauls only (derived).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF11 Hauls only (known).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF12 Hauls only (derived).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF12 Hauls only (known).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF13 Hauls only (derived).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF13 Hauls only (known).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF14 All posts in order.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF14 Hauls only (derived).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF14 Hauls only (known).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF14 Possible senders to brystmar.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF15 All posts in order.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF15 Hauls only (derived).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF15 Hauls only (known).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF15 Possible senders to brystmar.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SSF16 All posts in order.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/html-output/SSF16/SSF16 All posts in order.html" beforeDir="false" afterPath="$PROJECT_DIR$/html-output/SSF16/SSF16 All posts in order.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrapetb.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrapetb.py" afterDir="false" />
     </list>
     <ignored path="tbcred.py" />
     <ignored path="talkbeer.sqlite" />
@@ -68,28 +21,43 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scrapetb.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3975">
-              <caret line="295" column="13" selection-start-line="295" selection-start-column="13" selection-end-line="295" selection-end-column="13" />
+            <state relative-caret-position="384">
+              <caret line="235" lean-forward="true" selection-start-line="235" selection-end-line="235" />
               <folding>
+                <element signature="e#175#204#0" expanded="true" />
+                <element signature="e#693#717#0" />
+                <element signature="e#736#773#0" />
+                <element signature="e#793#866#0" />
+                <element signature="e#893#1066#0" />
+                <element signature="e#1092#1512#0" />
+                <element signature="e#1539#2102#0" />
                 <element signature="e#2124#2386#0" />
                 <element signature="e#2408#2581#0" />
                 <element signature="e#2602#2952#0" />
+                <element signature="e#2976#3352#0" />
+                <element signature="e#3376#3632#0" />
+                <element signature="e#3820#4289#0" />
+                <element signature="e#4387#4738#0" />
+                <element signature="e#5545#5875#0" />
+                <element signature="e#5764#6175#0" />
+                <element signature="e#7239#9726#0" />
+                <element signature="e#9755#10736#0" />
+                <element signature="e#10765#11652#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/agg_posts.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="44">
-              <caret line="569" column="22" lean-forward="true" selection-start-line="569" selection-start-column="22" selection-end-line="569" selection-end-column="22" />
+            <state relative-caret-position="118">
+              <caret line="462" column="21" lean-forward="true" selection-start-line="462" selection-start-column="21" selection-end-line="462" selection-end-column="21" />
               <folding>
                 <element signature="e#250#279#0" expanded="true" />
-                <element signature="e#671#712#0" />
               </folding>
             </state>
           </provider>
@@ -110,6 +78,24 @@
       <find>update_likes</find>
       <find>||</find>
       <find>'w'</find>
+      <find>print(</find>
+      <find>find(</find>
+      <find>find(</find>
+      <find>(find(</find>
+      <find>recently-like</find>
+      <find>print(query</find>
+      <find>retrieve post</find>
+      <find>content options</find>
+      <find>content options for</find>
+      <find>[instagram]</find>
+      <find>possible send</find>
+      <find>retrieve pos</find>
+      <find>recently-li</find>
+      <find>is_int(</find>
+      <find>is_int</find>
+      <find>to_int</find>
+      <find>[skip</find>
+      <find>_pscro</find>
     </findStrings>
     <replaceStrings>
       <replace>#</replace>
@@ -126,8 +112,8 @@
       <list>
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/first_post_debug.html" />
-        <option value="$PROJECT_DIR$/scrapetb.py" />
         <option value="$PROJECT_DIR$/agg_posts.py" />
+        <option value="$PROJECT_DIR$/scrapetb.py" />
       </list>
     </option>
   </component>
@@ -154,6 +140,23 @@
             <path>
               <item name="talkbeer" type="b2602c69:ProjectViewProjectNode" />
               <item name="talkbeer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="talkbeer" type="b2602c69:ProjectViewProjectNode" />
+              <item name="talkbeer" type="462c0819:PsiDirectoryNode" />
+              <item name="html-output" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="talkbeer" type="b2602c69:ProjectViewProjectNode" />
+              <item name="talkbeer" type="462c0819:PsiDirectoryNode" />
+              <item name="html-output" type="462c0819:PsiDirectoryNode" />
+              <item name="SSF11" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="talkbeer" type="b2602c69:ProjectViewProjectNode" />
+              <item name="talkbeer" type="462c0819:PsiDirectoryNode" />
+              <item name="html-output" type="462c0819:PsiDirectoryNode" />
+              <item name="SSF16" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -226,7 +229,8 @@
       <updated>1548640281255</updated>
       <workItem from="1552599750244" duration="85000" />
       <workItem from="1552765872790" duration="3424000" />
-      <workItem from="1552782459558" duration="1606000" />
+      <workItem from="1552782459558" duration="1670000" />
+      <workItem from="1553033339199" duration="3528000" />
     </task>
     <task id="LOCAL-00001" summary="PyCharm setup">
       <created>1552531676519</created>
@@ -249,30 +253,37 @@
       <option name="project" value="LOCAL" />
       <updated>1552770413891</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="folders for html output">
+      <created>1552802546775</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1552802546775</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5115000" />
+    <option name="totallyTimeSpent" value="8707000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1880" height="1129" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1648531" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16648531" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49782372" weight="0.3297975" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49945593" weight="0.3297975" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32929516" />
-      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.5195865" visible="true" weight="0.21697204" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.4804135" side_tool="true" visible="true" weight="0.21697204" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49945593" weight="0.32883316" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.5179543" weight="0.21697204" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5021763" side_tool="true" visible="true" weight="0.21697204" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49891186" weight="0.32883316" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -289,7 +300,8 @@
     <MESSAGE value="PyCharm setup" />
     <MESSAGE value="titleBar tag was changed" />
     <MESSAGE value="handling for null likes" />
-    <option name="LAST_COMMIT_MESSAGE" value="handling for null likes" />
+    <MESSAGE value="folders for html output" />
+    <option name="LAST_COMMIT_MESSAGE" value="folders for html output" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/first_post_debug.html" />
@@ -307,25 +319,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scrapetb.py">
+    <entry file="file://$PROJECT_DIR$/agg_posts.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3975">
-          <caret line="295" column="13" selection-start-line="295" selection-start-column="13" selection-end-line="295" selection-end-column="13" />
+        <state relative-caret-position="118">
+          <caret line="462" column="21" lean-forward="true" selection-start-line="462" selection-start-column="21" selection-end-line="462" selection-end-column="21" />
           <folding>
-            <element signature="e#2124#2386#0" />
-            <element signature="e#2408#2581#0" />
-            <element signature="e#2602#2952#0" />
+            <element signature="e#250#279#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/agg_posts.py">
+    <entry file="file://$PROJECT_DIR$/scrapetb.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="569" column="22" lean-forward="true" selection-start-line="569" selection-start-column="22" selection-end-line="569" selection-end-column="22" />
+        <state relative-caret-position="384">
+          <caret line="235" lean-forward="true" selection-start-line="235" selection-end-line="235" />
           <folding>
-            <element signature="e#250#279#0" expanded="true" />
-            <element signature="e#671#712#0" />
+            <element signature="e#175#204#0" expanded="true" />
+            <element signature="e#693#717#0" />
+            <element signature="e#736#773#0" />
+            <element signature="e#793#866#0" />
+            <element signature="e#893#1066#0" />
+            <element signature="e#1092#1512#0" />
+            <element signature="e#1539#2102#0" />
+            <element signature="e#2124#2386#0" />
+            <element signature="e#2408#2581#0" />
+            <element signature="e#2602#2952#0" />
+            <element signature="e#2976#3352#0" />
+            <element signature="e#3376#3632#0" />
+            <element signature="e#3820#4289#0" />
+            <element signature="e#4387#4738#0" />
+            <element signature="e#5545#5875#0" />
+            <element signature="e#5764#6175#0" />
+            <element signature="e#7239#9726#0" />
+            <element signature="e#9755#10736#0" />
+            <element signature="e#10765#11652#0" />
           </folding>
         </state>
       </provider>
