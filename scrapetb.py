@@ -25,6 +25,12 @@ def pause(): input("[====]")
 def make_soup(html_to_soupify): return BeautifulSoup(html_to_soupify, 'html.parser')
 
 
+def next_link(base_url, num): return base_url + 'page-' + str(num)
+
+
+def delete_url(url_to_delete): tbdb.execute('DELETE FROM thread_page WHERE url = ? and html is null', (url_to_delete,))
+
+
 def commit(db):
     db.commit()
     return 0
@@ -139,12 +145,6 @@ def db_value(val):
     t = tuple()
     if type(val) == type(t) or type(val) == type(l): return val[0]
     else: return val
-
-
-def next_link(base_url, num): return base_url + 'page-' + str(num)
-
-
-def delete_url(url_to_delete): tbdb.execute('DELETE FROM thread_page WHERE url = ? and html is null', (url_to_delete,))
 
 
 def find_last_post(html):
@@ -397,9 +397,8 @@ else:
 page = 1
 
 # see if thread data already exists in the db
-query = "SELECT distinct last_post_num, last_post_id, page, html" \
-        " FROM thread_page" \
-        " WHERE last_post_num = (SELECT max(last_post_num) FROM thread_page WHERE name = ?)"
+query = "SELECT distinct last_post_num, last_post_id, page, html FROM thread_page "
+query += "WHERE last_post_num = (SELECT max(last_post_num) FROM thread_page WHERE name = ?)"
 tbdb.execute(query, (name,))
 last_post_data = tbdb.fetchone()
 

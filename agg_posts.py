@@ -136,16 +136,19 @@ def remove_newlines(text):
     br2nl = '''<br/>\n<br/>'''
     br3nl = '''<br/>\n<br/>\n<br/>'''
 
-    while '\n\n\n' in text: text = text.replace('\n\n\n', '\n\n')
-    while br3 in text: text = text.replace(br3, br2)
-    while br3nl in text: text = text.replace(br3nl, br2nl)
+    while '\n\n\n' in text:
+        text = text.replace('\n\n\n', '\n\n')
+    while br3 in text:
+        text = text.replace(br3, br2)
+    while br3nl in text:
+        text = text.replace(br3nl, br2nl)
     return text
 
 
 def find_last_post(html):
-    soup = BeautifulSoup(html, 'html.parser')
+    lp_soup = BeautifulSoup(html, 'html.parser')
     # focus on the specific div
-    posts = soup('div', class_="publicControls")
+    posts = lp_soup('div', class_="publicControls")
     # carve out info about the last post on the page
     lpinfo = posts[len(posts)-1].find('a', title='Permalink')
     # user-facing number for the last post
@@ -154,7 +157,7 @@ def find_last_post(html):
     last_post_id = int(re.findall('#post-(\d+)', lpinfo.get('href'))[0])
 
     # page number
-    page = str(soup.find('link', rel="canonical"))
+    page = str(lp_soup.find('link', rel="canonical"))
     if page is not None:
         page = re.findall('href=\"(.+?)\"', page)[0]
         if page[-1] == '/':
@@ -168,19 +171,32 @@ def find_last_post(html):
 
 
 def month_to_num(m):
-    if m == 'Jan': return '01'
-    elif m == 'Feb': return '02'
-    elif m == 'Mar': return '03'
-    elif m == 'Apr': return '04'
-    elif m == 'May': return '05'
-    elif m == 'Jun': return '06'
-    elif m == 'Jul': return '07'
-    elif m == 'Aug': return '08'
-    elif m == 'Sep': return '09'
-    elif m == 'Oct': return '10'
-    elif m == 'Nov': return '11'
-    elif m == 'Dec': return '12'
-    else: return 'Month Error'
+    if m == 'Jan':
+        return '01'
+    elif m == 'Feb':
+        return '02'
+    elif m == 'Mar':
+        return '03'
+    elif m == 'Apr':
+        return '04'
+    elif m == 'May':
+        return '05'
+    elif m == 'Jun':
+        return '06'
+    elif m == 'Jul':
+        return '07'
+    elif m == 'Aug':
+        return '08'
+    elif m == 'Sep':
+        return '09'
+    elif m == 'Oct':
+        return '10'
+    elif m == 'Nov':
+        return '11'
+    elif m == 'Dec':
+        return '12'
+    else:
+        return 'Month Error'
 
 
 def to_timestamp(ds):
