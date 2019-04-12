@@ -80,7 +80,7 @@ def stop(text):
     if ongoing:
         update_likes(name)
     commit(conn_tbdb)
-    run_raffle(1, name)
+    # run_raffle(1, name)
 
     try:
         conn_tbdb.close()
@@ -208,9 +208,12 @@ def to_timestamp(ds):
     hour = int(re.findall(' at (\d+):', ds)[0])
 
     # update to 24-hour time
-    if ds[-2].lower() == 'p' and hour != 12: hour += 12
-    elif ds[-2].lower() == 'a' and hour == 12: hour -= 12
-    else: pass
+    if ds[-2].lower() == 'p' and hour != 12:
+        hour += 12
+    elif ds[-2].lower() == 'a' and hour == 12:
+        hour -= 12
+    else:
+        pass
 
     return datetime.datetime(year, month, day, hour, minute)
 
@@ -246,10 +249,10 @@ def replace_goto(p):
         goto_id = re.findall('href=\".+?#post-(\d+?)\"', goto_link)[0]
         new_link = ' <a href="#' + goto_id + '" class="AttributionLink">&uarr;</a>'
         new_quote = str(new_quote).replace(goto_link, new_link)
-        new_quote = new_quote.replace('\n','')
+        new_quote = new_quote.replace('\n', '')
 
         # add the new hyperlink + js
-        # new_quote = new_quote.replace('</div>', "\n<a id='post" + qid + "' class='AttributionLink'></a>" + js + "</div>")
+        # new_quote = new_quote.replace('</div>', "\n<a id='post" +qid+ "' class='AttributionLink'></a>" +js+ "</div>")
 
         # print("\n", "NEW quote:", "\n", new_quote)
         # pp("*=*=*=*=*=*=*=*=*=*=*=*=*")
@@ -353,8 +356,10 @@ def add_post_details(panel, postinfo):
 
 def elkhunter(data, name, postinfo):
     # validation
-    if data is None: stop("No data returned")
-    else: print("\nWriting", len(data), "posts to:", name, postinfo + ".txt")
+    if data is None:
+        stop("No data returned")
+    else:
+        print("\nWriting", len(data), "posts to:", name, postinfo + ".txt")
 
     guesses = []
 
@@ -374,26 +379,33 @@ def elkhunter(data, name, postinfo):
         for w in words:
             try:
                 num = int(w)
-                if num > 1000 or num < 1: continue
+                if num > 1000 or num < 1:
+                    continue
                 guesses.append([num, d[2], d[3], d[0], d[4], '#' + str(i)])
                 i += 1
-            except: continue
+            except:
+                continue
     return guesses
 
 
 def run_raffle(num_winners, name):
-    return 0
-    if num_winners == 1: noun = "winner"
-    else: noun = "winners"
+    noun = "winner" if num_winners == 1 else "winners"
+
     from rng import return_random_nums
-    tbdb.execute('SELECT distinct p.username, p.id, p.timestamp FROM posts p JOIN biffers b ON p.user_id = b.user_id AND p.thread_name = b.thread_name WHERE b.thread_name = ? ORDER BY p.id', (name,))
+    query = '''SELECT distinct p.username, p.id, p.timestamp
+                FROM posts p
+                JOIN biffers b ON p.user_id = b.user_id AND p.thread_name = b.thread_name
+                WHERE b.thread_name = ? ORDER BY p.id'''
+    tbdb.execute(query, (name,))
     raffle = tbdb.fetchall()
-    winners = return_random_nums(num_winners,0,len(raffle)-1)
+    winners = return_random_nums(num_winners, 0, len(raffle)-1)
 
     num_posts = []
-    for r in raffle: num_posts.append(r[0]) #new list for counting how many posts each user submitted
+    for r in raffle:
+        num_posts.append(r[0])  # new list for counting how many posts each user submitted
     print("Raffle", noun, "from the", len(raffle), "entries:")
-    for w in winners: print(raffle[w], "--", num_posts.count(raffle[w][0]), "user posts.")
+    for w in winners:
+        print(raffle[w], "--", num_posts.count(raffle[w][0]), "user posts.")
 
 
 def update_file(name):
@@ -1063,7 +1075,7 @@ if login_status is False:
     s.post(url_login, data=creds)  # log in with the provided credentials
     login_status = True
 
-run_raffle(1, name)
+# run_raffle(1, name)
 commit(conn_tbdb)
 conn_tbdb.close()
 
