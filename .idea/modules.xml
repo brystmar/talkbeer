@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/talkbeer.iml" filepath="$PROJECT_DIR$/.idea/talkbeer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/talkbeer_orig.iml" filepath="$PROJECT_DIR$/.idea/talkbeer_orig.iml" />
     </modules>
   </component>
 </project>
