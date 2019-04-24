@@ -36,8 +36,6 @@ engine_lite = create_engine(local_db)
 engine_cloud = create_engine(cloud_server)
 logger.debug('Cloud DB: {}'.format(cloud_server))
 
-done = []
-
 logger.debug('Start reading db')
 with engine_lite.connect() as conn_lite:
     with engine_cloud.connect() as conn_cloud:
