@@ -303,7 +303,8 @@ def write_post(p, post_id, username, message, timestamp, gifs, pics, other_media
 
 def write_users(ulist):
     # ensure the input is properly formatted as a list of dictionaries
-    if type(ulist) != type([]): ulist = [ulist]
+    if type(ulist) != type([]):
+        ulist = [ulist]
     # ulist is a dictionary with attributes: id, username, location, joindate
     for u in ulist:
         # validation
@@ -725,7 +726,7 @@ def write_likes(post_id, user_id, timestamp):
         tbdb.execute('INSERT INTO likes (post_id, user_id, timestamp) VALUES ' + qmarks(3), (post_id, user_id, timestamp))
 
 
-def determine_thread(): #returns the thread name and the highest page number that's been parsed
+def determine_thread():  # returns the thread name and the highest page number that's been parsed
     # if there's only one thread with new posts scraped, pick that one by default
     tbdb.execute('''WITH tp_maxpost as (SELECT name, max(last_post_id) as last_post FROM thread_page GROUP BY 1 ORDER BY 1),
                         p_maxpost as (SELECT thread_name as name, max(id) as last_post FROM posts GROUP BY 1 ORDER BY 1)
@@ -745,7 +746,8 @@ def determine_thread(): #returns the thread name and the highest page number tha
 
         # show existing threads
         print('Existing threads:')
-        for tn in thread_names: print(tn)
+        for tn in thread_names:
+            print(tn)
         print("")
 
         # user input
@@ -762,7 +764,8 @@ def determine_thread(): #returns the thread name and the highest page number tha
     elif len(to_agg) == 1:
         name = to_agg[0]
         print("Parsing thread:", name, "\n")
-    else: stop("Error finding the thread to scrape.")
+    else:
+        stop("Error finding the thread to scrape.")
 
     # compare the last post from scraped thread data to the last post in the posts table
     tbdb.execute('SELECT max(last_post_id) FROM thread_page WHERE name = ?', (name,))
@@ -779,23 +782,32 @@ def determine_thread(): #returns the thread name and the highest page number tha
     else: ongoing = False
 
     # load the pertinent thread data into the 'data' variable
-    if lp_threads is None: stop("No thread data for " + name)
-    elif lp_threads == lp_posts: stop("No new posts found for " + name)
-    elif lp_posts is None: page = 1 #no post data recorded for this thread yet
-    elif lp_threads > lp_posts: #found new posts that we need to parse
+    if lp_threads is None:
+        stop("No thread data for " + name)
+    elif lp_threads == lp_posts:
+        stop("No new posts found for " + name)
+    elif lp_posts is None:
+        page = 1  # no post data recorded for this thread yet
+    elif lp_threads > lp_posts:
+        # found new posts that we need to parse
         # find the page containing the first post that's not in the db
         tbdb.execute('SELECT distinct thread_page, num FROM posts WHERE id = ?', (lp_posts,))
         temp = tbdb.fetchone()
         # if this is the 20th post on the page, skip to the next page
-        if temp[1] % 20 == 0: page = temp[0] + 1
-        else: page = temp[0]
-    else: stop("More posts exist in the tb.posts table than raw thread html.  Re-scrape the thread for " + name)
+        if temp[1] % 20 == 0:
+            page = temp[0] + 1
+        else:
+            page = temp[0]
+    else:
+        stop("More posts exist in the tb.posts table than raw thread html.  Re-scrape the thread for " + name)
 
 
 def thumbfix(p):
     # adjusts tb-native thumbnails to use the same schema as tb-native full images
-    thumbs = p.find('blockquote', class_="messageText SelectQuoteContainer ugc baseHtml").find_all('a', class_="LbTrigger")
-    if thumbs is None or thumbs == []: return p
+    top_class = "messageText SelectQuoteContainer ugc baseHtml"
+    thumbs = p.find('blockquote', class_=top_class).find_all('a', class_="LbTrigger")
+    if thumbs is None or thumbs == []:
+        return p
 
     pp(p)
     print("")

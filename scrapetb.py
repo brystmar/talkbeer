@@ -19,16 +19,20 @@ print("")
 filename = __file__
 
 
-def pause(): input("[====]")
+def pause():
+    input("[====]")
 
 
-def make_soup(html_to_soupify): return BeautifulSoup(html_to_soupify, 'html.parser')
+def make_soup(html_to_soupify):
+    return BeautifulSoup(html_to_soupify, 'html.parser')
 
 
-def next_link(base_url, num): return base_url + 'page-' + str(num)
+def next_link(base_url, num):
+    return base_url + 'page-' + str(num)
 
 
-def delete_url(url_to_delete): tbdb.execute('DELETE FROM thread_page WHERE url = ? and html is null', (url_to_delete,))
+def delete_url(url_to_delete):
+    tbdb.execute('DELETE FROM thread_page WHERE url = ? and html is null', (url_to_delete, ))
 
 
 def commit(db):
@@ -43,8 +47,9 @@ def pp(item):
 
 
 def pl(items):
-    for i in items: print(i)
-    print("Total items:",len(items))
+    for i in items:
+        print(i)
+    print("Total items:", len(items))
     pause()
 
 
@@ -110,12 +115,12 @@ def qmarks(num):
 def stop(text):
     print(text)
     print("")
-    try: conn_tbdb.close()
-    except: pass
+    try:
+        conn_tbdb.close()
+    except:
+        pass
 
-    time_end = datetime.datetime.now()
-    time_end = time_end.isoformat(timespec='seconds')
-    time_end = str(time_end).replace("T", " ")
+    time_end = str(datetime.datetime.now().isoformat(timespec='seconds')).replace("T", " ")
 
     print("***** ***** **** ***** *****")
     print("  End:", time_end)
@@ -125,7 +130,7 @@ def stop(text):
 
 
 def remlist(data):
-    #returns a list of strings instead of a list of lists/tuples
+    # returns a list of strings instead of a list of lists/tuples
     l = list()
     t = tuple()
     if data is None or len(data) == 0: return None
@@ -188,7 +193,7 @@ def write_thread(name, page, url, html, last_post):
 def write_thread_master(name, url, html):
     thread_id = int(re.findall('http.*\.(\d+)\/', url)[0])
     thread_data = first_post_data(html)
-    write_thread_query = 'INSERT INTO threads (name, id, url, ongoing, start, organizer_id) VALUES '
+    write_thread_query = 'INSERT INTO threads (name, id, url, ongoing, start_date, organizer_id) VALUES '
     write_thread_query += qmarks(6)
     tbdb.execute(write_thread_query, (name, thread_id, url, 'Y', thread_data[0], thread_data[1]))
 
@@ -238,27 +243,28 @@ def add_biffers(thread_name, biffers):  # adds new BIF participants to the biffe
 def find_biffers(thread_name, html):  # finds the post with the most users tagged (first page only)
     # find the post and store the users in a variable
     soup = make_soup(html)
-    lis = soup.find('ol', class_="messageList").find_all('li') #collect all <li>s underneath the primary <ol>
+    lis = soup.find('ol', class_="messageList").find_all('li')  # collect all <li>s underneath the primary <ol>
     max_users = 8  # the post we're looking for should have dozens of users tagged.  starting at 8 to ignore posts with random user tagging
     biffers = []
-    ignore = [-1,3611]  # ignore the 'mods' account
+    ignore = [-1, 3611]  # ignore the 'mods' account
     teams = [[]]
     post_id = 0
     for l in lis:
-        if 'id="post-' in str(l): #filters out the bulleted lists from the posts
+        if 'id="post-' in str(l):  # filters out the bulleted lists from the posts
             post_id = int(re.findall('post-(\d+)', l['id'])[0])
             users = l.find('div', class_="messageContent").find_all('a', class_="username")
             num_users = len(users)
             if num_users > max_users:
-                biffers.clear() #clear the user list
-                listed_order = 1 #reset the counter
-                for u in users: #extract info for each biffer
-                    info = u['data-user'].split(', ') #returns a list for each biffer: [user_id, username]
+                biffers.clear()  # clear the user list
+                listed_order = 1  # reset the counter
+                for u in users:  # extract info for each biffer
+                    info = u['data-user'].split(', ')  # returns a list for each biffer: [user_id, username]
                     info[0] = int(info[0])
-                    if info[0] in ignore: continue
-                    partner = [None,None]
-                    for t in teams: #special handling if this biffer has a partner
-                        if info[0] in t: #has a partner
+                    if info[0] in ignore:
+                        continue
+                    partner = [None, None]
+                    for t in teams:  # special handling if this biffer has a partner
+                        if info[0] in t:  # has a partner
                             # find the partner's username
                             for user in users:
                                 partner = user['data-user'].split(', ')
@@ -269,19 +275,21 @@ def find_biffers(thread_name, html):  # finds the post with the most users tagge
                                     biffers.append([partner[0], partner[1], info[0], info[1], listed_order])
                                     # add partner to the ignore list so they aren't recorded twice
                                     ignore.append(partner[0])
-                                    break #no need to keep searching
-                        else: #doesn't have a partner
+                                    break  # no need to keep searching
+                        else:  # doesn't have a partner
                             biffers.append([info[0], info[1], None, None, listed_order])
                             break
                     listed_order += 1
                 max_users = num_users
-        else: continue #ignore <li>s that don't contain a forum post
+        else:
+            continue  # ignore <li>s that don't contain a forum post
     add_biffers(thread_name, biffers)
 
 
 def write_users(ulist):
-    # ensure the input is properly formatted as a list of dictionaries
-    if type(ulist) != type([]): ulist = [ulist]
+    # input must be a list of dictionaries
+    if not isinstance(ulist, list):
+        ulist = [ulist]
     # ulist is a dictionary with attributes: id, username, location, joindate
     for u in ulist:
         # validation
@@ -292,7 +300,7 @@ def write_users(ulist):
             tbdb.execute('INSERT INTO users (id, username, location, joindate) VALUES ' + qmarks(4), (u['id'], u['username'], u['location'], u['joindate']))
             print("Added user", u['username'] + ", id:", u['id'])
         elif None in val:
-            if u['location'] != None:
+            if u['location'] is not None:
                 tbdb.execute('UPDATE users SET username = ?, location = ?, joindate = ? WHERE id = ?', (u['username'], u['location'], u['joindate'], u['id']))
             else:
                 tbdb.execute('UPDATE users SET username = ?, joindate = ? WHERE id = ?', (u['username'], u['joindate'], u['id']))
@@ -300,10 +308,10 @@ def write_users(ulist):
 
 def get_userdata(user):
     # read & soupify the html for this user's page
-    url = 'https://www.talkbeer.com/community/members/' + user[1].replace(' ','-').lower().strip() + '.' + str(user[0]) + '/'
+    url = 'https://www.talkbeer.com/community/members/' + user[1].replace(' ', '-').lower().strip() + '.' + str(user[0]) + '/'
     html = s.get(url).text
     soup = make_soup(html)
-    joindate = None # there's no easy way to find the join date
+    joindate = None  # there's no easy way to find the join date
 
     # some users restrict who can view their profile page
     try:
@@ -316,8 +324,10 @@ def get_userdata(user):
         joindate = None
 
     # only some users share their location
-    try: location = soup.find('a', itemprop="address").text
-    except: location = None
+    try:
+        location = soup.find('a', itemprop="address").text
+    except:
+        location = None
 
     # return user data as a dictionary
     return {'id': user[0], 'username': user[1], 'joindate': joindate, 'location': location}
@@ -340,7 +350,7 @@ conn_tbdb = sqlite3.connect('talkbeer.sqlite')
 tbdb = conn_tbdb.cursor()
 
 # if there are ongoing threads, automatically scrape those instead of prompting for a thread to update
-tbdb.execute('SELECT distinct name, url FROM threads WHERE ongoing = ? order by start', ('Y',))
+tbdb.execute('SELECT distinct name, url FROM threads WHERE ongoing = ? order by start_date', ('Y',))
 toscrape = tbdb.fetchall()
 
 if len(toscrape) == 0:  # no ongoing threads
@@ -356,7 +366,8 @@ if len(toscrape) == 0:  # no ongoing threads
 
     # get the thread URL & nickname to scrape
     toscrape = str(input("Enter an existing thread nickname or a new URL to scrape: "))
-    if toscrape is None: stop('')  # validate input length
+    if toscrape is None:
+        stop('')  # validate input length
     elif 'http' in toscrape:  # user entered a URL
         url = toscrape
         # does this URL already have a nickname?
@@ -365,21 +376,27 @@ if len(toscrape) == 0:  # no ongoing threads
         if oldname is None:  # new thread, so it needs a nickname
             new_thread = True
             name = input("Create a nickname for this thread: ")
-            if name is None or len(name) <= 2: stop('Input was either null or too short')
+            if name is None or len(name) <= 2:
+                stop('Input was either null or too short')
             while name in thread_names:
                 name = input('Nickname is already taken.  Choose a different one: ')
-        elif len(oldname) > 1: stop('More than one thread matches that URL')
-        else: name = oldname[0]
-    elif toscrape in thread_names or toscrape.upper() in thread_names: #valid nickname was entered, so grab that URL
-        if toscrape.upper() in thread_names: name = toscrape.upper()
-        else: name = toscrape
+        elif len(oldname) > 1:
+            stop('More than one thread matches that URL')
+        else:
+            name = oldname[0]
+    elif toscrape in thread_names or toscrape.upper() in thread_names:  # valid nickname was entered, so grab that URL
+        if toscrape.upper() in thread_names:
+            name = toscrape.upper()
+        else:
+            name = toscrape
         tbdb.execute('SELECT min(url) FROM thread_page WHERE url is not null AND url <> "" AND name = ?', (name,))
         url = db_value(tbdb.fetchone())
         if url is None:  # new thread that hasn't been scraped yet
             tbdb.execute('SELECT min(url) FROM threads WHERE name = ?', (name,))
             url = db_value(tbdb.fetchone())
         elif 'http' not in url: stop('Invalid URL from the db: ' + str(url))
-    else: stop('Invalid nickname or URL')
+    else:
+        stop('Invalid nickname or URL')
 else:  # at least one ongoing thread
     new_thread = False
     for ts in toscrape:

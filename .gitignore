@@ -24,6 +24,7 @@ ui.lnf.xml
 updates.xml
 vcs.xml
 .env
+*.log
 
 
 # Created by https://www.gitignore.io/api/venv,macos,pycharm
