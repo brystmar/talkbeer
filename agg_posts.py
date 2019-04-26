@@ -24,13 +24,12 @@ logging_util.basicConfig(filename=logfile, filemode='w', level=logging_util.DEBU
 logger = logging_util.getLogger(__name__)
 
 time_start = datetime.datetime.now()
-time_start = time_start.isoformat(timespec='seconds')
-time_start = str(time_start).replace("T", " ")
+# time_start = time_start.isoformat(timespec='seconds')
 print("\n***** ***** **** ***** *****")
-print(" Start:", time_start)
+print(" Start:", time_start.strftime("%Y-%m-%d %H:%M:%S"))
 print("***** ***** **** ***** *****\n")
 logger.info('\n\n***** ***** **** ***** ***** |||| ***** ***** **** ***** *****\n')
-logger.info('START agg_posts.py @ {}'.format(time_start))
+logger.info('START agg_posts.py @ {}'.format(time_start.strftime("%Y-%m-%d %H:%M:%S")))
 
 
 def pause(): input("[====]")
@@ -44,11 +43,25 @@ def find_substring(text, char):
 
 
 def commit(db):
-    pp("Pause before commit...")
-    logger.debug("Attempting to commit db {}".format(str(db)))
+    logger.debug("Attempting to commit db & dbsql")
     # db.commit()
-    logger.debug("Commit successful for db {}".format(str(db)))
-    return 0
+    logger.debug("Commit successful for db")
+    # dbsql.commit()
+    logger.debug("Commit successful for dbsql")
+
+
+def close_dbs(db, dbsql):
+    try:
+        db.close()
+        logger.debug("Closed db")
+    except:
+        logger.error("Error attempting to close db connection: db", exc_info=True)
+
+    try:
+        dbsql.close()
+        logger.debug("Closed dbsql")
+    except:
+        logger.error("Error attempting to close db connection: dbsql", exc_info=True)
 
 
 def pp(item):
@@ -103,26 +116,22 @@ def stop(text):
     global name, ongoing
 
     logger.info('Entered the stop() function because: {}'.format(text))
-    print(text)
     update_file(name)
     if ongoing:
         update_likes(name)
-    commit(conn_tbdb)
-    # run_raffle(1, name)
 
-    try:
-        db.close()
-    except:
-        logger.error('Error attempting to close the db', exc_info=True)
+    # run_raffle(1, name)
+    commit(db)
+    close_dbs(db, dbsql)
 
     time_end = datetime.datetime.now()
-    time_end = time_end.isoformat(timespec='seconds')
-    time_end = str(time_end).replace("T", " ")
 
-    logger.info('END via the stop() function @ {}\n\n'.format(time_end))
     print("\n***** ***** **** ***** *****")
     print("  End:", time_end, "[stop function]")
+    print("  Total time: {} seconds\n\n".format(round((time_end - time_start).total_seconds(), 2)))
     print("***** ***** **** ***** *****\n")
+    logger.info("END via the stop() function @ {}".format(time_end.strftime("%Y-%m-%d %H:%M:%S")))
+    logger.info("Total time: {} seconds\n\n".format(round((time_end - time_start).total_seconds(), 2)))
 
     quit()
 
@@ -134,7 +143,6 @@ def return_list_of_values(mylist):
         logger.debug("mylist is None, or len(mylist)==0")
         logger.debug("End return_list_of_values()")
         return None
-
     list_to_return = [m for m, in mylist]
     logger.debug("Ending return_list_of_values() with: {}".format(list_to_return))
     return list_to_return
@@ -148,7 +156,7 @@ def return_first_value(input):
         return input
     try:
         # return_list_of_values(input)
-        logger.debug('Ending return_first_value() with: {}'.format(input[0][:20]))
+        logger.debug('Ending return_first_value() with: {}'.format(str(input[0])[:20]))
         return input[0]
     except TypeError:
         logger.error('Error:', exc_info=True)
@@ -306,39 +314,47 @@ def remove_ols(p):
 
 def write_post_raw(post_id, thread_name, p):
     # validation
-    dbsql.execute('SELECT distinct id, thread_name, soup FROM raw.posts_soup WHERE id = ?', (post_id,))
-    val = tbdb.fetchone()
+    query = text('SELECT distinct id, thread_name, soup FROM raw.posts_soup WHERE id = :id')
+    result = dbsql.execute(query, id=post_id)
+    val = result.fetchone()
 
     if val is None:
         # new post
-        dbsql.execute('INSERT INTO raw.posts_soup (id, thread_name, soup) VALUES ' + qmarks(3),
-                     (post_id, thread_name, p))
+        query = text('INSERT INTO raw.posts_soup (id, thread_name, soup) VALUES (:id, :tn, :s)')
+        dbsql.execute(query, id=post_id, tn=thread_name, s=p)
         logger.debug('Wrote new post_soup id={id} for {thread}'.format(id=post_id, thread=thread_name))
     elif None in val:
         # overwrite incomplete data
-        dbsql.execute('UPDATE raw.posts_soup SET thread_name = ?, soup = ? WHERE id = ?',
-                     (thread_name, p, post_id))
+        query = text('UPDATE raw.posts_soup SET thread_name = :tn, soup = :s WHERE id = :id')
+        dbsql.execute(query, tn=thread_name, s=p, id=post_id)
         logger.debug('Updated post_soup id={id} for {thread}'.format(id=post_id, thread=thread_name))
     else:
         return 0
 
 
-def write_post(p, post_id, username, message, timestamp, gifs, pics, other_media, num, thread_page, thread_name, url, user_id, hint):
+def write_post(p, post_id, username, message, timestamp, gifs, pics, other_media, num, thread_page, thread_name,
+               url, user_id, hint):
     # validation
-    dbsql.execute('SELECT * FROM public.posts WHERE id = ?', (post_id,))
-    val = tbdb.fetchone()
+    query = text('SELECT * FROM public.posts WHERE id = :id')
+    result = dbsql.execute(query, id=post_id)
+    val = result.fetchone()
 
     if val is None:
-        dbsql.execute('''INSERT INTO public.posts (id, username, text, timestamp, gifs, pics, other_media, num,
+        # insert new post
+        query = text('''INSERT INTO public.posts (id, username, text, timestamp, gifs, pics, other_media, num,
                                             thread_page, thread_name, url, user_id, hint)
-                        VALUES ''' + qmarks(13), (post_id, username, message, timestamp, gifs, pics, other_media,
-                                                  num, thread_page, thread_name, url, user_id, hint))
+                        VALUES (:id, :u, :txt, :ts, :gifs, :pics, :media, :num, :tp, :tn, :url, :uid, :clue)''')
+        dbsql.execute(query, id=post_id, u=username, txt=message, ts=timestamp, gifs=gifs, pics=pics,
+                      media=other_media, num=num, tp=thread_page, tn=thread_name, url=url, uid=user_id, clue=hint)
         logger.debug("Inserted new post {id} for {thread}".format(id=post_id, thread=thread_name))
+
     else:
-        dbsql.execute('''UPDATE public.posts SET username = ?, text = ?, timestamp = ?, gifs = ?, pics = ?,
-                            other_media = ?, num = ?, thread_page = ?, thread_name = ?, url = ?, user_id = ?, hint = ?
-                        WHERE id = ?''', (username, message, timestamp, gifs, pics, other_media, num,
-                                          thread_page, thread_name, url, user_id, post_id, hint))
+        # update existing post
+        query = text('''UPDATE public.posts SET username = :u, text = :txt, timestamp = :ts, gifs = :gifs, pics = :pics,
+                            other_media = :media, num = :num, thread_page = :tp, thread_name = :tn, url = :url,
+                            user_id = :uid, hint = :clue''')
+        dbsql.execute(query, u=username, txt=message, ts=timestamp, gifs=gifs, pics=pics,
+                      media=other_media, num=num, tp=thread_page, tn=thread_name, url=url, uid=user_id, clue=hint)
         print("Updated post {id} for {thread}".format(id=post_id, thread=thread_name))
         logger.debug("Updated post {id} for {thread}".format(id=post_id, thread=thread_name))
 
@@ -350,21 +366,23 @@ def write_users(ulist):
 
     for u in ulist:
         # validation
-        dbsql.execute('SELECT distinct id, username, joindate FROM public.users WHERE id = ?', (u['id'],))
-        val = tbdb.fetchone()
+        query = text('SELECT distinct id, username, joindate FROM public.users WHERE id = :id')
+        result = dbsql.execute(query, id=u['id'])
+        val = result.fetchone()
 
         if val is None:
-            dbsql.execute('INSERT INTO public.users (id, username, location, joindate) VALUES ' + qmarks(4),
-                         (u['id'], u['username'], u['location'], u['joindate']))
+            query = text("""INSERT INTO public.users (id, username, location, joindate)
+                            VALUES (:id, :u, :loc, :jd)""")
+            dbsql.execute(query, id=u['id'], u=u['username'], loc=u['location'], jd=u['joindate'])
             print('Inserted user {user}, id: {id}'.format(user=u['username'], id=u['id']))
             logger.debug('Inserted user {user}, id: {id}'.format(user=u['username'], id=u['id']))
         elif None in val:
             if u['location'] is not None:
-                dbsql.execute('UPDATE public.users SET username = ?, location = ?, joindate = ? WHERE id = ?',
-                             (u['username'], u['location'], u['joindate'], u['id']))
+                query = text('UPDATE public.users SET username = :u, location = :loc, joindate = :jd WHERE id = :id')
+                dbsql.execute(query, u=u['username'], loc=u['location'], jd=u['joindate'], id=u['id'])
             else:
-                dbsql.execute('UPDATE public.users SET username = ?, joindate = ? WHERE id = ?',
-                             (u['username'], u['joindate'], u['id']))
+                query = text('UPDATE public.users SET username = :u, joindate = :jd WHERE id = :id')
+                dbsql.execute(query, u=u['username'], jd=u['joindate'], id=u['id'])
             logger.debug('Updated user {user}, id: {id}'.format(user=u['username'], id=u['id']))
 
 
@@ -445,12 +463,12 @@ def run_raffle(num_winners, name):
     noun = "winner" if num_winners == 1 else "winners"
 
     from rng import return_random_nums
-    query = '''SELECT distinct p.username, p.id, p.timestamp
+    query = text('''SELECT distinct p.username, p.id, p.timestamp
                 FROM public.posts p
                 JOIN public.biffers b ON p.user_id = b.user_id AND p.thread_name = b.thread_name
-                WHERE b.thread_name = ? ORDER BY p.id'''
-    dbsql.execute(query, (name,))
-    raffle = tbdb.fetchall()
+                WHERE b.thread_name = :n ORDER BY p.id''')
+    result = dbsql.execute(query, n=name)
+    raffle = result.fetchall()
     winners = return_random_nums(num_winners, 0, len(raffle)-1)
 
     num_posts = []
@@ -466,18 +484,19 @@ def run_raffle(num_winners, name):
 
 
 def update_file(name):
-    logger.debug('Entering update_file()')
+    logger.debug('Start of update_file() for: {}'.format(name))
 
     # prompt user for which posts to include and the display order
-    options = {0: '[Skip]', 1: 'All posts in order', 2: 'Hauls only (known)', 3: 'Hauls only (derived)',
-               4: 'Possible senders to brystmar', 5: 'BYO SQL'}
+    # asdf1234 = {0: '[Skip]', 1: 'All posts in order', 2: 'Hauls only (known)', 3: 'Hauls only (derived)',
+    #             4: 'Possible senders to brystmar', 5: 'BYO SQL'}
     output_options = db.query(Output_Options)
+    valid_options = []
     print("\nContent options for the {} html file:".format(name))
     for o in output_options:
-        print('{id}: {val}'.format(id=o.id, val=o.option))
+        print("{id}: {val}".format(id=o.__dict__['id'], val=o.__dict__['option']))
+        valid_options.append(o.__dict__['id'])
 
     print("")
-    valid_options = return_list_of_values(db.query(Output_Options.id).all())
     val = False
     while val is False:
         user_option = input("Option: ")
@@ -485,14 +504,14 @@ def update_file(name):
             user_option = int(user_option)
             if user_option in valid_options:
                 val = True
-            else:
-                logger.debug('User entry {u} is an invalid selection from {opt}'.format(u=user_option,
-                                                                                        opt=valid_options))
         except ValueError:
             logger.error('Cannot convert str({}) to int'.format(user_option), exc_info=True)
             continue
+        except IndexError:
+            logger.debug('User entry {u} is an invalid selection'.format(u=user_option))
 
-    logger.debug('User selected option {opt}: {val}'.format(opt=user_option, val=output_options[user_option].option))
+    user_option_text = output_options[user_option].option
+    logger.debug('User selected option {opt}: {val}'.format(opt=user_option, val=user_option_text))
 
     # get the first page of the thread
     query = text('SELECT html FROM raw.thread_page WHERE name = :a and page = 0')
@@ -535,87 +554,72 @@ def update_file(name):
         if name not in ['SSF14', 'SSF15', 'SSF16', 'SSF17', 'Fest18']:
             stop("Possible sender data for brystmar only exists for SSF14+")
 
-        dbsql.execute('''SELECT DISTINCT r.id, r.soup, p.username, p.timestamp, p.thread_page
-                    FROM raw.posts_soup r
-                    JOIN public.posts p ON r.id = p.id
-                    JOIN public.biffers b ON p.user_id = b.user_id AND p.thread_name = b.thread_name
-                    WHERE p.thread_name = ? AND r.soup is not null
-                        AND b.my_sender is null AND p.hint = 1 AND p.user_id <> 456
-                    ORDER BY p.username, r.id''', (name, ))
+        query = text('''SELECT DISTINCT r.id, r.soup, p.username, p.timestamp, p.thread_page
+                        FROM raw.posts_soup r
+                        JOIN public.posts p ON r.id = p.id
+                        JOIN public.biffers b ON p.user_id = b.user_id AND p.thread_name = b.thread_name
+                        WHERE p.thread_name = :n
+                            AND r.soup is not null
+                            AND b.my_sender is null
+                            AND p.hint = 1
+                            AND p.user_id <> 456
+                        ORDER BY p.username, r.id''')
+        data = dbsql.execute(query, n=name).fetchall()
+
     elif user_option == 1:  # all posts, in sequential order
-        dbsql.execute('''SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
-                    FROM raw.posts_soup r
-                    JOIN public.posts p ON r.id = p.id
-                    WHERE p.thread_name = ? AND r.soup is not null
-                    ORDER BY r.id''', (name, ))
+        query = text('''SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
+                        FROM raw.posts_soup r
+                        JOIN public.posts p ON r.id = p.id
+                        WHERE p.thread_name = :n AND r.soup is not null
+                        ORDER BY r.id''')
+        data = dbsql.execute(query, n=name).fetchall()
+
     elif user_option == 2:  # known hauls only, in sequential order
-        dbsql.execute('''SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
+        query = text('''SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
                     FROM raw.posts_soup r
                     JOIN public.posts p ON r.id = p.id
                     JOIN public.biffers b ON p.id = b.haul_id AND p.thread_name = b.thread_name
-                    WHERE p.thread_name = ? AND r.soup is not null
-                    ORDER BY r.id''', (name, ))
+                    WHERE p.thread_name = :n
+                        AND r.soup is not null
+                    ORDER BY r.id''')
+        data = dbsql.execute(query, n=name).fetchall()
+
     elif user_option == 3:  # derived hauls only, in sequential order (2+ pics or 2+ non-quoted instagram posts)
-        dbsql.execute('''SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
+        query = text('''SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
                     FROM raw.posts_soup r
                     JOIN public.posts p ON r.id = p.id
-                    WHERE p.thread_name = ? AND r.soup is not null
-                        AND (p.pics >= 2) OR p.text like '%\n[instagram]%\n[instagram]%'
-                    ORDER BY r.id''', (name, ))
-    # elif option == 5: #elkhunter LIF
-        # dbsql.execute("""SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
-    #                       FROM raw.posts_soup r
-    #                       JOIN public.posts p ON r.id = p.id
-    #                       WHERE p.thread_name = ?
-    #                           AND lower(p.text) like '%#elkhunterlif%'
-    #                           AND r.id > 1921012
-    #                           ORDER BY r.id""", (name, ))
-        # html = elkhunter(tbdb.fetchall(), name, options[option])
+                    WHERE p.thread_name = :n
+                        AND r.soup is not null
+                        AND (p.pics >= 2 OR p.text like '%\n[instagram]%\n[instagram]%')
+                    ORDER BY r.id''')
+        data = dbsql.execute(query, n=name).fetchall()
+
     elif user_option == 5:  # BYO SQL
         last_query = """SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
                     FROM raw.posts_soup r
                     JOIN public.posts p ON r.id = p.id
                     WHERE p.thread_name = 'Fest18'
                         AND r.id > 1929291
-                        AND p.user_id in(SELECT user_id FROM public.biffers WHERE thread_name = 'Fest18' AND haul_id is null)
+                        AND p.user_id in(SELECT user_id FROM public.biffers
+                                            WHERE thread_name = 'Fest18' AND haul_id is null)
                     ORDER BY p.user_id, r.id"""
-        print("Last query entered: {}\n".format(last_query))
-        query = input("Enter SQL to execute: ")
+        print("Last query entered:\n{}\n".format(last_query))
+        query = text(input("Enter SQL to execute: "))
         logger.debug('Running user-entered query:\n{}'.format(query))
-        dbsql.execute(query)
-
-        # Fest18 haul posts:
-        #   """SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
-        #   FROM raw.posts_soup r
-        #   JOIN posts p ON r.id = p.id
-        #   WHERE p.thread_name = 'Fest18'
-        #       AND r.id > 1929291
-        #       AND (p.pics > 0 OR p.other_media > 0)
-        #   ORDER BY r.id"""
-        # Fest18 haul posts2:
-        #   """SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
-        #   FROM raw.posts_soup r
-        #   JOIN posts p ON r.id = p.id
-        #   WHERE p.thread_name = 'Fest18'
-        #       AND r.id > 1929291
-        #       AND (p.pics > 0 OR p.other_media > 0)
-        #       AND r.id not in(SELECT distinct haul_id FROM public.biffers)
-        #   ORDER BY r.id"""
+        data = dbsql.execute(query).fetchall()
 
     elif user_option == 0:
         return 0
 
-    data = tbdb.fetchall()
+    # data = result.fetchall()
+
     # validation
     if data is None:
-        logger.debug('No data returned from update_file query {}'.format(user_option))
+        logger.debug('No data returned from update_file query #{}'.format(user_option))
         stop("No data returned")
-    print("\nWriting {qty} posts to: {name} {opt}.html".format(qty=len(data), name=name, opt=options[user_option]))
-    logger.debug("Writing {qty} posts to: {name} {opt}.html".format(qty=len(data), name=name, opt=options[user_option]))
 
     # grab the post_id URL
-    dbsql.execute('SELECT post FROM public.urls limit 1')
-    post_url = return_first_value(tbdb.fetchone())
+    post_url = db.query(URLs.post).first()[0]
 
     # insert posts into the html shell
     remove = []
@@ -625,10 +629,12 @@ def update_file(name):
         remove.clear()
         postinfo.clear()
         post_id = str(d[0])
+        post_timestamp = d[3]
         page_number = str(d[4])
 
         postinfo.append(("Post ID", post_id))
-        postinfo.append(("Page", '<a class="page_number" target="_blank" href="' + post_url + post_id + '">' + page_number + '</a>'))
+        postinfo.append(("Page", '<a class="page_number" target="_blank" href="' + post_url +
+                         post_id + '">' + page_number + '</a>'))
 
         sp = make_soup(remove_ols(d[1]))
         raw = str(sp)
@@ -644,26 +650,23 @@ def update_file(name):
         # adjust stuff in the user info section
         userpanelinfo = sp.find('div', class_="extraUserInfo")
         # get the hyperlink for the user's location
-        llink = userpanelinfo.find('a')
+        locationlink = userpanelinfo.find('a')
         # add stuff to the user detail panel
         userpanelinfo = str(userpanelinfo)
-        if d[3].count(':') == 2 and d[3][len(d[3])-3:] == ':00':
-            postinfo.append(("Date", d[3][:-3]))
-        else:
-            postinfo.append(("Date", d[3]))
+        postinfo.append(("Date", post_timestamp.strftime("%Y-%m-%d %H:%M:%S")))
 
         raw = raw.replace(userpanelinfo, add_post_details(userpanelinfo, postinfo))
 
         # remove the location hyperlink (if the user shows their location)
-        if llink is not None:
-            loc = llink.text
+        if locationlink is not None:
+            loc = locationlink.text
             if len(loc) > 18:  # truncate the location string if it's too long
                 spaces = list(reversed(find_substring(loc, ' ')))
                 for s in spaces:
                     if s <= 18:
                         break
                 loc = loc[:min(s, 18)] + '...'
-            raw = raw.replace(str(llink), loc)
+            raw = raw.replace(str(locationlink), loc)
 
         if sp.find('div', id="pic_blob") is not None:
             for pic in sp.find_all('div', id="pic_blob"):
@@ -685,18 +688,6 @@ def update_file(name):
         else:
             html = html.replace('</ol>', raw + '\n<br/>\n<br/>\n</ol>')
 
-    """if option == 5: #write results to a csv
-        with open(name + ' ' + options[option] + '.txt', 'w') as file:
-            for guess in html:
-                i = 1
-                for g in guess:
-                    if i == len(guess):
-                        file.write(str(g))
-                    else:
-                        file.write(str(g) + ',')
-                    i += 1
-                file.write('\n')
-        else:"""
     # add summary data to the footer
     footer_html = '\n<footer>\n<div class="footerLegal">\n<div class="pageWidth">\n<div class="pageContent">\n'
     footer_html += '<div id="copyright">A mediocre concatenation of {} posts by brystmar</div>\n'.format(count)
@@ -705,9 +696,12 @@ def update_file(name):
 
     # write the output
     file_path = 'html-output/{subdir}/'.format(subdir=name)
-    file_name = '{name} {opt}.html'.format(name=name, opt=options[user_option])
+    file_name = '{name} {opt}.html'.format(name=name, opt=user_option_text)
+    print("\nWriting {qty} posts to: {file}".format(qty=len(data), file=file_name))
+    logger.debug("Writing {qty} posts to: {file}".format(qty=len(data), file=file_name))
+
     with open(file_path + file_name, 'w') as file:
-        logger.debug('Begin writing html file: {}'.format(file_path + file_name))
+        logger.debug('Begin writing html file: /{}'.format(file_path + file_name))
         file.write(html)
         logger.debug('Done writing html')
 
@@ -715,7 +709,7 @@ def update_file(name):
 
 
 def update_likes(name):
-    logger.debug('Entering update_likes() function')
+    logger.debug('Starting update_likes() for: {}'.format(name))
 
     # prompt to update
     if 'ssf' in name.lower() or 'fest' in name.lower():
@@ -742,10 +736,15 @@ def update_likes(name):
         logger.debug("beetsbot successfully logged into talkbeer.com")
 
     # get post_id & timestamp for the most recently-recorded 'liked' post
-    query = 'SELECT post_id, max(timestamp) FROM public.likes WHERE post_id = (SELECT max(l.post_id) as maxpost '
-    query += 'FROM public.likes l JOIN public.posts p on l.post_id = p.id WHERE p.thread_name = ?) GROUP BY post_id;'
-    dbsql.execute(query, (name,))
-    last_like = return_first_value(tbdb.fetchall())
+    query = text("""SELECT post_id, max(timestamp)
+                FROM public.likes
+                WHERE post_id = (SELECT max(l.post_id) as maxpost 
+                                FROM public.likes l
+                                JOIN public.posts p on l.post_id = p.id
+                                WHERE p.thread_name = :tn)
+                GROUP BY post_id""")
+    result = dbsql.execute(query, tn=name)
+    last_like = return_first_value(result.fetchall())
 
     if len(last_like) == 0:
         # no liked posts yet
@@ -761,6 +760,7 @@ def update_likes(name):
     print(recent_post_text + "\n")
     logger.debug(recent_post_text)
     starting_post = input("Enter post_id, timestamp, or # days to retrieve posts from: ")
+    cutoff_date = None
 
     # figure out what the user entered, then submit the right query
     try:
@@ -769,79 +769,81 @@ def update_likes(name):
         if starting_post > 180:
             # user entered a post_id
             logger.debug("Detected a post_id")
-            query = """SELECT DISTINCT id, timestamp
+            query = text("""SELECT DISTINCT id, timestamp
                         FROM public.posts
-                        WHERE id >= ?
-                            AND thread_name = ?
+                        WHERE id >= :i
+                            AND thread_name = :tn
                         ORDER BY id
-                        LIMIT 1500"""
-            dbsql.execute(query, (starting_post, name))
+                        LIMIT 1500""")
+            result = dbsql.execute(query, i=starting_post, tn=name)
         else:
             # user entered a number of days
             logger.debug("Detected a number of days")
             cutoff_date = str(datetime.datetime.now() + datetime.timedelta(-starting_post))[:10]
-            query = """SELECT DISTINCT id, timestamp
+            query = text("""SELECT DISTINCT id, timestamp
                         FROM public.posts
-                        WHERE timestamp >= ?
-                            AND thread_name = ?
-                        ORDER BY id LIMIT 1500"""
-            dbsql.execute(query, (cutoff_date, name))
+                        WHERE timestamp >= :ts
+                            AND thread_name = :tn
+                        ORDER BY id LIMIT 1500""")
+            result = dbsql.execute(query, ts=cutoff_date, tn=name)
     except:
-        logger.error("Error attempting to convert user entry {} to int".format(starting_post), exc_info=True)
+        logger.error("Error in try/except in update_likes() function".format(starting_post), exc_info=True)
         if '-' in starting_post:
             # user entered a timestamp
             logger.debug("Detected a timestamp")
-            query = """SELECT DISTINCT id, timestamp
+            query = text("""SELECT DISTINCT id, timestamp
                         FROM public.posts
-                        WHERE timestamp >= ?
-                            AND thread_name = ?
+                        WHERE timestamp >= :ts
+                            AND thread_name = :tn
                         ORDER BY id
-                        LIMIT 1500"""
-            dbsql.execute(query, (starting_post, name))
+                        LIMIT 1500""")
+            result = dbsql.execute(query, ts=cutoff_date, tn=name)
         else:
             logger.debug("Unable to detect the type of user entry")
             return 0
 
     # load post_ids into memory
-    post_ids = tbdb.fetchall()
+    post_ids = result.fetchall()
 
     # update likes
     i = 0
     if post_ids is not None:
-        logger.debug("Begin updating likes, total: {}".format(len(post_ids)))
+        logger.debug("Begin writing updated likes, total: {}".format(len(post_ids)))
         for pid in post_ids:
             read_likes(pid[0])
             i += 1
             if i % 10 == 0:
-                commit(conn_tbdb)
+                commit(db)
                 print("{i} of {qty} post_id={pid} COMMIT".format(i=i, qty=len(post_ids), pid=pid[0]))
                 logger.debug("{i} of {qty} post_id={pid} COMMIT".format(i=i, qty=len(post_ids), pid=pid[0]))
             else:
                 print("{i} of {qty} post_id={pid}".format(i=i, qty=len(post_ids), pid=pid[0]))
                 logger.debug("{i} of {qty} post_id={pid}".format(i=i, qty=len(post_ids), pid=pid[0]))
-    logger.debug("End updating likes")
-    commit(conn_tbdb)
+    logger.debug("Done writing updated likes")
+    commit(db)
 
     # if any unknown users were added to the 'likes' table, add them to the 'users' table too
-    query = '''SELECT distinct user_id FROM public.likes WHERE user_id not in
-                    (SELECT distinct id FROM public.users)
-                ORDER BY user_id'''
-    dbsql.execute(query)
-    users = tbdb.fetchall()
+    query = text("""SELECT distinct user_id
+                    FROM public.likes
+                    WHERE user_id not in (SELECT distinct id FROM public.users)
+                    ORDER BY user_id""")
+    result = dbsql.execute(query)
+    users = result.fetchall()
     if users is None or len(users) < 1:
         logger.debug("No users to update")
-        return 0
     else:
         # add missing users to the 'users' table
-        logger.debug("Add {} missing users".format(len(users)))
+        logger.debug("Found {} missing users to add".format(len(users)))
         for u in users:
             write_users(get_userdata(u[0]))
+
+    logger.debug("End of update_likes()")
 
 
 def read_likes(post_id):
     logger.debug("Start of read_likes()")
     global s
-    url = 'https://www.talkbeer.com/community/posts/{pid}/likes'.format(post_id)
+    url = 'https://www.talkbeer.com/community/posts/{pid}/likes'.format(pid=post_id)
     html = s.get(url).text
     soup = make_soup(html)
     # soup = make_soup(s.get(url).text)
@@ -860,17 +862,17 @@ def read_likes(post_id):
 def write_likes(post_id, user_id, timestamp):
     logger.debug("Start of write_likes()")
     # validation
-    dbsql.execute('SELECT post_id, user_id, timestamp FROM public.likes WHERE post_id = ? and user_id = ?',
-                 (post_id, user_id))
-    val = tbdb.fetchall()
+    query = text('SELECT post_id, user_id, timestamp FROM public.likes WHERE post_id = :pid and user_id = :uid')
+    result = dbsql.execute(query, pid=post_id, uid=user_id)
+    val = result.fetchall()
 
-    if val is None:
-        dbsql.execute('INSERT INTO public.likes (post_id, user_id, timestamp) VALUES ' + qmarks(3),
-                     (post_id, user_id, timestamp))
-    else:
-        dbsql.execute('DELETE FROM public.likes WHERE post_id = ? and user_id = ?', (post_id, user_id))
-        dbsql.execute('INSERT INTO public.likes (post_id, user_id, timestamp) VALUES ' + qmarks(3),
-                     (post_id, user_id, timestamp))
+    # delete existing likes data for this user & post
+    if val is not None:
+        query = text('DELETE FROM public.likes WHERE post_id = :pid and user_id = :uid')
+        dbsql.execute(query, pid=post_id, uid=user_id)
+
+    query = text('INSERT INTO public.likes (post_id, user_id, timestamp) VALUES (:pid, :uid, :ts)')
+    dbsql.execute(query, pid=post_id, uid=user_id, ts=timestamp)
 
     logger.debug("End of write_likes()")
 
@@ -971,6 +973,7 @@ def determine_thread():  # returns the thread name and the highest page number t
 
 
 def thumbfix(p):
+    logger.debug("Start of thumbfix()")
     # adjusts tb-native thumbnails to use the same schema as tb-native full images
     top_class = "messageText SelectQuoteContainer ugc baseHtml"
     thumbs = p.find('blockquote', class_=top_class).find_all('a', class_="LbTrigger")
@@ -995,6 +998,7 @@ def thumbfix(p):
         p = p.replace(str(thumbs[i]), new_img)
         i += 1
 
+    logger.debug("End of thumbfix()")
     return make_soup(p)
 
 
@@ -1042,9 +1046,6 @@ Session = sessionmaker(bind=cloud_engine)
 db = Session()
 dbsql = cloud_engine.connect()
 
-# tbdb = conn_tbdb  # TODO: clean up usage of tbdb vs conn_tbdb
-# cursor = engine.interfaces.ExecutionContext.create_cursor()
-# tbdb = conn_tbdb.create_cursor()
 logger.debug('DB session object created')
 
 # initialize global variables
@@ -1057,16 +1058,17 @@ ulist = list()
 determine_thread()  # sets the global name & page variables
 
 # get html for the thread pages we want to parse and the thread's base URL
-dbsql.execute('SELECT distinct page, html FROM raw.thread_page WHERE name = ? and page >= ? ORDER BY page', (name, page))
-data = tbdb.fetchall()  # returns a list of tuples
+query = text('SELECT distinct page, html FROM raw.thread_page WHERE name = :n and page >= :p ORDER BY page')
+data = dbsql.execute(query, n=name, p=page)  # returns a list of tuples
 
 # get the thread's base url
-dbsql.execute('SELECT distinct url FROM raw.thread_page WHERE name = ? and page = 1 LIMIT 1', (name,))
-url = return_first_value(tbdb.fetchone())
+query = text('SELECT distinct url FROM raw.thread_page WHERE name = :n and page = 1 LIMIT 1')
+result = dbsql.execute(query, n=name)
+url = return_first_value(result.fetchone)
 
 # user_id list of all BIF participants
-dbsql.execute('SELECT distinct user_id FROM public.biffers WHERE thread_name = ? ORDER BY 1', (name,))
-biffers_list = tbdb.fetchall()
+query = text('SELECT distinct user_id FROM public.biffers WHERE thread_name = :tn ORDER BY 1')
+biffers_list = dbsql.execute(query, tn=name)
 
 # iterate through the thread pages to extract data about each post
 page_counter = 1
@@ -1282,13 +1284,13 @@ for d in data:
             ulist.append(user)
 
     # commit after each page
-    commit(conn_tbdb)
+    commit(db)
     page_counter += 1
     # pause()
 
 # write user data to the db
 write_users(ulist)
-commit(conn_tbdb)
+commit(db)
 
 # update the single-page html file
 update_file(name)
@@ -1301,14 +1303,16 @@ if login_status is False:
     login_status = True
 
 # run_raffle(1, name)
-commit(conn_tbdb)
-conn_tbdb.close()
+commit(db)
+close_dbs(db, dbsql)
 
 time_end = datetime.datetime.now()
-time_end = time_end.isoformat(timespec='seconds')
-time_end = str(time_end).replace("T", " ")
+# time_end = time_end.isoformat(timespec='seconds')
 print("")
 print("***** ***** **** ***** *****")
-print("  End:", time_end, "[normal path]")
+print("  End:", time_end.strftime("%Y-%m-%d %H:%M:%S"), "[normal path]")
+print("  Total time: {} seconds\n\n".format(round((time_end - time_start).total_seconds(), 2)))
 print("***** ***** **** ***** *****")
 print("")
+logger.info("END via the normal path @ {}".format(time_end.strftime("%Y-%m-%d %H:%M:%S")))
+logger.info("Total time: {} seconds\n\n".format(round((time_end - time_start).total_seconds(), 2)))
