@@ -478,7 +478,7 @@ while current_page <= max_page:
         find_biffers(name, html)
 
         """tbdb.execute('SELECt count(distinct user_id) FROM biffers WHERE thread_name = ' + name)
-        bcount = db_value(tbdb.fetchone())
+        bcount = return_first_value(tbdb.fetchone())
 
         if bcount is None or bcount == 0:
             print("Needs biffers!")

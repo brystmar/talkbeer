@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base, declared_attr
 Base = declarative_base()
 
 
+# Schema: public #
 class PublicMixin(object):
     @declared_attr
     def __tablename__(cls):
@@ -12,7 +13,6 @@ class PublicMixin(object):
     __table_args__ = {'schema': 'main'}
 
 
-# Schema: public #
 class Biffers(PublicMixin, Base):
     thread_name = Column(String, primary_key=True)
     username = Column(String)
@@ -66,12 +66,6 @@ class Threads(PublicMixin, Base):
     organizer_id = Column(Integer)
 
 
-class URLs(PublicMixin, Base):
-    post = Column(String, primary_key=True)
-    user_page = Column(String, primary_key=True)
-    gdrive = Column(String, primary_key=True)
-
-
 class Users(PublicMixin, Base):
     id = Column(Integer, primary_key=True)
     username = Column(String)
@@ -80,27 +74,48 @@ class Users(PublicMixin, Base):
     joindate = Column(Date)
 
 
+# Schema: sys #
+class SysMixin(object):
+    @declared_attr
+    def __tablename__(cls):
+        return cls.__name__.lower()
+
+    __table_args__ = {'schema': 'sys'}
+
+
+class URLs(SysMixin, Base):
+    post = Column(String, primary_key=True)
+    user_page = Column(String, primary_key=True)
+    gdrive = Column(String, primary_key=True)
+
+
+class Output_Options(SysMixin, Base):
+    id = Column(Integer, primary_key=True)
+    option = Column(String)
+
+
 # Schema: raw #
 class RawMixin(object):
+    @declared_attr
+    def __tablename__(cls):
+        return cls.__name__.lower()
+
     __table_args__ = {'schema': 'raw'}
 
 
 class Errors(RawMixin, Base):
-    __tablename__ = 'errors'
     post_id = Column(Integer)
     url = Column(String, primary_key=True)
     notes = Column(String)
 
 
 class Posts_Soup(RawMixin, Base):
-    __tablename__ = 'posts_soup'
     id = Column(Integer, primary_key=True)
     thread_name = Column(String)
     soup = Column(String)
 
 
 class Thread_Page(RawMixin, Base):
-    __tablename__ = 'thread_page'
     name = Column(String)
     page = Column(String)
     url = Column(String)
