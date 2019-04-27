@@ -55,7 +55,8 @@ with engine_lite.connect() as conn_lite:
                     logger.debug('Start writing to cloud db')
                     conn_cloud.execute(table.insert().values(data))
                     logger.debug('Finished writing to cloud db')
-                except Exception:
+                except Exception as exc:
                     logger.error('Error writing to cloud db', exc_info=True)
+                    logger.debug('Exception info:\n{}'.format(exc))
 
                 logger.debug("Finished {table} @ {dt}".format(table=table.name, dt=datetime.datetime.now()))

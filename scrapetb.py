@@ -7,7 +7,7 @@ import datetime
 import re
 import requests
 import sqlite3
-# from agg_posts import get_userdata, write_users
+# from agg_posts import get_user_data, write_users
 
 time_start = datetime.datetime.now()
 time_start = time_start.isoformat(timespec='seconds')
@@ -342,7 +342,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # suppress S
 
 # set credentials for the talkbeets account so we can log in when the time comes
 from tbcred import url_login, user_sys, pw_sys
-creds = {'login': user_sys, 'password': pw_sys}
+tb_credentials = {'login': user_sys, 'password': pw_sys}
 login_status = False
 
 # open & initialize the db
@@ -420,7 +420,7 @@ tbdb.execute(query, (name,))
 last_post_data = tbdb.fetchone()
 
 # log in with the provided credentials
-s.post(url_login, data=creds)
+s.post(url_login, data=tb_credentials)
 login_status = True
 
 if last_post_data is None or None in last_post_data:

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f7beec6f-2a3a-42f1-9a9b-d8f6c8deba15" name="Default Changelist" comment="refactored agg_posts.py for CloudSQL &amp; added logging">
+    <list default="true" id="f7beec6f-2a3a-42f1-9a9b-d8f6c8deba15" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/raffle.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/agg_posts.py" beforeDir="false" afterPath="$PROJECT_DIR$/agg_posts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html-output/SOTB All posts in order.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrate_sqlite.py" beforeDir="false" afterPath="$PROJECT_DIR$/migrate_sqlite.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rng.py" beforeDir="false" afterPath="$PROJECT_DIR$/rng.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scrapetb.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrapetb.py" afterDir="false" />
     </list>
     <ignored path="tbcred.py" />
@@ -67,6 +69,15 @@
         <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
         <item name="bifs: database" type="162271b6:PgImplModel$Database" />
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="public: schema" type="983ebcf7:PgImplModel$Schema" />
+        <item name="users: table" type="69fad909:PgImplModel$LocalTable" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="GCP: trivialib.bifs" type="feb32156:DbDataSourceImpl" />
+        <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="bifs: database" type="162271b6:PgImplModel$Database" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
         <item name="raw: schema" type="983ebcf7:PgImplModel$Schema" />
       </path>
       <path>
@@ -76,6 +87,15 @@
         <item name="bifs: database" type="162271b6:PgImplModel$Database" />
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
         <item name="sys: schema" type="983ebcf7:PgImplModel$Schema" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="GCP: trivialib.bifs" type="feb32156:DbDataSourceImpl" />
+        <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="bifs: database" type="162271b6:PgImplModel$Database" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="sys: schema" type="983ebcf7:PgImplModel$Schema" />
+        <item name="urls: table" type="69fad909:PgImplModel$LocalTable" />
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
@@ -89,51 +109,64 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/agg_posts.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="75">
+              <caret line="5" selection-start-line="5" selection-end-line="5" />
               <folding>
-                <element signature="e#250#279#0" expanded="true" />
-                <element signature="e#764#825#0" />
-                <element signature="e#848#872#0" />
-                <element signature="e#893#930#0" />
-                <element signature="e#952#1026#0" />
-                <element signature="e#1691#1930#0" />
-                <element signature="e#1250#1382#0" />
-                <element signature="e#1406#1579#0" />
-                <element signature="e#1602#2102#0" />
-                <element signature="e#2782#3162#0" />
-                <element signature="e#3195#4029#0" />
-                <element signature="e#4057#4581#0" />
-                <element signature="e#4610#5199#0" />
-                <element signature="e#5223#5485#0" />
-                <element signature="e#5513#7088#0" />
-                <element signature="e#7114#7177#0" />
-                <element signature="e#9862#10617#0" />
-                <element signature="e#10758#12025#0" />
-                <element signature="e#12056#13386#0" />
-                <element signature="e#13416#14330#0" />
-                <element signature="e#14376#14696#0" />
-                <element signature="e#14740#15785#0" />
-                <element signature="e#15827#16994#0" />
-                <element signature="e#16970#28679#0" />
-                <element signature="e#28746#33921#0" />
-                <element signature="e#33953#34649#0" />
-                <element signature="e#34702#35409#0" />
-                <element signature="e#35514#39455#0" />
-                <element signature="e#39479#40408#0" />
-                <element signature="e#40188#40247#0" />
+                <element signature="e#235#264#0" expanded="true" />
+                <element signature="e#1411#1443#0" />
+                <element signature="e#1533#1582#0" />
+                <element signature="e#1684#1814#0" />
+                <element signature="e#1857#2047#0" />
+                <element signature="e#2125#2284#0" />
+                <element signature="e#2221#2288#0" />
+                <element signature="e#2310#2481#0" />
+                <element signature="e#2510#2755#0" />
+                <element signature="e#2777#2968#0" />
+                <element signature="e#3104#3277#0" />
+                <element signature="e#3757#4543#0" />
+                <element signature="e#4695#5163#0" />
+                <element signature="e#5225#5801#0" />
+                <element signature="e#5871#6405#0" />
+                <element signature="e#6305#7139#0" />
+                <element signature="e#7167#7691#0" />
+                <element signature="e#8198#8790#0" />
+                <element signature="e#8814#9079#0" />
+                <element signature="e#9107#10682#0" />
+                <element signature="e#11441#11512#0" />
+                <element signature="e#10823#11648#0" />
+                <element signature="e#12794#14547#0" />
+                <element signature="e#14578#16220#0" />
+                <element signature="e#16344#17520#0" />
+                <element signature="e#17571#17895#0" />
+                <element signature="e#18208#28791#0" />
+                <element signature="e#28941#34648#0" />
+                <element signature="e#34578#35278#0" />
+                <element signature="e#35331#36018#0" />
+                <element signature="e#36398#40530#0" />
+                <element signature="e#40516#41523#0" />
+                <element signature="e#41616#41676#0" />
+                <element signature="e#45071#54840#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/migrate_sqlite.py">
+        <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/sys/table/urls">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state>
+              <filtering enabled="true">
+                <filter text="" />
+              </filtering>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/tbcred.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="767">
-              <caret line="58" column="76" selection-start-line="58" selection-start-column="20" selection-end-line="58" selection-end-column="76" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="105">
+              <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
             </state>
           </provider>
         </entry>
@@ -141,8 +174,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="85" column="27" selection-start-line="85" selection-start-column="27" selection-end-line="85" selection-end-column="27" />
+            <state relative-caret-position="285">
+              <caret line="85" column="27" lean-forward="true" selection-start-line="85" selection-start-column="27" selection-end-line="85" selection-end-column="27" />
               <folding>
                 <element signature="e#0#63#0" expanded="true" />
               </folding>
@@ -151,10 +184,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/fd42b6f2-cd1e-48f0-a92d-e37254ec8004/console.sql">
+        <entry file="file://$PROJECT_DIR$/.env">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="24">
-              <caret line="38" column="20" selection-start-line="38" selection-start-column="20" selection-end-line="38" selection-end-column="20" />
+            <state relative-caret-position="120">
+              <caret line="8" selection-start-line="8" selection-end-line="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/migrate_sqlite.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="600">
+              <caret line="43" lean-forward="true" selection-start-line="43" selection-end-line="43" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -170,36 +215,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>from biff</find>
-      <find>from like</find>
-      <find>from url</find>
-      <find>sqlite</find>
-      <find>.sqlite</find>
-      <find>conn_tb</find>
-      <find>curs</find>
-      <find>dummy</find>
-      <find>thread to parse</find>
-      <find>enter thread to parse</find>
-      <find>remlist(</find>
-      <find>logging.</find>
-      <find>global name &amp; pa</find>
-      <find>js_old</find>
-      <find>js_new</find>
-      <find>db_na</find>
-      <find>session</find>
-      <find>output_op</find>
-      <find>create_eng</find>
-      <find>output_options</find>
-      <find>db =</find>
-      <find>tbdb.execute</find>
-      <find>select html from thr</find>
-      <find>text(</find>
-      <find>select html from</find>
-      <find>from threa</find>
       <find>select html fro</find>
       <find>db_val</find>
       <find>user wants to</find>
       <find>stop(</find>
+      <find>conn_tbdb</find>
+      <find>db =</find>
+      <find>where p.thread_name</find>
+      <find>where p.thread_name = ?</find>
+      <find>asdf1234</find>
+      <find>todo</find>
+      <find>SELECT r.id, r.soup, p.username, p.timestamp, p.th</find>
+      <find>delete from</find>
+      <find>insert into</find>
+      <find>update</find>
+      <find>asdf123</find>
+      <find>filename</find>
+      <find>commit</find>
+      <find>'''</find>
+      <find>except:</find>
+      <find>qmarks</find>
+      <find>qid</find>
+      <find>write_post(</find>
+      <find>urls</find>
+      <find>apik</find>
+      <find>env</find>
+      <find>db_pw</find>
+      <find>elkhunter(</find>
+      <find>return 0</find>
+      <find>urls.</find>
+      <find>url_login</find>
     </findStrings>
     <replaceStrings>
       <replace>#</replace>
@@ -209,6 +254,10 @@
       <replace>FROM raw.posts_soup</replace>
       <replace>INTO raw.posts_soup</replace>
       <replace>dbsql.execute</replace>
+      <replace>db</replace>
+      <replace>&quot;&quot;&quot;</replace>
+      <replace>except Exception:</replace>
+      <replace>return None</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -219,17 +268,18 @@
       <list>
         <option value="$PROJECT_DIR$/first_post_debug.html" />
         <option value="$PROJECT_DIR$/saugus_dbfix.py" />
-        <option value="$PROJECT_DIR$/rng.py" />
         <option value="$PROJECT_DIR$/tbcred.py" />
         <option value="$PROJECT_DIR$/postgres migration talkbeer.sql" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/fd42b6f2-cd1e-48f0-a92d-e37254ec8004/console.sql" />
         <option value="$PROJECT_DIR$/scrapetb.py" />
-        <option value="$PROJECT_DIR$/.env" />
         <option value="$PROJECT_DIR$/migrate_sqlite_main.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/rng.py" />
+        <option value="$PROJECT_DIR$/raffle.py" />
         <option value="$PROJECT_DIR$/migrate_sqlite.py" />
-        <option value="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell" />
+        <option value="$PROJECT_DIR$/.env" />
         <option value="$PROJECT_DIR$/models.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell" />
         <option value="$PROJECT_DIR$/agg_posts.py" />
       </list>
     </option>
@@ -247,7 +297,7 @@
     <option name="x" value="281" />
     <option name="y" value="23" />
     <option name="width" value="1717" />
-    <option name="height" value="1041" />
+    <option name="height" value="1099" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -301,7 +351,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.agg_posts">
+  <component name="RunManager" selected="Python.raffle">
     <configuration name="agg_posts" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="talkbeer_orig" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -316,6 +366,28 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/agg_posts.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="raffle" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="talkbeer_orig" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/raffle.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -348,6 +420,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.raffle" />
         <item itemvalue="Python.agg_posts" />
         <item itemvalue="Python.scrapetb" />
       </list>
@@ -377,7 +450,7 @@
       <workItem from="1554504596374" duration="7130000" />
       <workItem from="1555105944098" duration="2884000" />
       <workItem from="1555189937353" duration="12849000" />
-      <workItem from="1556063298734" duration="38125000" />
+      <workItem from="1556063298734" duration="71461000" />
     </task>
     <task id="LOCAL-00001" summary="PyCharm setup">
       <created>1552531676519</created>
@@ -442,11 +515,25 @@
       <option name="project" value="LOCAL" />
       <updated>1556132498812</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="more agg_posts refactoring for sqlalchemy, before find/replace conn_tbdb">
+      <created>1556242671833</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1556242671833</updated>
+    </task>
+    <task id="LOCAL-00011" summary="all agg_posts.py cloud select statements work">
+      <created>1556323002288</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1556323002288</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="82491000" />
+    <option name="totallyTimeSpent" value="115827000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -458,23 +545,23 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="281" y="23" width="1717" height="1041" extended-state="0" />
+    <frame x="281" y="23" width="1717" height="1099" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20597015" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49782372" weight="0.32876712" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49782372" weight="0.3286991" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49727964" weight="0.32876712" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32876712" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="8" sideWeight="0.5102853" visible="true" weight="0.23709168" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.5102853" weight="0.23709168" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50497675" side_tool="true" weight="0.32876712" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49502322" weight="0.32876712" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49502322" weight="0.30983117" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="12" sideWeight="0.4983678" weight="0.32876712" />
       <window_info anchor="bottom" id="Database Console" order="13" sideWeight="0.49891186" weight="0.32876712" />
@@ -498,10 +585,13 @@
     <MESSAGE value="more cleaning" />
     <MESSAGE value="migrated data to CloudSQL" />
     <MESSAGE value="refactored agg_posts.py for CloudSQL &amp; added logging" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactored agg_posts.py for CloudSQL &amp; added logging" />
+    <MESSAGE value="more agg_posts refactoring for sqlalchemy, before find/replace conn_tbdb" />
+    <MESSAGE value="all agg_posts.py cloud select statements work" />
+    <option name="LAST_COMMIT_MESSAGE" value="all agg_posts.py cloud select statements work" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/talkbeer_orig$scrapetb.coverage" NAME="scrapetb Coverage Results" MODIFIED="1556067383637" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/talkbeer_orig$raffle.coverage" NAME="raffle Coverage Results" MODIFIED="1556386129221" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/talkbeer$agg_posts.coverage" NAME="agg_posts Coverage Results" MODIFIED="1554402729660" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/talkbeer$scrapetb.coverage" NAME="scrapetb Coverage Results" MODIFIED="1555037332655" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/talkbeer_orig$agg_posts.coverage" NAME="agg_posts Coverage Results" MODIFIED="1556069313144" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -554,20 +644,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rng.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="34" selection-start-line="21" selection-start-column="34" selection-end-line="21" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tbcred.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/errors">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
@@ -597,15 +673,6 @@
       </provider>
     </entry>
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/likes">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/posts">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
           <filtering enabled="true">
@@ -670,29 +737,6 @@
         <state relative-caret-position="-2114" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scrapetb.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#175#204#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.env">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="40" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/possible senders to brystmar.sql">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -712,13 +756,6 @@
           <filtering enabled="true">
             <filter text="" />
           </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/fd42b6f2-cd1e-48f0-a92d-e37254ec8004/console.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="38" column="20" selection-start-line="38" selection-start-column="20" selection-end-line="38" selection-end-column="20" />
         </state>
       </provider>
     </entry>
@@ -743,72 +780,138 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/sys/table/urls">
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/posts">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
           <filtering enabled="true">
             <filter text="" />
           </filtering>
-          <column-attributes>
-            <column name="ctid" enabled="false" />
-          </column-attributes>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models.py">
+    <entry file="file://$PROJECT_DIR$/rng.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raffle.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="85" column="27" selection-start-line="85" selection-start-column="27" selection-end-line="85" selection-end-column="27" />
+        <state>
           <folding>
-            <element signature="e#0#63#0" expanded="true" />
+            <element signature="e#204#218#0" expanded="true" />
+            <element signature="e#706#808#0" />
+            <element signature="e#457#567#0" />
+            <element signature="e#119#1583#0" />
+            <element signature="e#2434#3524#0" />
+            <element signature="e#4225#5976#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/fd42b6f2-cd1e-48f0-a92d-e37254ec8004/console.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="282">
+          <caret line="38" column="20" selection-start-line="38" selection-start-column="20" selection-end-line="38" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scrapetb.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+          <folding>
+            <element signature="e#175#204#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/migrate_sqlite.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="767">
-          <caret line="58" column="76" selection-start-line="58" selection-start-column="20" selection-end-line="58" selection-end-column="76" />
+        <state relative-caret-position="600">
+          <caret line="43" lean-forward="true" selection-start-line="43" selection-end-line="43" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="85" column="27" lean-forward="true" selection-start-line="85" selection-start-column="27" selection-end-line="85" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.env">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tbcred.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/sys/table/urls">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true">
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/agg_posts.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="75">
+          <caret line="5" selection-start-line="5" selection-end-line="5" />
           <folding>
-            <element signature="e#250#279#0" expanded="true" />
-            <element signature="e#764#825#0" />
-            <element signature="e#848#872#0" />
-            <element signature="e#893#930#0" />
-            <element signature="e#952#1026#0" />
-            <element signature="e#1691#1930#0" />
-            <element signature="e#1250#1382#0" />
-            <element signature="e#1406#1579#0" />
-            <element signature="e#1602#2102#0" />
-            <element signature="e#2782#3162#0" />
-            <element signature="e#3195#4029#0" />
-            <element signature="e#4057#4581#0" />
-            <element signature="e#4610#5199#0" />
-            <element signature="e#5223#5485#0" />
-            <element signature="e#5513#7088#0" />
-            <element signature="e#7114#7177#0" />
-            <element signature="e#9862#10617#0" />
-            <element signature="e#10758#12025#0" />
-            <element signature="e#12056#13386#0" />
-            <element signature="e#13416#14330#0" />
-            <element signature="e#14376#14696#0" />
-            <element signature="e#14740#15785#0" />
-            <element signature="e#15827#16994#0" />
-            <element signature="e#16970#28679#0" />
-            <element signature="e#28746#33921#0" />
-            <element signature="e#33953#34649#0" />
-            <element signature="e#34702#35409#0" />
-            <element signature="e#35514#39455#0" />
-            <element signature="e#39479#40408#0" />
-            <element signature="e#40188#40247#0" />
+            <element signature="e#235#264#0" expanded="true" />
+            <element signature="e#1411#1443#0" />
+            <element signature="e#1533#1582#0" />
+            <element signature="e#1684#1814#0" />
+            <element signature="e#1857#2047#0" />
+            <element signature="e#2125#2284#0" />
+            <element signature="e#2221#2288#0" />
+            <element signature="e#2310#2481#0" />
+            <element signature="e#2510#2755#0" />
+            <element signature="e#2777#2968#0" />
+            <element signature="e#3104#3277#0" />
+            <element signature="e#3757#4543#0" />
+            <element signature="e#4695#5163#0" />
+            <element signature="e#5225#5801#0" />
+            <element signature="e#5871#6405#0" />
+            <element signature="e#6305#7139#0" />
+            <element signature="e#7167#7691#0" />
+            <element signature="e#8198#8790#0" />
+            <element signature="e#8814#9079#0" />
+            <element signature="e#9107#10682#0" />
+            <element signature="e#11441#11512#0" />
+            <element signature="e#10823#11648#0" />
+            <element signature="e#12794#14547#0" />
+            <element signature="e#14578#16220#0" />
+            <element signature="e#16344#17520#0" />
+            <element signature="e#17571#17895#0" />
+            <element signature="e#18208#28791#0" />
+            <element signature="e#28941#34648#0" />
+            <element signature="e#34578#35278#0" />
+            <element signature="e#35331#36018#0" />
+            <element signature="e#36398#40530#0" />
+            <element signature="e#40516#41523#0" />
+            <element signature="e#41616#41676#0" />
+            <element signature="e#45071#54840#0" />
           </folding>
         </state>
       </provider>

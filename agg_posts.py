@@ -1,6 +1,10 @@
-##################################################################################
-# Parses posts from each thread page, then combines all posts onto a single page #
-##################################################################################
+"""Parses data from posts on each page of a thread, then cleans & writes this data to the database.
+
+Also:
+* Identifies & adds users not currently in the database.
+* Collects & writes likes for each post to the database.
+* Allows users to select a templated option for writing an html file.
+"""
 
 from bs4 import BeautifulSoup
 import datetime
@@ -9,16 +13,18 @@ import logging as logging_util
 import os
 import re
 import requests
-from sqlalchemy import create_engine, event, engine
+from sqlalchemy import create_engine, event  # engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 # import sqlite3
-from models import Biffers, Likes, Posts, Region_Map, Threads, Users
-from models import Errors, Posts_Soup, Thread_Page, URLs, Output_Options
+# from models import Biffers, Likes, Posts, Region_Map, Threads, Users
+# from models import Errors, Posts_Soup, Thread_Page
+from models import URLs, Output_Options
 from dotenv import load_dotenv
+from urllib3.exceptions import InsecureRequestWarning
 
 # initialize logging
-logfile = 'logs/system_log.log'
+logfile = 'logs/{}.log'.format(__file__)
 logging_util.basicConfig(filename=logfile, filemode='w', level=logging_util.DEBUG, datefmt='%H:%M:%S',
                          format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging_util.getLogger(__name__)
@@ -32,17 +38,23 @@ logger.info('\n\n***** ***** **** ***** ***** |||| ***** ***** **** ***** *****\
 logger.info('START agg_posts.py @ {}'.format(time_start.strftime("%Y-%m-%d %H:%M:%S")))
 
 
-def pause(): input("[====]")
+def pause():
+    """Pause the program until the user is ready to continue."""
+    input("[==========]")
 
 
-def make_soup(html_to_soupify): return BeautifulSoup(html_to_soupify, 'html.parser')
+def make_soup(html_to_soup):
+    """Convert an html chunk into a BeautifulSoup object."""
+    return BeautifulSoup(html_to_soup, 'html.parser')
 
 
-def find_substring(text, char):
-    return [i for i, letter in enumerate(text) if letter == char]
+def find_substring(string, char):
+    """Return the index of a given character within a substring."""
+    return [st for st, letter in enumerate(string) if letter == char]
 
 
-def commit(db):
+def commit(database_connection):
+    """Commit changes to the provided database connection."""
     logger.debug("Attempting to commit db & dbsql")
     # db.commit()
     logger.debug("Commit successful for db")
@@ -50,21 +62,17 @@ def commit(db):
     logger.debug("Commit successful for dbsql")
 
 
-def close_dbs(db, dbsql):
+def close_db(db1):
+    """Close the connection to the provided database."""
     try:
-        db.close()
+        db1.close()
         logger.debug("Closed db")
-    except:
-        logger.error("Error attempting to close db connection: db", exc_info=True)
-
-    try:
-        dbsql.close()
-        logger.debug("Closed dbsql")
-    except:
-        logger.error("Error attempting to close db connection: dbsql", exc_info=True)
+    except Exception:
+        logger.error("Error attempting to close db", exc_info=True)
 
 
 def pp(item):
+    """Print an item, then pause until the user is ready to proceed."""
     print("")
     print(item)
     logger.debug("\n" + item)
@@ -72,175 +80,192 @@ def pp(item):
 
 
 def pl(items):
-    for i in items:
-        print(i)
-        logger.debug(i)
+    """Print all items in a provided list/tuple, show the number of items in the list, then pause."""
+    for item in items:
+        print(item)
+        logger.debug(item)
     print("Total items: {}".format(len(items)))
     logger.debug("Total items: {}".format(len(items)))
     pause()
 
 
 def pl_sorted(items):
-    newlist = list()
-    ditems = set(items)
-    for d in ditems:
-        newlist.append(d)
+    """Sort the provided list, print all items, show the number of items in the list, then pause."""
+    new_list = list()
+    dict_items = set(items)
+    for di in dict_items:
+        new_list.append(di)
 
-    newlist.sort()
+    new_list.sort()
 
-    for n in newlist:
-        print(items.count(n), n)
-        logger.debug("{count} {n}".format(count=items.count(n), n=n))
+    for nl in new_list:
+        print(items.count(nl), nl)
+        logger.debug("{count} {n}".format(count=items.count(nl), n=nl))
     pause()
 
 
 def pd(items):
+    """Print all items in a provided dict, then pause until the user is ready to proceed."""
     for item in items:
-        print("{item}: {value}".format(item, items[item]))
-        logger.debug("{item}: {value}".format(item, items[item]))
+        print("{item}: {value}".format(item=item, value=items[item]))
+        logger.debug("{item}: {value}".format(item=item, value=items[item]))
     pause()
     print("")
 
 
-def qmarks(num):
-    # returns a string of question marks in the length requested, ex: (?,?,?,?)
-    i = 0
-    q = "("
-    while i < num:
-        q += "?,"
-        i += 1
-    return q[:-1] + ")"
+def add_question_marks(num):
+    """Return a string of question marks of the length requested, ex: (?,?,?,?)"""
+    count = 0
+    string = "("
+    while count < num:
+        string += "?,"
+        count += 1
+    return string[:-1] + ")"
 
 
-def stop(text):
+def stop(reason):
+    """Shortcut to the final steps of the module: generate an html file, update likes, raffle, and commit/close dbs."""
     global name, ongoing
 
-    logger.info('Entered the stop() function because: {}'.format(text))
+    logger.info('Entered the stop() function because: {}'.format(reason))
     update_file(name)
     if ongoing:
         update_likes(name)
 
     # run_raffle(1, name)
     commit(db)
-    close_dbs(db, dbsql)
+    commit(dbsql)
+    close_db(db)
+    close_db(dbsql)
 
-    time_end = datetime.datetime.now()
+    time_end_stop = datetime.datetime.now()
 
     print("\n***** ***** **** ***** *****")
-    print("  End:", time_end, "[stop function]")
-    print("  Total time: {} seconds\n\n".format(round((time_end - time_start).total_seconds(), 2)))
+    print("  End:", time_end_stop, "[stop function]")
+    print("  Total time: {} seconds\n\n".format(round((time_end_stop - time_start).total_seconds(), 2)))
     print("***** ***** **** ***** *****\n")
-    logger.info("END via the stop() function @ {}".format(time_end.strftime("%Y-%m-%d %H:%M:%S")))
-    logger.info("Total time: {} seconds\n\n".format(round((time_end - time_start).total_seconds(), 2)))
+    logger.info("END via the stop() function @ {}".format(time_end_stop.strftime("%Y-%m-%d %H:%M:%S")))
+    logger.info("Total time: {} seconds\n\n".format(round((time_end_stop - time_start).total_seconds(), 2)))
 
     quit()
 
 
-def return_list_of_values(mylist):
-    # returns a list of strings instead of a list of tuples
-    logger.debug("Starting return_list_of_values() with: {}".format(mylist))
-    if mylist is None or len(mylist) == 0:
-        logger.debug("mylist is None, or len(mylist)==0")
+def return_list_of_values(my_list):
+    """Convert a list of tuples (or tuple-like objects) to a list of strings."""
+    logger.debug("Starting return_list_of_values() with: {}".format(my_list))
+    if my_list is None or len(my_list) == 0:
+        logger.debug("my_list is None, or len(my_list)==0")
         logger.debug("End return_list_of_values()")
         return None
-    list_to_return = [m for m, in mylist]
+    list_to_return = [my for my, in my_list]
     logger.debug("Ending return_list_of_values() with: {}".format(list_to_return))
     return list_to_return
 
 
-def return_first_value(input):
-    # returns the first value in the set if input is a list or tuple, otherwise it returns the input untouched
-    logger.debug('Starting return_first_value() with: {}'.format(input))
-    if input is None:
+def return_first_value(input_object):
+    """Return the first value in a list, tuple, or tuple-like object."""
+    logger.debug('Starting return_first_value() with: {}'.format(input_object))
+    if input_object is None:
         logger.debug('Ending return_first_value() unchanged')
-        return input
+        return input_object
     try:
-        # return_list_of_values(input)
-        logger.debug('Ending return_first_value() with: {}'.format(str(input[0])[:20]))
-        return input[0]
+        # return_list_of_values(input_object)
+        logger.debug('Ending return_first_value() with: {}'.format(str(input_object[0])[:20]))
+        return input_object[0]
     except TypeError:
         logger.error('Error:', exc_info=True)
         logger.debug('Ending return_first_value() unchanged')
-        return input
+        return input_object
 
 
-def remove_newlines(text):
-    text = str(text)
+def remove_newlines(html_input):
+    """Remove excess newlines and line breaks from a chunk of html."""
+    logger.debug("Starting remove_newlines()")
+    text_output = str(html_input)
 
-    br2 = '''<br/>
-    <br/>'''
-    br3 = '''<br/>
+    br2 = """<br/>
+    <br/>"""
+    br3 = """<br/>
     <br/>
-    <br/>'''
+    <br/>"""
 
-    br2nl = '''<br/>\n<br/>'''
-    br3nl = '''<br/>\n<br/>\n<br/>'''
+    br2nl = """<br/>\n<br/>"""
+    br3nl = """<br/>\n<br/>\n<br/>"""
 
-    while '\n\n\n' in text:
-        text = text.replace('\n\n\n', '\n\n')
-    while br3 in text:
-        text = text.replace(br3, br2)
-    while br3nl in text:
-        text = text.replace(br3nl, br2nl)
-    return text
+    while '\n\n\n' in text_output:
+        text_output = text_output.replace('\n\n\n', '\n\n')
+    while br3 in text_output:
+        text_output = text_output.replace(br3, br2)
+    while br3nl in text_output:
+        text_output = text_output.replace(br3nl, br2nl)
+
+    logger.debug("Ending remove_newlines()")
+    return text_output
 
 
 def find_last_post(html):
+    """Given an html page input, return page metadata in list form: [last_post, last_post_id, page]"""
+    logger.debug("Starting find_last_post()")
+
     lp_soup = BeautifulSoup(html, 'html.parser')
     # focus on the specific div
-    posts = lp_soup('div', class_="publicControls")
+    all_posts = lp_soup('div', class_="publicControls")
     # carve out info about the last post on the page
-    lpinfo = posts[len(posts)-1].find('a', title='Permalink')
+    last_post_info = all_posts[len(all_posts)-1].find('a', title='Permalink')
     # user-facing number for the last post
-    last_post = int(lpinfo.text.replace('#','').strip())
+    last_post = int(last_post_info.text.replace('#', '').strip())
     # system id for the last post
-    last_post_id = int(re.findall('#post-(\d+)', lpinfo.get('href'))[0])
+    last_post_id = int(re.findall('#post-(\d+)', last_post_info.get('href'))[0])
 
-    # page number
-    page = str(lp_soup.find('link', rel="canonical"))
-    if page is not None:
-        page = re.findall('href=\"(.+?)\"', page)[0]
-        if page[-1] == '/':
-            page = 1
-        elif re.search('/page-\d+', page):
-            page = int(re.findall('/page-(\d+)', page)[0])
+    page_number = str(lp_soup.find('link', rel="canonical"))
+    if page_number is not None:
+        page_number = re.findall('href=\"(.+?)\"', page_number)[0]
+        if page_number[-1] == '/':
+            page_number = 1
+        elif re.search('/page-\d+', page_number):
+            page_number = int(re.findall('/page-(\d+)', page_number)[0])
         else:
-            page = None
+            page_number = None
 
-    return [last_post, last_post_id, page]
+    logger.debug("Ending find_last_post() with: {}".format([last_post, last_post_id, page_number]))
+    return [last_post, last_post_id, page_number]
 
 
-def month_to_num(m):
-    if m == 'Jan':
+def month_to_num(month):
+    """Return the month as a 2-character, zero-padded numeric string because I'm a newbie."""
+    logger.debug("Starting month_to_num() with: {}".format(month))
+    if month == 'Jan':
         return '01'
-    elif m == 'Feb':
+    elif month == 'Feb':
         return '02'
-    elif m == 'Mar':
+    elif month == 'Mar':
         return '03'
-    elif m == 'Apr':
+    elif month == 'Apr':
         return '04'
-    elif m == 'May':
+    elif month == 'May':
         return '05'
-    elif m == 'Jun':
+    elif month == 'Jun':
         return '06'
-    elif m == 'Jul':
+    elif month == 'Jul':
         return '07'
-    elif m == 'Aug':
+    elif month == 'Aug':
         return '08'
-    elif m == 'Sep':
+    elif month == 'Sep':
         return '09'
-    elif m == 'Oct':
+    elif month == 'Oct':
         return '10'
-    elif m == 'Nov':
+    elif month == 'Nov':
         return '11'
-    elif m == 'Dec':
+    elif month == 'Dec':
         return '12'
     else:
         return 'Month Error'
 
 
 def to_timestamp(ds):
-    # converts a text date/time sting to ISO-8601 formatting: 'Mar 26, 2018 at 9:48 PM' --> '2018-03-26 21:48:00'
+    """Convert a text date/time sting to ISO-8601 formatting: 'Mar 26, 2018 at 9:48 PM' --> '2018-03-26 21:48:00.'"""
+    logger.debug("Starting to_timestamp() with: {}".format(ds))
+
     year = int(re.findall(', (20\d\d) at', ds)[0])
     month = int(month_to_num(ds[:3]))
     day = int(re.findall(' (\d+),', ds)[0])
@@ -255,33 +280,43 @@ def to_timestamp(ds):
     else:
         pass
 
+    logger.debug("Ending to_timestamp() with: {}".format(datetime.datetime(year, month, day, hour, minute)))
     return datetime.datetime(year, month, day, hour, minute)
 
 
 def to_date(ds):
-    # converts a text date string to ISO-8601 formatting: 'Mar 26, 2018' --> '2018-03-26'
+    """Convert a text date string to ISO-8601 formatting: 'Mar 26, 2018' --> '2018-03-26'."""
+    logger.debug("Starting to_date() with: {}".format(ds))
+
     year = int(re.findall(', (20\d\d)', ds)[0])
     month = int(month_to_num(ds[:3]))
     day = int(re.findall(' (\d+),', ds)[0])
+
+    logger.debug("Ending to_date() with: {}".format(datetime.datetime(year, month, day)))
     return datetime.datetime(year, month, day)
 
 
-def replace_goto(p):
-    i = 0
+def replace_goto(goto_input):
+    """Replace the goto string with ... ??"""
+    logger.debug("Starting replace_goto() with: {}".format(goto_input))
+
+    count = 0
+    goto_output = goto_input
     # print('entering goto...')
-    quotes = p.find_all('div', class_="attribution type")
-    p = str(p)
-    while i < len(quotes):
+    all_quotes = goto_output.find_all('div', class_="attribution type")
+    goto_output = str(goto_output)
+    while count < len(all_quotes):
         # grab the anchor's post id
-        if 'class="AttributionLink"' in quotes[i]:
-            qid = re.findall('href=\".+?#post-(\d+)\"', str(quotes[i].find('a', class_="AttributionLink")))[0]
+        if 'class="AttributionLink"' in all_quotes[count]:
+            quote_id = re.findall('href=\".+?#post-(\d+)\"',
+                                  str(all_quotes[count].find('a', class_="AttributionLink")))[0]
         else:
             # when a post gets deleted, it has no AttLink
-            i += 1
+            count += 1
             continue
         # save the original before we make any edits
-        old_quote = str(quotes[i])
-        new_quote = quotes[i]
+        old_quote = str(all_quotes[count])
+        new_quote = all_quotes[count]
         # print("OLD quote:", "\n", old_quote)
         # print("")
         # delete the existing hyperlink
@@ -292,27 +327,25 @@ def replace_goto(p):
         new_quote = new_quote.replace('\n', '')
 
         # add the new hyperlink + js
-        # new_quote = new_quote.replace('</div>', "\n<a id='post" +qid+ "' class='AttributionLink'></a>" +js+ "</div>")
+        # new_quote = new_quote.replace('</div>', "\n<a id='post" + quote_id
+        # new_quote += "' class='AttributionLink'></a>" +js+ "</div>")
 
-        # print("\n", "NEW quote:", "\n", new_quote)
-        # pp("*=*=*=*=*=*=*=*=*=*=*=*=*")
-        # print(str(old_quote) in p)
-        # print(str(new_quote) in p)
-        p = p.replace(str(old_quote), str(new_quote))
-        # print(str(old_quote) in p)
-        # pp(str(new_quote) in p)
-        i += 1
-    # print("#########################")
-    # print(p)
-    # pp('exiting goto...')
-    return p
+        goto_output = goto_output.replace(str(old_quote), str(new_quote))
+        count += 1
+
+    logger.debug("Ending replace_goto with: {}".format(goto_output))
+    return goto_output
 
 
-def remove_ols(p):
-    return str(p).replace('<ol>', '<ul>').replace('</ol>', '</ul>')
+def remove_ols(html_input):
+    """Replace <ol> tags with <ul> tags in a block of html."""
+    return str(html_input).replace('<ol>', '<ul>').replace('</ol>', '</ul>')
 
 
-def write_post_raw(post_id, thread_name, p):
+def write_post_raw(post_id, thread_name, post_html):
+    """Write raw Post data to the database."""
+    logger.debug("Starting write_post_raw() for {name} id={id}".format(name=thread_name, id=post_id))
+
     # validation
     query = text('SELECT distinct id, thread_name, soup FROM raw.posts_soup WHERE id = :id')
     result = dbsql.execute(query, id=post_id)
@@ -321,19 +354,22 @@ def write_post_raw(post_id, thread_name, p):
     if val is None:
         # new post
         query = text('INSERT INTO raw.posts_soup (id, thread_name, soup) VALUES (:id, :tn, :s)')
-        dbsql.execute(query, id=post_id, tn=thread_name, s=p)
-        logger.debug('Wrote new post_soup id={id} for {thread}'.format(id=post_id, thread=thread_name))
+        dbsql.execute(query, id=post_id, tn=thread_name, s=post_html)
+        logger.debug('Wrote new post_soup for {thread} id={id}'.format(id=post_id, thread=thread_name))
     elif None in val:
         # overwrite incomplete data
         query = text('UPDATE raw.posts_soup SET thread_name = :tn, soup = :s WHERE id = :id')
-        dbsql.execute(query, tn=thread_name, s=p, id=post_id)
-        logger.debug('Updated post_soup id={id} for {thread}'.format(id=post_id, thread=thread_name))
-    else:
-        return 0
+        dbsql.execute(query, tn=thread_name, s=post_html, id=post_id)
+        logger.debug('Updated post_soup for {thread} id={id}'.format(id=post_id, thread=thread_name))
+
+    logger.debug("Ending write_post_raw()")
 
 
-def write_post(p, post_id, username, message, timestamp, gifs, pics, other_media, num, thread_page, thread_name,
+def write_post(post_id, username, message, timestamp, gifs, pics, other_media, num, thread_page, thread_name,
                url, user_id, hint):
+    """Write cleaned data for a Post to the database."""
+    logger.debug("Starting write_post() for {name} id={id}".format(name=thread_name, id=post_id))
+
     # validation
     query = text('SELECT * FROM public.posts WHERE id = :id')
     result = dbsql.execute(query, id=post_id)
@@ -341,30 +377,38 @@ def write_post(p, post_id, username, message, timestamp, gifs, pics, other_media
 
     if val is None:
         # insert new post
-        query = text('''INSERT INTO public.posts (id, username, text, timestamp, gifs, pics, other_media, num,
+        query = text("""INSERT INTO public.posts (id, username, text, timestamp, gifs, pics, other_media, num,
                                             thread_page, thread_name, url, user_id, hint)
-                        VALUES (:id, :u, :txt, :ts, :gifs, :pics, :media, :num, :tp, :tn, :url, :uid, :clue)''')
+                        VALUES (:id, :u, :txt, :ts, :gifs, :pics, :media, :num, :tp, :tn, :url, :uid, :clue)""")
         dbsql.execute(query, id=post_id, u=username, txt=message, ts=timestamp, gifs=gifs, pics=pics,
                       media=other_media, num=num, tp=thread_page, tn=thread_name, url=url, uid=user_id, clue=hint)
-        logger.debug("Inserted new post {id} for {thread}".format(id=post_id, thread=thread_name))
+        logger.debug("Inserted new post for {thread} id={id}".format(id=post_id, thread=thread_name))
 
     else:
         # update existing post
-        query = text('''UPDATE public.posts SET username = :u, text = :txt, timestamp = :ts, gifs = :gifs, pics = :pics,
+        query = text("""UPDATE public.posts SET username = :u, text = :txt, timestamp = :ts, gifs = :gifs, pics = :pics,
                             other_media = :media, num = :num, thread_page = :tp, thread_name = :tn, url = :url,
-                            user_id = :uid, hint = :clue''')
+                            user_id = :uid, hint = :clue""")
         dbsql.execute(query, u=username, txt=message, ts=timestamp, gifs=gifs, pics=pics,
                       media=other_media, num=num, tp=thread_page, tn=thread_name, url=url, uid=user_id, clue=hint)
-        print("Updated post {id} for {thread}".format(id=post_id, thread=thread_name))
-        logger.debug("Updated post {id} for {thread}".format(id=post_id, thread=thread_name))
+        print("Updated post for {thread} id={id}".format(id=post_id, thread=thread_name))
+        logger.debug("Updated post for {thread} id={id}".format(id=post_id, thread=thread_name))
+
+    logger.debug("Ending write_post()")
 
 
-def write_users(ulist):
+def write_users(user_list):
+    """Add users to the database.  If a user already exists, update their data.
+
+    Required input is a list of dictionaries with attributes: id, username, location, joindate
+    """
+    logger.debug("Starting write_users() with: {}".format(user_list))
+
     # ensure the input is properly formatted as a list of dictionaries
-    if not isinstance(ulist, list):  # ulist is a dictionary with attributes: id, username, location, joindate
-        ulist = [ulist]
+    if not isinstance(user_list, list):
+        user_list = [user_list]
 
-    for u in ulist:
+    for u in user_list:
         # validation
         query = text('SELECT distinct id, username, joindate FROM public.users WHERE id = :id')
         result = dbsql.execute(query, id=u['id'])
@@ -385,113 +429,69 @@ def write_users(ulist):
                 dbsql.execute(query, u=u['username'], jd=u['joindate'], id=u['id'])
             logger.debug('Updated user {user}, id: {id}'.format(user=u['username'], id=u['id']))
 
+    logger.debug("Ending write_users()")
 
-def get_userdata(uid):
+
+def get_user_data(uid):
+    """Given a user_id, return a dictionary with their user data."""
+    logger.debug("Starting get_user_data() with: {}".format(uid))
+
     # read & soupify the html for this user's page
-    url = 'https://www.talkbeer.com/community/members/{}'.format(uid)
-    html = s.get(url).text
-    soup = make_soup(html)
+    user_page_url = db.query(URLs.user_page).first()[0] + str(uid)
+    user_soup = make_soup(s.get(user_page_url).text)
 
-    username = soup.find('h1', class_="username").text
-    user_id = int(re.findall('/community/members/\S+?\.(\d+?)/', str(soup.find('link', rel="canonical")))[0])
+    user_name = user_soup.find('h1', class_="username").text
+    user_uid = int(re.findall('/community/members/\S+?\.(\d+?)/', str(user_soup.find('link', rel="canonical")))[0])
 
     # there's no easy way to find the join date
-    joindate = None
-    jointext = soup.find('div', class_="section infoBlock").find_all('dd')
+    join_date = None
+    join_date_text = user_soup.find('div', class_="section infoBlock").find_all('dd')
 
-    for j in jointext:
+    for j in join_date_text:
         if ', 20' in j.text and ':' not in j.text:
-            joindate = str(to_date(j.text))[:10]
+            join_date = str(to_date(j.text))[:10]
             break
 
     # users have the option of sharing their location
     try:
-        location = soup.find('a', itemprop="address").text
-    except:
-        location = None
+        loc = user_soup.find('a', itemprop="address").text
+    except Exception:
+        loc = None
 
     # return user data as a dictionary
-    return {'id': user_id, 'username': username, 'joindate': joindate, 'location': location}
+    user_dict = {'id': user_uid, 'username': user_name, 'joindate': join_date, 'location': loc}
+
+    logger.debug("Ending get_user_data() with: {}".format(user_dict))
+    return user_dict
 
 
-def add_post_details(panel, postinfo):
-    # adds new items in the detail panel to the left of each post
-    #  postinfo must be a list of tuples: (label,value)
-    for pi in postinfo:
+def add_post_details(panel, post_info):
+    """Insert a new data row at the bottom of the detail panel, which is the section to the left side of each post.
+
+    Inputs:
+    * panel - an html string of the existing panel
+    * post_info - a list of tuples to add: (label, value)
+    """
+    logger.debug("Starting add_post_details() with: {panel}, {info}".format(panel=panel, info=post_info))
+
+    for pi in post_info:
         repl = '<dl class="pairsJustified"><dt>{pi0}:</dt><dd>{pi1}</dd></dl>\n</div>'.format(pi0=pi[0], pi1=pi[1])
         panel = panel.replace('</div>', repl)
+
+    logger.debug("Ending add_post_details()")
     return panel
 
 
-def elkhunter(data, name, postinfo):
-    # validation
-    if data is None:
-        stop("No data returned")
-    else:
-        print("\nWriting {num} posts to: {name} {info}.txt".format(num=len(data), name=name, info=postinfo))
-        logger.debug("Writing {num} posts to: {name} {info}.txt".format(num=len(data), name=name, info=postinfo))
-
-    guesses = []
-
-    for d in data:
-        # r.id, r.soup, p.username, p.timestamp, p.page_number
-        soup = make_soup(d[1])
-
-        # remove quoted posts
-        while soup.find('div', class_="bbCodeBlock bbCodeQuote") is not None:
-            soup.find('div', class_="bbCodeBlock bbCodeQuote").decompose()
-
-        text = soup.blockquote.get_text()
-        words = text.split()
-
-        # find the number they guessed
-        i = 1
-        for w in words:
-            try:
-                num = int(w)
-                if num > 1000 or num < 1:
-                    continue
-                guesses.append([num, d[2], d[3], d[0], d[4], '#' + str(i)])
-                i += 1
-            except:
-                continue
-    return guesses
-
-
-def run_raffle(num_winners, name):
-    logger.debug('About to run the raffle, seeking {num} winners in {name}'.format(num=num_winners, name=name))
-    noun = "winner" if num_winners == 1 else "winners"
-
-    from rng import return_random_nums
-    query = text('''SELECT distinct p.username, p.id, p.timestamp
-                FROM public.posts p
-                JOIN public.biffers b ON p.user_id = b.user_id AND p.thread_name = b.thread_name
-                WHERE b.thread_name = :n ORDER BY p.id''')
-    result = dbsql.execute(query, n=name)
-    raffle = result.fetchall()
-    winners = return_random_nums(num_winners, 0, len(raffle)-1)
-
-    num_posts = []
-    for r in raffle:
-        num_posts.append(r[0])  # new list for counting how many posts each user submitted
-    print("Raffle {noun} from the {qty} entries:".format(noun=noun, qty=len(raffle)))
-    logger.debug("Raffle {noun} from the {qty} entries:".format(noun=noun, qty=len(raffle)))
-    for w in winners:
-        print("{winner} -- {np} user posts.".format(winner=raffle[w], np=num_posts.count(raffle[w][0])))
-        logger.debug("{winner} -- {np} user posts.".format(winner=raffle[w], np=num_posts.count(raffle[w][0])))
-
-    logger.debug('Raffle complete')
-
-
-def update_file(name):
-    logger.debug('Start of update_file() for: {}'.format(name))
+def update_file(thread_name):
+    """Create an html file based on user input from a templated set of options.  Existing files are overwritten."""
+    logger.debug('Start of update_file() for: {}'.format(thread_name))
 
     # prompt user for which posts to include and the display order
     # asdf1234 = {0: '[Skip]', 1: 'All posts in order', 2: 'Hauls only (known)', 3: 'Hauls only (derived)',
     #             4: 'Possible senders to brystmar', 5: 'BYO SQL'}
     output_options = db.query(Output_Options)
     valid_options = []
-    print("\nContent options for the {} html file:".format(name))
+    print("\nContent options for the {} html file:".format(thread_name))
     for o in output_options:
         print("{id}: {val}".format(id=o.__dict__['id'], val=o.__dict__['option']))
         valid_options.append(o.__dict__['id'])
@@ -514,13 +514,13 @@ def update_file(name):
     logger.debug('User selected option {opt}: {val}'.format(opt=user_option, val=user_option_text))
 
     # get the first page of the thread
-    query = text('SELECT html FROM raw.thread_page WHERE name = :a and page = 0')
-    result = dbsql.execute(query, a=name)
+    query = text('SELECT html FROM raw.thread_page WHERE thread_name = :a and page = 0')
+    result = dbsql.execute(query, a=thread_name)
     html = return_first_value(result.fetchone())
 
     # find the max page number we've recorded
-    query = text('SELECT max(page) FROM raw.thread_page WHERE name = :a')
-    result = dbsql.execute(query, a=name)
+    query = text('SELECT max(page) FROM raw.thread_page WHERE thread_name = :a')
+    result = dbsql.execute(query, a=thread_name)
     maxpage = return_first_value(result.fetchone())
 
     # remove ads flags
@@ -551,10 +551,10 @@ def update_file(name):
 
     # 'option' determines which SQL query to use
     if user_option == 4:  # only hint-related posts by users not ruled out as brystmar's sender, ordered by username
-        if name not in ['SSF14', 'SSF15', 'SSF16', 'SSF17', 'Fest18']:
+        if thread_name not in ['SSF14', 'SSF15', 'SSF16', 'SSF17', 'Fest18']:
             stop("Possible sender data for brystmar only exists for SSF14+")
 
-        query = text('''SELECT DISTINCT r.id, r.soup, p.username, p.timestamp, p.thread_page
+        query = text("""SELECT DISTINCT r.id, r.soup, p.username, p.timestamp, p.thread_page
                         FROM raw.posts_soup r
                         JOIN public.posts p ON r.id = p.id
                         JOIN public.biffers b ON p.user_id = b.user_id AND p.thread_name = b.thread_name
@@ -563,53 +563,50 @@ def update_file(name):
                             AND b.my_sender is null
                             AND p.hint = 1
                             AND p.user_id <> 456
-                        ORDER BY p.username, r.id''')
-        data = dbsql.execute(query, n=name).fetchall()
+                        ORDER BY p.username, r.id""")
+        data = dbsql.execute(query, n=thread_name).fetchall()
 
     elif user_option == 1:  # all posts, in sequential order
-        query = text('''SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
+        query = text("""SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
                         FROM raw.posts_soup r
                         JOIN public.posts p ON r.id = p.id
                         WHERE p.thread_name = :n AND r.soup is not null
-                        ORDER BY r.id''')
-        data = dbsql.execute(query, n=name).fetchall()
+                        ORDER BY r.id""")
+        data = dbsql.execute(query, n=thread_name).fetchall()
 
     elif user_option == 2:  # known hauls only, in sequential order
-        query = text('''SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
+        query = text("""SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
                     FROM raw.posts_soup r
                     JOIN public.posts p ON r.id = p.id
                     JOIN public.biffers b ON p.id = b.haul_id AND p.thread_name = b.thread_name
                     WHERE p.thread_name = :n
                         AND r.soup is not null
-                    ORDER BY r.id''')
-        data = dbsql.execute(query, n=name).fetchall()
+                    ORDER BY r.id""")
+        data = dbsql.execute(query, n=thread_name).fetchall()
 
     elif user_option == 3:  # derived hauls only, in sequential order (2+ pics or 2+ non-quoted instagram posts)
-        query = text('''SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
+        query = text("""SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
                     FROM raw.posts_soup r
                     JOIN public.posts p ON r.id = p.id
                     WHERE p.thread_name = :n
                         AND r.soup is not null
                         AND (p.pics >= 2 OR p.text like '%\n[instagram]%\n[instagram]%')
-                    ORDER BY r.id''')
-        data = dbsql.execute(query, n=name).fetchall()
+                    ORDER BY r.id""")
+        data = dbsql.execute(query, n=thread_name).fetchall()
 
     elif user_option == 5:  # BYO SQL
         last_query = """SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
                     FROM raw.posts_soup r
                     JOIN public.posts p ON r.id = p.id
-                    WHERE p.thread_name = 'Fest18'
-                        AND r.id > 1929291
-                        AND p.user_id in(SELECT user_id FROM public.biffers
-                                            WHERE thread_name = 'Fest18' AND haul_id is null)
-                    ORDER BY p.user_id, r.id"""
-        print("Last query entered:\n{}\n".format(last_query))
-        query = text(input("Enter SQL to execute: "))
+                    WHERE p.thread_name = '{name}'
+                      AND """.format(name=thread_name).replace("                    ", "")
+        user_query = input("Complete this query:\n{}\n".format(last_query))
+        query = text(last_query + user_query.replace('"', "'"))
         logger.debug('Running user-entered query:\n{}'.format(query))
         data = dbsql.execute(query).fetchall()
 
     elif user_option == 0:
-        return 0
+        return None
 
     # data = result.fetchall()
 
@@ -639,7 +636,7 @@ def update_file(name):
         sp = make_soup(remove_ols(d[1]))
         raw = str(sp)
 
-        likes_id = 'likes-post-' + str(sp.a['name'])
+        likes_id = 'likes-post-' + str(sp.a['thread_name'])
         remove.append(str(sp.find('div', id=likes_id)))
         remove.append(str(sp.find('h3', class_="userTitle userText")))
         remove.append(str(sp.find('div', class_="avatarHolder")))
@@ -695,8 +692,8 @@ def update_file(name):
     html = html.replace('</html>', footer_html)
 
     # write the output
-    file_path = 'html-output/{subdir}/'.format(subdir=name)
-    file_name = '{name} {opt}.html'.format(name=name, opt=user_option_text)
+    file_path = 'html-output/{subdir}/'.format(subdir=thread_name)
+    file_name = '{name} {opt}.html'.format(name=thread_name, opt=user_option_text)
     print("\nWriting {qty} posts to: {file}".format(qty=len(data), file=file_name))
     logger.debug("Writing {qty} posts to: {file}".format(qty=len(data), file=file_name))
 
@@ -708,30 +705,31 @@ def update_file(name):
     print('Done.\n')
 
 
-def update_likes(name):
-    logger.debug('Starting update_likes() for: {}'.format(name))
+def update_likes(thread_name):
+    """Read & write likes for a user-specified set of posts within a specified thread."""
+    logger.debug('Starting update_likes() for: {}'.format(thread_name))
 
-    # prompt to update
-    if 'ssf' in name.lower() or 'fest' in name.lower():
+    # Only prompt for SSF and Festivus threads
+    if 'ssf' in thread_name.lower() or 'fest' in thread_name.lower():
         likes_input = input("Update likes? ")
     else:
-        logger.debug("Thread {} doesn't contain SSF or Fest, so ineligible for updating likes".format(name))
-        return 0
+        logger.debug("Thread {} doesn't contain SSF or Fest and is ineligible for updating likes".format(thread_name))
+        return None
 
     if likes_input.lower() not in ['y', 'yes', '1']:
         logger.debug("User declined to update likes")
-        return 0
+        return None
     else:
-        logger.debug("Updating likes for {}".format(name))
+        logger.debug("User wants to update likes.")
 
-    # must be logged in to view likes
+    # Ensure our session is logged in
     global login_status
     if login_status is False:
-        logger.debug("beetsbot not logged into talkbeer.com")
+        logger.debug("beetsbot must log into talkbeer.com")
 
         # log in using the provided credentials
-        global url_login, creds
-        s.post(url_login, data=creds)
+        global url_login, tb_credentials
+        s.post(url_login, data=tb_credentials)
         login_status = True
         logger.debug("beetsbot successfully logged into talkbeer.com")
 
@@ -743,18 +741,18 @@ def update_likes(name):
                                 JOIN public.posts p on l.post_id = p.id
                                 WHERE p.thread_name = :tn)
                 GROUP BY post_id""")
-    result = dbsql.execute(query, tn=name)
+    result = dbsql.execute(query, tn=thread_name)
     last_like = return_first_value(result.fetchall())
 
     if len(last_like) == 0:
         # no liked posts yet
-        recent_post_text = "No likes found for {}.".format(name)
+        recent_post_text = "No likes found for {}.".format(thread_name)
     else:
         # how many days ago was that 'like' timestamp?
         time_ago = datetime.datetime.now() - dateutil.parser.parse(last_like[1])
         days_ago = round(time_ago.days + round(time_ago.seconds/(24*60*60), 2), 2)
 
-        recent_post_text = "Most recently-liked {} post was {} days ".format(name, days_ago)
+        recent_post_text = "Most recently-liked {} post was {} days ".format(thread_name, days_ago)
         recent_post_text += "ago: id={} at {}.".format(last_like[0], last_like[1])
 
     print(recent_post_text + "\n")
@@ -775,7 +773,7 @@ def update_likes(name):
                             AND thread_name = :tn
                         ORDER BY id
                         LIMIT 1500""")
-            result = dbsql.execute(query, i=starting_post, tn=name)
+            result = dbsql.execute(query, i=starting_post, tn=thread_name)
         else:
             # user entered a number of days
             logger.debug("Detected a number of days")
@@ -785,8 +783,8 @@ def update_likes(name):
                         WHERE timestamp >= :ts
                             AND thread_name = :tn
                         ORDER BY id LIMIT 1500""")
-            result = dbsql.execute(query, ts=cutoff_date, tn=name)
-    except:
+            result = dbsql.execute(query, ts=cutoff_date, tn=thread_name)
+    except Exception:
         logger.error("Error in try/except in update_likes() function".format(starting_post), exc_info=True)
         if '-' in starting_post:
             # user entered a timestamp
@@ -797,10 +795,10 @@ def update_likes(name):
                             AND thread_name = :tn
                         ORDER BY id
                         LIMIT 1500""")
-            result = dbsql.execute(query, ts=cutoff_date, tn=name)
+            result = dbsql.execute(query, ts=cutoff_date, tn=thread_name)
         else:
             logger.debug("Unable to detect the type of user entry")
-            return 0
+            return None
 
     # load post_ids into memory
     post_ids = result.fetchall()
@@ -835,32 +833,36 @@ def update_likes(name):
         # add missing users to the 'users' table
         logger.debug("Found {} missing users to add".format(len(users)))
         for u in users:
-            write_users(get_userdata(u[0]))
+            write_users(get_user_data(u[0]))
 
     logger.debug("End of update_likes()")
 
 
 def read_likes(post_id):
+    """Get data about likes for the specified post_id."""
     logger.debug("Start of read_likes()")
+
     global s
-    url = 'https://www.talkbeer.com/community/posts/{pid}/likes'.format(pid=post_id)
-    html = s.get(url).text
-    soup = make_soup(html)
+    likes_url = 'https://www.talkbeer.com/community/posts/{pid}/likes'.format(pid=post_id)
+    html = s.get(likes_url).text
+    likes_soup = make_soup(html)
     # soup = make_soup(s.get(url).text)
-    likes = soup.find_all('li', class_="primaryContent memberListItem")
+    likes = likes_soup.find_all('li', class_="primaryContent memberListItem")
 
     for li in likes:
-        time_blob = str(li.find('div', class_="extra"))
-        timestamp = to_timestamp(re.findall('.+(\w\w\w \d+, 20\d\d at \d+:\d+ [APap][Mm])', time_blob)[0])
-        user_id = int(re.findall('href=\"members/.*\.(\d+?)/\"', str(li))[0])
+        likes_time_blob = str(li.find('div', class_="extra"))
+        likes_timestamp = to_timestamp(re.findall('.+(\w\w\w \d+, 20\d\d at \d+:\d+ [APap][Mm])', likes_time_blob)[0])
+        likes_user_id = int(re.findall('href=\"members/.*\.(\d+?)/\"', str(li))[0])
         # print(timestamp, " <--> ", user_id)
-        write_likes(post_id, user_id, timestamp)
+        write_likes(post_id, likes_user_id, likes_timestamp)
 
     logger.debug("End of read_likes()")
 
 
 def write_likes(post_id, user_id, timestamp):
+    """Write new/updated likes to the database."""
     logger.debug("Start of write_likes()")
+
     # validation
     query = text('SELECT post_id, user_id, timestamp FROM public.likes WHERE post_id = :pid and user_id = :uid')
     result = dbsql.execute(query, pid=post_id, uid=user_id)
@@ -877,11 +879,12 @@ def write_likes(post_id, user_id, timestamp):
     logger.debug("End of write_likes()")
 
 
-def determine_thread():  # returns the thread name and the highest page number that's been parsed
-    # if there's only one thread with new posts scraped, pick that one by default
+def determine_thread():
+    """Return the thread name and the highest page number that's been scraped & stored in the raw.thread_page table."""
     logger.debug('Start of determine_thread()')
 
-    query = text('''WITH tp_maxpost as
+    # If there's only one thread with new posts scraped, pick that one by default
+    query = text("""WITH tp_maxpost as
                         (SELECT name, max(last_post_id) as last_post FROM raw.thread_page GROUP BY 1 ORDER BY 1),
                     p_maxpost as
                         (SELECT thread_name as name, max(id) as last_post FROM public.posts GROUP BY 1 ORDER BY 1)
@@ -890,7 +893,7 @@ def determine_thread():  # returns the thread name and the highest page number t
                     FROM tp_maxpost tp
                     JOIN p_maxpost p ON tp.name = p.name
                     WHERE tp.last_post > p.last_post
-                    ORDER BY 1''')
+                    ORDER BY 1""")
     result = dbsql.execute(query)
     to_agg = return_list_of_values(result.fetchall())
     logger.debug('to_agg={}'.format(to_agg))
@@ -972,58 +975,44 @@ def determine_thread():  # returns the thread name and the highest page number t
     logger.debug('End of determine_thread()')
 
 
-def thumbfix(p):
-    logger.debug("Start of thumbfix()")
-    # adjusts tb-native thumbnails to use the same schema as tb-native full images
+def thumbnail_fix(post_data):
+    """Adjust tb-native thumbnails to use the same schema as tb-native full images."""
+    logger.debug("Start of thumbnail_fix()")
+    #
     top_class = "messageText SelectQuoteContainer ugc baseHtml"
-    thumbs = p.find('blockquote', class_=top_class).find_all('a', class_="LbTrigger")
+    thumbs = post_data.find('blockquote', class_=top_class).find_all('a', class_="LbTrigger")
     if thumbs is None or isinstance(thumbs, list):
-        return p
+        return post_data
 
-    pp(p)
+    pp(post_data)
     print("")
 
-    i = 0
-    p = str(p)
-    while i < len(thumbs):
+    count = 0
+    post_data = str(post_data)
+    while count < len(thumbs):
         # ex: https://www.talkbeer.com/community/attachments/994f94d8-9eba-4450-bff0-d83a3e65c3f7-jpeg.458/
-        a_href = str(thumbs[i].get('href'))
+        a_href = str(thumbs[count].get('href'))
         pic_id = re.findall('.*community\/attachments\/.*\.(\d+)\/', a_href)[0]
 
-        img_tag = thumbs[i].find('img')
+        img_tag = thumbs[count].find('img')
         thumb_src = str(img_tag.get('src'))
         new_src = 'https://www.talkbeer.com/community/attachments/{id}/'.format(id=pic_id)
         new_img = str(img_tag).replace(thumb_src, new_src)
 
-        p = p.replace(str(thumbs[i]), new_img)
-        i += 1
+        post_data = post_data.replace(str(thumbs[count]), new_img)
+        count += 1
 
-    logger.debug("End of thumbfix()")
-    return make_soup(p)
+    logger.debug("End of thumbnail_fix()")
+    return make_soup(post_data)
 
 
 def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+    """Add DEBUG-level logging to every database request using the cursor."""
     # logger.debug("Received statement: %s", statement)
     pass
 
 
-# open & initialize the http session
-s = requests.session()
-# talkbeer's forum software doesn't allow scraping, so mask the request as a different user agent
-s.headers.update({'User-Agent': 'Mozilla/65.0.1'})
-s.verify = False  # disable SSL verification
-from urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # suppress SSL warning messages
-
-# set the talkbeets account credentials in case we need to log in later
-from tbcred import url_login, user_sys, pw_sys
-creds = {'login': user_sys, 'password': pw_sys}
-login_status = False
-
-# open & initialize the db
-# conn_tbdb = sqlite3.connect('talkbeer.sqlite')
-
-# set path for loading local .env variables
+# Set the path for loading local variables from the .env file
 basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
 
@@ -1047,6 +1036,21 @@ db = Session()
 dbsql = cloud_engine.connect()
 
 logger.debug('DB session object created')
+
+# open & initialize the http session
+s = requests.session()
+
+# Although Gene gave me his blessing to scrape data from tb, the talkbeer forum software doesn't
+#   allow scraping by default.  We need to mask the request as a different user agent.
+s.headers.update({'User-Agent': 'Mozilla/66.0.2'})
+s.verify = False  # disable SSL verification
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # suppress SSL warning messages
+logger.debug('HTTP session created & configured')
+
+# set the beetsbot account credentials in case we need to log in later
+tb_credentials = {'login': os.environ.get('DB_USER'), 'password': os.environ.get('DB_PW')}
+url_login = db.query(URLs.login).first()[0]
+login_status = False
 
 # initialize global variables
 page = 0
@@ -1080,18 +1084,20 @@ for d in data:
     page = d[0]
 
     posts = soup.find_all('li')  # class_="message   ")
-    for p in posts:  # loop through each post on this page
-        # gets the post_id
+    # loop through each post on this page
+    for p in posts:
+        # get the post_id
         try:
             post_id = int(re.findall('post-(\d+)', p['id'])[0])
-        except:
+        except Exception:
+            logger.debug("Couldn't retrieve the post_id for a post on page {}".format(page_counter))
             continue
 
         # replace any <ol>s with <ul>s
         p = make_soup(remove_ols(p))
 
         # tb-native thumbnails need to be adjusted to use a similar schema to tb-hosted images
-        p = thumbfix(p)
+        p = thumbnail_fix(p)
 
         # create a slice that contains user data
         ud = p.find('div', class_="messageUserInfo")
@@ -1122,7 +1128,7 @@ for d in data:
 
         # remove user signature, if applicable
         try: p.find('div', class_="baseHtml signature messageText ugc").decompose()
-        except: pass
+        except Exception: pass
 
         # create a variable to store the post without any quotes for proper gifs/pics/media counting
         p_noquotes = p.find('div', class_="messageInfo primaryContent")
@@ -1197,7 +1203,7 @@ for d in data:
             # adding a try/except (ugh) to cover these scenarios
             try:
                 media_type = re.findall('mediaembed=\"(.+?)\"', media_blob)[0]
-            except:
+            except Exception:
                 if 'youtube.com' in media_blob:
                     media_type = 'youtube'
                     media_link = media_link.replace('embed/', 'watch?v=').strip()
@@ -1257,7 +1263,8 @@ for d in data:
         # print(",", "Post: #" + str(post_num) + ",", "gifs:", str(gifs) + ",", "Pics:", str(pic_counter) + ",")
         # print("Media:", str(media_counter) + ",", "Hint:", str(hint) + ",")
         # print("Timestamp:", timestamp, "Username:", username, "\n")
-        write_post(str(p), post_id, username, message, timestamp, gifs, pic_counter, media_counter, post_num, page, name, post_url, user_id, hint)
+        write_post(post_id, username, message, timestamp, gifs, pic_counter, media_counter, post_num, page,
+                   name, post_url, user_id, hint)
 
         # iterate through user data for everyone who posted
         fields = ud.find_all('dd')  # returns a tuple: [text-based date, location]
@@ -1274,7 +1281,7 @@ for d in data:
 
         # create a dictionary for this user
         user = {
-            'id':       user_id,
+            'id': user_id,
             'username': username,
             'joindate': joindate,
             'location': location,
@@ -1299,20 +1306,25 @@ if ongoing:
 
 # update user data
 if login_status is False:
-    s.post(url_login, data=creds)  # log in with the provided credentials
+    s.post(url_login, data=tb_credentials)  # log in with the provided credentials
     login_status = True
 
 # run_raffle(1, name)
 commit(db)
-close_dbs(db, dbsql)
+commit(dbsql)
+close_db(db)
+close_db(dbsql)
 
 time_end = datetime.datetime.now()
-# time_end = time_end.isoformat(timespec='seconds')
+
 print("")
 print("***** ***** **** ***** *****")
 print("  End:", time_end.strftime("%Y-%m-%d %H:%M:%S"), "[normal path]")
 print("  Total time: {} seconds\n\n".format(round((time_end - time_start).total_seconds(), 2)))
 print("***** ***** **** ***** *****")
 print("")
+
 logger.info("END via the normal path @ {}".format(time_end.strftime("%Y-%m-%d %H:%M:%S")))
 logger.info("Total time: {} seconds\n\n".format(round((time_end - time_start).total_seconds(), 2)))
+
+quit()
