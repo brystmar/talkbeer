@@ -87,6 +87,7 @@ class URLs(SysMixin, Base):
     post = Column(String, primary_key=True)
     user_page = Column(String, primary_key=True)
     gdrive = Column(String, primary_key=True)
+    login = Column(String, primary_key=True)
 
 
 class Output_Options(SysMixin, Base):
