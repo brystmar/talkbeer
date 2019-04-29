@@ -18,13 +18,15 @@ logging_util.basicConfig(filename=logfile, filemode='w', level=logging_util.DEBU
 logger = logging_util.getLogger(__name__)
 
 
-class Guess:
+class Guess(object):
     """Stores all pertinent info about each guess submitted as a LIF entry."""
-    user = Users()
-    post = Posts()
-    soup = Posts_Soup()
-    number_guessed = int()
-    order = int()
+    def __init__(self, user=Users(), post=Posts(), soup=Posts_Soup(), number_guessed=None, order=None):
+        # Allows initialization of the Guess class on a single line: foo = Guess(user=SomeUser, post=Post123, [...]).
+        self.user = user
+        self.post = post
+        self.soup = soup
+        self.number_guessed = number_guessed
+        self.order = order
 
 
 def make_soup(html_to_soup):

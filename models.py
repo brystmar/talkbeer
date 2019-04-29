@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Date, TIMESTAMP
+from sqlalchemy import Column, Integer, String, Date, TIMESTAMP, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
 Base = declarative_base()
@@ -10,44 +11,46 @@ class PublicMixin(object):
     def __tablename__(cls):
         return cls.__name__.lower()
 
-    __table_args__ = {'schema': 'main'}
+    __table_args__ = {'schema': 'public'}
 
 
 class Biffers(PublicMixin, Base):
-    thread_name = Column(String, primary_key=True)
+    thread_name = Column(String, ForeignKey('public.threads.name'), primary_key=True)
     username = Column(String)
-    user_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('public.users.id'), primary_key=True)
     my_sender = Column(String)
-    haul_id = Column(Integer)
+    haul_id = Column(Integer, ForeignKey('public.posts.id'))
     sender = Column(String)
-    sender_id = Column(Integer)
+    sender_id = Column(Integer, ForeignKey('public.users.id'))
     target = Column(String)
-    target_id = Column(Integer)
+    target_id = Column(Integer, ForeignKey('public.users.id'))
     partner = Column(String)
-    partner_id = Column(Integer)
+    partner_id = Column(Integer, ForeignKey('public.users.id'))
     list_order = Column(Integer)
 
 
 class Likes(PublicMixin, Base):
-    post_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, primary_key=True)
+    post_id = Column(Integer, ForeignKey('public.posts.id'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('public.users.id'), primary_key=True)
     timestamp = Column(TIMESTAMP)
 
 
 class Posts(PublicMixin, Base):
     id = Column(Integer, primary_key=True)
     username = Column(String)
-    user_id = Column(Integer)
+    user_id = Column(Integer, ForeignKey('public.users.id'))
     text = Column(String)
     timestamp = Column(TIMESTAMP)
     num = Column(Integer)
     thread_page = Column(Integer)
-    thread_name = Column(String)
+    thread_name = Column(String, ForeignKey('public.threads.name'))
     gifs = Column(Integer)
     pics = Column(Integer)
     other_media = Column(Integer)
     hint = Column(Integer)
     url = Column(String)
+
+    soup = relationship('Posts_Soup', back_populates='post_info', lazy='dynamic')
 
 
 class Region_Map(PublicMixin, Base):
@@ -107,13 +110,15 @@ class RawMixin(object):
 class Errors(RawMixin, Base):
     post_id = Column(Integer)
     url = Column(String, primary_key=True)
-    notes = Column(String)
+    notes = Column(String, primary_key=True)
 
 
 class Posts_Soup(RawMixin, Base):
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, ForeignKey('public.posts.id'), primary_key=True)
     thread_name = Column(String)
     soup = Column(String)
+
+    post_info = relationship('Posts', back_populates='soup', lazy='dynamic')
 
 
 class Thread_Page(RawMixin, Base):
