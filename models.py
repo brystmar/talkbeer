@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base, declared_attr
 Base = declarative_base()
 
 
-# Schema: public #
+# Schema: public
 class PublicMixin(object):
     @declared_attr
     def __tablename__(cls):
@@ -76,8 +76,11 @@ class Users(PublicMixin, Base):
     region = Column(String)
     joindate = Column(Date)
 
+    def __repr__(self):
+        return "<User(name='%s', fullname='%s', nickname='%s')>" % (self.name, self.fullname, self.nickname)
 
-# Schema: sys #
+
+# Schema: sys
 class SysMixin(object):
     @declared_attr
     def __tablename__(cls):
@@ -98,7 +101,7 @@ class Output_Options(SysMixin, Base):
     option = Column(String)
 
 
-# Schema: raw #
+# Schema: raw
 class RawMixin(object):
     @declared_attr
     def __tablename__(cls):

@@ -13,12 +13,12 @@ import logging as logging_util
 import os
 import re
 import requests
+# import sqlite3
 from sqlalchemy import create_engine, event  # engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
-# import sqlite3
-# from models import Biffers, Likes, Posts, Region_Map, Threads, Users
-# from models import Errors, Posts_Soup, Thread_Page
+from models import Biffers, Likes, Posts, Region_Map, Threads, Users
+from models import Errors, Posts_Soup, Thread_Page
 from models import URLs, Output_Options
 from dotenv import load_dotenv
 from urllib3.exceptions import InsecureRequestWarning
@@ -55,11 +55,9 @@ def find_substring(string, char):
 
 def commit(database_connection):
     """Commit changes to the provided database connection."""
-    logger.debug("Attempting to commit db & dbsql")
-    # db.commit()
-    logger.debug("Commit successful for db")
-    # dbsql.commit()
-    logger.debug("Commit successful for dbsql")
+    logger.debug("Attempting to commit {}".format(database_connection.__repr__()))
+    database_connection.commit()
+    logger.debug("Commit successful for {}".format(database_connection.__repr__()))
 
 
 def close_db(db1):
@@ -111,16 +109,6 @@ def pd(items):
         logger.debug("{item}: {value}".format(item=item, value=items[item]))
     pause()
     print("")
-
-
-def add_question_marks(num):
-    """Return a string of question marks of the length requested, ex: (?,?,?,?)"""
-    count = 0
-    string = "("
-    while count < num:
-        string += "?,"
-        count += 1
-    return string[:-1] + ")"
 
 
 def stop(reason):
@@ -297,12 +285,14 @@ def to_date(ds):
 
 
 def replace_goto(goto_input):
-    """Replace the goto string with ... ??"""
+    """Replace the goto links in quoted posts with local, relative anchors.
+
+    Need to figure out how the js links should be formatted before implementing this.
+    """
     logger.debug("Starting replace_goto() with: {}".format(goto_input))
 
     count = 0
     goto_output = goto_input
-    # print('entering goto...')
     all_quotes = goto_output.find_all('div', class_="attribution type")
     goto_output = str(goto_output)
     while count < len(all_quotes):
@@ -317,8 +307,7 @@ def replace_goto(goto_input):
         # save the original before we make any edits
         old_quote = str(all_quotes[count])
         new_quote = all_quotes[count]
-        # print("OLD quote:", "\n", old_quote)
-        # print("")
+
         # delete the existing hyperlink
         goto_link = str(new_quote.find('a', class_="AttributionLink"))
         goto_id = re.findall('href=\".+?#post-(\d+?)\"', goto_link)[0]
@@ -338,98 +327,58 @@ def replace_goto(goto_input):
 
 
 def remove_ols(html_input):
-    """Replace <ol> tags with <ul> tags in a block of html."""
-    return str(html_input).replace('<ol>', '<ul>').replace('</ol>', '</ul>')
+    """Replace all <ol> tags with <ul> tags."""
+    output = str(html_input)
+    while '<ol>' in output or '<ul>' in output:
+        output.replace('</ol>', '</ul>')
+    return output
 
 
-def write_post_raw(post_id, thread_name, post_html):
+def write_post_raw(post):
     """Write raw Post data to the database."""
-    logger.debug("Starting write_post_raw() for {name} id={id}".format(name=thread_name, id=post_id))
+    logger.debug("Starting write_post_raw() for {name} id={id}".format(name=post.thread_name, id=post.id))
+    global db
 
-    # validation
-    query = text('SELECT distinct id, thread_name, soup FROM raw.posts_soup WHERE id = :id')
-    result = dbsql.execute(query, id=post_id)
-    val = result.fetchone()
+    # create a Posts_Soup object
+    ps = Posts_Soup(id=post.id, thread_name=post.thread_name, soup=post.soup)
 
-    if val is None:
-        # new post
-        query = text('INSERT INTO raw.posts_soup (id, thread_name, soup) VALUES (:id, :tn, :s)')
-        dbsql.execute(query, id=post_id, tn=thread_name, s=post_html)
-        logger.debug('Wrote new post_soup for {thread} id={id}'.format(id=post_id, thread=thread_name))
-    elif None in val:
-        # overwrite incomplete data
-        query = text('UPDATE raw.posts_soup SET thread_name = :tn, soup = :s WHERE id = :id')
-        dbsql.execute(query, tn=thread_name, s=post_html, id=post_id)
-        logger.debug('Updated post_soup for {thread} id={id}'.format(id=post_id, thread=thread_name))
-
-    logger.debug("Ending write_post_raw()")
+    # add/update post data
+    db.add(ps)
+    logger.debug('Added/updated post_soup for {thread} id={id}'.format(id=post.id, thread=post.thread_name))
+    print('Added/updated post_soup for {thread} id={id}'.format(id=post.id, thread=post.thread_name))
 
 
-def write_post(post_id, username, message, timestamp, gifs, pics, other_media, num, thread_page, thread_name,
-               url, user_id, hint):
+def write_post(post):
     """Write cleaned data for a Post to the database."""
-    logger.debug("Starting write_post() for {name} id={id}".format(name=thread_name, id=post_id))
+    logger.debug("Starting write_post() for {name} id={id}".format(name=post.thread_name, id=post.id))
+    global db
 
-    # validation
-    query = text('SELECT * FROM public.posts WHERE id = :id')
-    result = dbsql.execute(query, id=post_id)
-    val = result.fetchone()
-
-    if val is None:
-        # insert new post
-        query = text("""INSERT INTO public.posts (id, username, text, timestamp, gifs, pics, other_media, num,
-                                            thread_page, thread_name, url, user_id, hint)
-                        VALUES (:id, :u, :txt, :ts, :gifs, :pics, :media, :num, :tp, :tn, :url, :uid, :clue)""")
-        dbsql.execute(query, id=post_id, u=username, txt=message, ts=timestamp, gifs=gifs, pics=pics,
-                      media=other_media, num=num, tp=thread_page, tn=thread_name, url=url, uid=user_id, clue=hint)
-        logger.debug("Inserted new post for {thread} id={id}".format(id=post_id, thread=thread_name))
-
-    else:
-        # update existing post
-        query = text("""UPDATE public.posts SET username = :u, text = :txt, timestamp = :ts, gifs = :gifs, pics = :pics,
-                            other_media = :media, num = :num, thread_page = :tp, thread_name = :tn, url = :url,
-                            user_id = :uid, hint = :clue""")
-        dbsql.execute(query, u=username, txt=message, ts=timestamp, gifs=gifs, pics=pics,
-                      media=other_media, num=num, tp=thread_page, tn=thread_name, url=url, uid=user_id, clue=hint)
-        print("Updated post for {thread} id={id}".format(id=post_id, thread=thread_name))
-        logger.debug("Updated post for {thread} id={id}".format(id=post_id, thread=thread_name))
-
-    logger.debug("Ending write_post()")
+    # insert/update this post
+    db.add(post)
+    logger.debug("Added/updated post for {thread} id={id}".format(id=post.id, thread=post.thread_name))
+    print("Added/updated post for {thread} id={id}".format(id=post.id, thread=post.thread_name))
 
 
 def write_users(user_list):
-    """Add users to the database.  If a user already exists, update their data.
-
-    Required input is a list of dictionaries with attributes: id, username, location, joindate
-    """
+    """Add users to the database.  If a user already exists, update their data."""
     logger.debug("Starting write_users() with: {}".format(user_list))
-
-    # ensure the input is properly formatted as a list of dictionaries
-    if not isinstance(user_list, list):
-        user_list = [user_list]
+    global db
 
     for u in user_list:
-        # validation
-        query = text('SELECT distinct id, username, joindate FROM public.users WHERE id = :id')
-        result = dbsql.execute(query, id=u['id'])
-        val = result.fetchone()
+        db.add(u)
+        print('Added/updated user {user}, id: {id}'.format(user=u.username, id=u.id))
+        logger.debug('Added/updated user {user}, id: {id}'.format(user=u.username, id=u.id))
 
-        if val is None:
-            query = text("""INSERT INTO public.users (id, username, location, joindate)
-                            VALUES (:id, :u, :loc, :jd)""")
-            dbsql.execute(query, id=u['id'], u=u['username'], loc=u['location'], jd=u['joindate'])
-            print('Inserted user {user}, id: {id}'.format(user=u['username'], id=u['id']))
-            logger.debug('Inserted user {user}, id: {id}'.format(user=u['username'], id=u['id']))
-        elif None in val:
-            if u['location'] is not None:
-                query = text('UPDATE public.users SET username = :u, location = :loc, joindate = :jd WHERE id = :id')
-                dbsql.execute(query, u=u['username'], loc=u['location'], jd=u['joindate'], id=u['id'])
-            else:
-                query = text('UPDATE public.users SET username = :u, joindate = :jd WHERE id = :id')
-                dbsql.execute(query, u=u['username'], jd=u['joindate'], id=u['id'])
-            logger.debug('Updated user {user}, id: {id}'.format(user=u['username'], id=u['id']))
 
-    logger.debug("Ending write_users()")
+def write_likes(like):
+    """Write new/updated likes to the database."""
+    logger.debug("Start of write_likes()")
+    global db
+
+    # insert/update this like
+    db.add(like)
+    logger.debug("Added/updated like for {post} by user {user}".format(post=like.post_id, user=like.user_id))
+    print("Added/updated like for {post} by user {user}".format(post=like.post_id, user=like.user_id))
 
 
 def get_user_data(uid):
@@ -470,7 +419,7 @@ def add_post_details(panel, post_info):
 
     Inputs:
     * panel - an html string of the existing panel
-    * post_info - a list of tuples to add: (label, value)
+    * post_info - a list of (label, value) tuples to add
     """
     logger.debug("Starting add_post_details() with: {panel}, {info}".format(panel=panel, info=post_info))
 
@@ -486,9 +435,6 @@ def update_file(thread_name):
     """Create an html file based on user input from a templated set of options.  Existing files are overwritten."""
     logger.debug('Start of update_file() for: {}'.format(thread_name))
 
-    # prompt user for which posts to include and the display order
-    # asdf1234 = {0: '[Skip]', 1: 'All posts in order', 2: 'Hauls only (known)', 3: 'Hauls only (derived)',
-    #             4: 'Possible senders to brystmar', 5: 'BYO SQL'}
     output_options = db.query(Output_Options)
     valid_options = []
     print("\nContent options for the {} html file:".format(thread_name))
@@ -498,45 +444,50 @@ def update_file(thread_name):
 
     print("")
     val = False
-    while val is False:
-        user_option = input("Option: ")
+    user_option = input("Option: ")
+    while not val:
         try:
             user_option = int(user_option)
             if user_option in valid_options:
                 val = True
+                break
         except ValueError:
             logger.error('Cannot convert str({}) to int'.format(user_option), exc_info=True)
-            continue
         except IndexError:
             logger.debug('User entry {u} is an invalid selection'.format(u=user_option))
+        user_option = input("Option: ")
 
     user_option_text = output_options[user_option].option
     logger.debug('User selected option {opt}: {val}'.format(opt=user_option, val=user_option_text))
 
     # get the first page of the thread
-    query = text('SELECT html FROM raw.thread_page WHERE thread_name = :a and page = 0')
-    result = dbsql.execute(query, a=thread_name)
+    query = text('SELECT html FROM raw.thread_page WHERE name = :n and page = 0')
+    result = dbsql.execute(query, n=thread_name)
     html = return_first_value(result.fetchone())
 
     # find the max page number we've recorded
-    query = text('SELECT max(page) FROM raw.thread_page WHERE thread_name = :a')
-    result = dbsql.execute(query, a=thread_name)
+    query = text('SELECT max(page) FROM raw.thread_page WHERE name = :n')
+    result = dbsql.execute(query, n=thread_name)
     maxpage = return_first_value(result.fetchone())
 
     # remove ads flags
     if "enable_page_level_ads: true" in html:
         html = html.replace("enable_page_level_ads: true", "enable_page_level_ads: false")
     if "adsbygoogle" in html:
-        html = html.replace("adsbygoogle", "ads123byN0Pty")
+        html = html.replace("adsbygoogle", "noadsplzthx")
 
     # erase the header & quickReply sections
     soup = make_soup(html)
     current_page = int(re.findall('Page (\d+) of \d+', soup.find('span', class_="pageNavHeader").text)[0])
     current_maxpage = int(re.findall('Page \d+ of (\d+)', soup.find('span', class_="pageNavHeader").text)[0])
-    if soup.find('a', title="Open quick navigation") is not None: soup.find('a', title="Open quick navigation").decompose()
-    if soup.find('header') is not None: soup.find('header').decompose()
-    if soup.find('div', class_="quickReply message") is not None: soup.find('div', class_="quickReply message").decompose()
-    if soup.find('div', id="loginBar") is not None: soup.find('div', id="loginBar").decompose()
+    if soup.find('a', title="Open quick navigation") is not None:
+        soup.find('a', title="Open quick navigation").decompose()
+    if soup.find('header') is not None:
+        soup.find('header').decompose()
+    if soup.find('div', class_="quickReply message") is not None:
+        soup.find('div', class_="quickReply message").decompose()
+    if soup.find('div', id="loginBar") is not None:
+        soup.find('div', id="loginBar").decompose()
 
     # find current max page, replace with the new max page
     html = str(soup)  # soup re-arranges some of the tag attributes, which wouldn't work for replace() below
@@ -551,7 +502,7 @@ def update_file(thread_name):
 
     # 'option' determines which SQL query to use
     if user_option == 4:  # only hint-related posts by users not ruled out as brystmar's sender, ordered by username
-        if thread_name not in ['SSF14', 'SSF15', 'SSF16', 'SSF17', 'Fest18']:
+        if thread_name not in ['SSF14', 'SSF15', 'SSF16', 'SSF17', 'SSF18', 'Fest18']:
             stop("Possible sender data for brystmar only exists for SSF14+")
 
         query = text("""SELECT DISTINCT r.id, r.soup, p.username, p.timestamp, p.thread_page
@@ -659,10 +610,10 @@ def update_file(thread_name):
             loc = locationlink.text
             if len(loc) > 18:  # truncate the location string if it's too long
                 spaces = list(reversed(find_substring(loc, ' ')))
-                for s in spaces:
-                    if s <= 18:
+                for space in spaces:
+                    if space <= 18:
                         break
-                loc = loc[:min(s, 18)] + '...'
+                loc = loc[:min(space, 18)] + '...'
             raw = raw.replace(str(locationlink), loc)
 
         if sp.find('div', id="pic_blob") is not None:
@@ -859,26 +810,6 @@ def read_likes(post_id):
     logger.debug("End of read_likes()")
 
 
-def write_likes(post_id, user_id, timestamp):
-    """Write new/updated likes to the database."""
-    logger.debug("Start of write_likes()")
-
-    # validation
-    query = text('SELECT post_id, user_id, timestamp FROM public.likes WHERE post_id = :pid and user_id = :uid')
-    result = dbsql.execute(query, pid=post_id, uid=user_id)
-    val = result.fetchall()
-
-    # delete existing likes data for this user & post
-    if val is not None:
-        query = text('DELETE FROM public.likes WHERE post_id = :pid and user_id = :uid')
-        dbsql.execute(query, pid=post_id, uid=user_id)
-
-    query = text('INSERT INTO public.likes (post_id, user_id, timestamp) VALUES (:pid, :uid, :ts)')
-    dbsql.execute(query, pid=post_id, uid=user_id, ts=timestamp)
-
-    logger.debug("End of write_likes()")
-
-
 def determine_thread():
     """Return the thread name and the highest page number that's been scraped & stored in the raw.thread_page table."""
     logger.debug('Start of determine_thread()')
@@ -899,7 +830,8 @@ def determine_thread():
     logger.debug('to_agg={}'.format(to_agg))
 
     # if there's only one thread name returned, use that thread name and don't prompt the user
-    global name, page, ongoing
+    global page, ongoing
+    thread_name = None
     if to_agg is None or len(to_agg) != 1:  # prompt user for the thread to parse
         # retrieve list of all thread nicknames
         result = dbsql.execute(text('SELECT distinct name FROM raw.thread_page order by 1'))
@@ -913,50 +845,50 @@ def determine_thread():
         print("")
 
         # user input
-        while name not in thread_names:
-            name = input("Enter thread to parse: ")
-            if name is None or name == '':
+        while thread_name not in thread_names:
+            thread_name = input("Enter thread to parse: ")
+            if thread_name is None or thread_name == '':
                 db.close()
                 print("")
                 logger.debug("User didn't enter a thread name.  Quitting.")
                 quit()
-            # be case insensitive for user entry
+            # input should be case insensitive
             for tn in thread_names:
-                if tn.lower() == name.lower():
-                    name = tn
+                if tn.lower() == thread_name.lower():
+                    thread_name = tn
     elif len(to_agg) == 1:
-        name = to_agg[0]
-        print("Parsing thread: {}\n".format(name))
-        logger.debug("Parsing thread: {}\n".format(name))
+        thread_name = to_agg[0]
+        print("Parsing thread: {}\n".format(thread_name))
+        logger.debug("Parsing thread: {}\n".format(thread_name))
     else:
         stop("Error finding the thread to scrape.")
 
-    logger.info("User wants to parse data from {}".format(name))
+    logger.info("User wants to parse data from {}".format(thread_name))
 
     # compare the last post from scraped thread data to the last post in the posts table
     query = text('SELECT max(last_post_id) FROM raw.thread_page WHERE name = :a')
-    result = dbsql.execute(query, a=name)
+    result = dbsql.execute(query, a=thread_name)
     lp_threads = return_first_value(result.fetchone())
 
     query = text('SELECT max(id) FROM public.posts WHERE thread_name = :a')
-    result = dbsql.execute(query, a=name)
+    result = dbsql.execute(query, a=thread_name)
     lp_posts = return_first_value(result.fetchone())
 
     # is this thread ongoing?
     query = text('SELECT distinct name FROM public.threads WHERE name = :a and ongoing = :b')
-    result = dbsql.execute(query, a=name, b='Y')
+    result = dbsql.execute(query, a=thread_name, b='Y')
     ongoing = return_first_value(result.fetchone())
 
-    if ongoing == name:
+    if ongoing == thread_name:
         ongoing = True
     else:
         ongoing = False
 
     # load the pertinent thread data into the 'data' variable
     if lp_threads is None:
-        stop("No thread data for {}".format(name))
+        stop("No thread data for {}".format(thread_name))
     elif lp_threads == lp_posts:
-        stop("No new posts found for {}".format(name))
+        stop("No new posts found for {}".format(thread_name))
     elif lp_posts is None:
         page = 1  # no post data recorded for this thread yet
     elif lp_threads > lp_posts:
@@ -970,15 +902,18 @@ def determine_thread():
         else:
             page = check_posts_on_page[0]
     else:
-        stop("More posts exist in the posts table than raw thread html.  Re-scrape the thread for {}".format(name))
+        stop("More posts exist in the posts table than raw thread html.  Re-scrape the thread for {}".format(thread_name))
 
-    logger.debug('End of determine_thread()')
+    logger.debug('End of determine_thread(), found thread: {}'.format(thread_name))
+    print('End of determine_thread(), found thread: {}'.format(thread_name))
+
+    return thread_name
 
 
 def thumbnail_fix(post_data):
     """Adjust tb-native thumbnails to use the same schema as tb-native full images."""
     logger.debug("Start of thumbnail_fix()")
-    #
+
     top_class = "messageText SelectQuoteContainer ugc baseHtml"
     thumbs = post_data.find('blockquote', class_=top_class).find_all('a', class_="LbTrigger")
     if thumbs is None or isinstance(thumbs, list):
@@ -1041,7 +976,7 @@ logger.debug('DB session object created')
 s = requests.session()
 
 # Although Gene gave me his blessing to scrape data from tb, the talkbeer forum software doesn't
-#   allow scraping by default.  We need to mask the request as a different user agent.
+#  allow scraping by default.  We need to mask the request as a different user agent.
 s.headers.update({'User-Agent': 'Mozilla/66.0.2'})
 s.verify = False  # disable SSL verification
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # suppress SSL warning messages
@@ -1054,25 +989,24 @@ login_status = False
 
 # initialize global variables
 page = 0
-name = 'dummy'  # name must be a global variable before the determine_thread function
 ongoing = False  # same with this variable
 ulist = list()
 
 # determine which thread to parse
-determine_thread()  # sets the global name & page variables
+name = determine_thread()  # sets the global name & page variables
 
 # get html for the thread pages we want to parse and the thread's base URL
-query = text('SELECT distinct page, html FROM raw.thread_page WHERE name = :n and page >= :p ORDER BY page')
-data = dbsql.execute(query, n=name, p=page)  # returns a list of tuples
+sql = text('SELECT distinct page, html FROM raw.thread_page WHERE name = :n and page >= :p ORDER BY page')
+data = dbsql.execute(sql, n=name, p=page)  # returns a list of tuples
 
 # get the thread's base url
-query = text('SELECT distinct url FROM raw.thread_page WHERE name = :n and page = 1 LIMIT 1')
-result = dbsql.execute(query, n=name)
+sql = text('SELECT distinct url FROM raw.thread_page WHERE name = :n and page = 1 LIMIT 1')
+result = dbsql.execute(sql, n=name)
 url = return_first_value(result.fetchone)
 
 # user_id list of all BIF participants
-query = text('SELECT distinct user_id FROM public.biffers WHERE thread_name = :tn ORDER BY 1')
-biffers_list = dbsql.execute(query, tn=name)
+sql = text('SELECT distinct user_id FROM public.biffers WHERE thread_name = :tn ORDER BY 1')
+biffers_list = dbsql.execute(sql, tn=name)
 
 # iterate through the thread pages to extract data about each post
 page_counter = 1
@@ -1135,7 +1069,7 @@ for d in data:
         qblocks = p_noquotes.find_all('div', class_="bbCodeBlock bbCodeQuote")
 
         # replace the goto links in quoted posts with local, relative anchors
-        p = replace_goto(p) # function returns a string
+        p = replace_goto(p)  # function returns a string
         p_noquotes = str(p_noquotes)
 
         # add anchor tags for each post
@@ -1259,10 +1193,6 @@ for d in data:
         # write the post's html to the db
         write_post_raw(post_id, name, remove_newlines(p))
 
-        # print("*=*=*=*=*=*=*=*=*=* MESSAGE *=*=*=*=*=*=*=*=*=*")
-        # print(",", "Post: #" + str(post_num) + ",", "gifs:", str(gifs) + ",", "Pics:", str(pic_counter) + ",")
-        # print("Media:", str(media_counter) + ",", "Hint:", str(hint) + ",")
-        # print("Timestamp:", timestamp, "Username:", username, "\n")
         write_post(post_id, username, message, timestamp, gifs, pic_counter, media_counter, post_num, page,
                    name, post_url, user_id, hint)
 
