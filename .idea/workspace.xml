@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f7beec6f-2a3a-42f1-9a9b-d8f6c8deba15" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/test_create_file.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/talkbeer_orig.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/talkbeer_orig.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agg_posts.py" beforeDir="false" afterPath="$PROJECT_DIR$/agg_posts.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/raffle.py" beforeDir="false" afterPath="$PROJECT_DIR$/raffle.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <ignored path="tbcred.py" />
     <ignored path="talkbeer.sqlite" />
@@ -38,29 +35,77 @@
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="GCP: trivialib.bifs" type="feb32156:DbDataSourceImpl" />
+        <item name="GCP: trivialib.bifs_test" type="feb32156:DbDataSourceImpl" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="GCP: trivialib.bifs_test" type="feb32156:DbDataSourceImpl" />
         <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="GCP: trivialib.bifs" type="feb32156:DbDataSourceImpl" />
+        <item name="GCP: trivialib.bifs_test" type="feb32156:DbDataSourceImpl" />
         <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
         <item name="bifs: database" type="162271b6:PgImplModel$Database" />
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="GCP: trivialib.bifs" type="feb32156:DbDataSourceImpl" />
+        <item name="GCP: trivialib.bifs_test" type="feb32156:DbDataSourceImpl" />
         <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
         <item name="bifs: database" type="162271b6:PgImplModel$Database" />
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="GCP: trivialib.bifs" type="feb32156:DbDataSourceImpl" />
+        <item name="GCP: trivialib.bifs_test" type="feb32156:DbDataSourceImpl" />
         <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
         <item name="bifs: database" type="162271b6:PgImplModel$Database" />
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
         <item name="public: schema" type="983ebcf7:PgImplModel$Schema" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="GCP: trivialib.bifs_test" type="feb32156:DbDataSourceImpl" />
+        <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="bifs: database" type="162271b6:PgImplModel$Database" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="public: schema" type="983ebcf7:PgImplModel$Schema" />
+        <item name="likes: table" type="69fad909:PgImplModel$LocalTable" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="GCP: trivialib.bifs_test" type="feb32156:DbDataSourceImpl" />
+        <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="bifs: database" type="162271b6:PgImplModel$Database" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="public: schema" type="983ebcf7:PgImplModel$Schema" />
+        <item name="users: table" type="69fad909:PgImplModel$LocalTable" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="GCP: trivialib.bifs_test" type="feb32156:DbDataSourceImpl" />
+        <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="bifs: database" type="162271b6:PgImplModel$Database" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="raw: schema" type="983ebcf7:PgImplModel$Schema" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="GCP: trivialib.bifs_test" type="feb32156:DbDataSourceImpl" />
+        <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="bifs: database" type="162271b6:PgImplModel$Database" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="raw: schema" type="983ebcf7:PgImplModel$Schema" />
+        <item name="posts_soup: table" type="69fad909:PgImplModel$LocalTable" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="GCP: trivialib.bifs_test" type="feb32156:DbDataSourceImpl" />
+        <item name="databases" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="bifs: database" type="162271b6:PgImplModel$Database" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="raw: schema" type="983ebcf7:PgImplModel$Schema" />
+        <item name="thread_page: table" type="69fad909:PgImplModel$LocalTable" />
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
@@ -71,65 +116,47 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/agg_posts.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="986">
-              <caret line="1296" selection-start-line="1296" selection-end-line="1296" />
+            <state relative-caret-position="262">
+              <caret line="349" lean-forward="true" selection-start-line="349" selection-end-line="349" />
               <folding>
-                <element signature="e#235#264#0" expanded="true" />
-                <element signature="e#1411#1443#0" />
-                <element signature="e#1533#1582#0" />
-                <element signature="e#1684#1814#0" />
-                <element signature="e#1857#2047#0" />
-                <element signature="e#2125#2284#0" />
-                <element signature="e#2221#2288#0" />
-                <element signature="e#2310#2481#0" />
-                <element signature="e#2510#2755#0" />
-                <element signature="e#2777#2968#0" />
-                <element signature="e#3104#3277#0" />
-                <element signature="e#3757#4543#0" />
-                <element signature="e#4695#5163#0" />
-                <element signature="e#5225#5801#0" />
-                <element signature="e#5871#6405#0" />
-                <element signature="e#6305#7139#0" />
-                <element signature="e#7167#7691#0" />
-                <element signature="e#8198#8790#0" />
-                <element signature="e#8814#9079#0" />
-                <element signature="e#9107#10682#0" />
-                <element signature="e#11441#11512#0" />
-                <element signature="e#10823#11648#0" />
-                <element signature="e#12794#14547#0" />
-                <element signature="e#14578#16220#0" />
-                <element signature="e#16344#17520#0" />
-                <element signature="e#17571#17895#0" />
-                <element signature="e#18208#28791#0" />
-                <element signature="e#28941#34648#0" />
-                <element signature="e#34578#35278#0" />
-                <element signature="e#35331#36018#0" />
-                <element signature="e#36398#40530#0" />
-                <element signature="e#40516#41523#0" />
-                <element signature="e#41616#41676#0" />
+                <element signature="e#296#325#0" expanded="true" />
+                <element signature="e#1540#1626#0" />
+                <element signature="e#1662#1772#0" />
+                <element signature="e#1813#1946#0" />
+                <element signature="e#1986#2243#0" />
+                <element signature="e#2253#2458#0" />
+                <element signature="e#2479#2618#0" />
+                <element signature="e#2640#2922#0" />
+                <element signature="e#2951#3316#0" />
+                <element signature="e#3338#3622#0" />
+                <element signature="e#3647#4542#0" />
+                <element signature="e#4585#5070#0" />
+                <element signature="e#5115#5721#0" />
+                <element signature="e#5761#6388#0" />
+                <element signature="e#6421#7601#0" />
+                <element signature="e#7633#8366#0" />
+                <element signature="e#8395#9162#0" />
+                <element signature="e#9186#9603#0" />
+                <element signature="e#9640#11319#0" />
+                <element signature="e#11354#11533#0" />
+                <element signature="e#11582#12115#0" />
+                <element signature="e#12042#12460#0" />
+                <element signature="e#12593#12977#0" />
+                <element signature="e#13007#13371#0" />
+                <element signature="e#15794#16971#0" />
+                <element signature="e#17018#17617#0" />
+                <element signature="e#17654#28162#0" />
+                <element signature="e#28200#33929#0" />
+                <element signature="e#33961#34780#0" />
+                <element signature="e#32865#37281#0" />
+                <element signature="e#39772#40887#0" />
+                <element signature="e#40980#41118#0" />
               </folding>
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/raffle.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="41" lean-forward="true" selection-start-line="14" selection-end-line="17" selection-end-column="41" />
-              <folding>
-                <element signature="e#214#228#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test_create_file.py">
-          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -144,8 +171,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="15" selection-start-line="15" selection-end-line="15" />
+            <state relative-caret-position="150">
+              <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
               <folding>
                 <element signature="e#0#75#0" expanded="true" />
               </folding>
@@ -156,8 +183,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.env">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" selection-start-line="8" selection-end-line="8" />
+            <state relative-caret-position="30">
+              <caret line="2" column="17" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -165,8 +192,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/migrate_sqlite.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
-              <caret line="43" selection-start-line="43" selection-end-line="43" />
+            <state relative-caret-position="165">
+              <caret line="16" column="36" lean-forward="true" selection-start-line="16" selection-start-column="36" selection-end-line="16" selection-end-column="36" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -185,14 +212,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>select html fro</find>
-      <find>db_val</find>
-      <find>user wants to</find>
-      <find>stop(</find>
-      <find>conn_tbdb</find>
-      <find>db =</find>
-      <find>where p.thread_name</find>
-      <find>where p.thread_name = ?</find>
       <find>asdf1234</find>
       <find>todo</find>
       <find>SELECT r.id, r.soup, p.username, p.timestamp, p.th</find>
@@ -215,6 +234,14 @@
       <find>return 0</find>
       <find>urls.</find>
       <find>url_login</find>
+      <find>add_ques</find>
+      <find>to_timesta</find>
+      <find>to_timestamp</find>
+      <find>quote_id</find>
+      <find>replace_got</find>
+      <find>write_post_raw</find>
+      <find>attr</find>
+      <find>bifs</find>
     </findStrings>
     <replaceStrings>
       <replace>#</replace>
@@ -246,12 +273,13 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/rng.py" />
         <option value="$PROJECT_DIR$/migrate_sqlite.py" />
-        <option value="$PROJECT_DIR$/.env" />
-        <option value="$PROJECT_DIR$/agg_posts.py" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell" />
-        <option value="$PROJECT_DIR$/models.py" />
         <option value="$PROJECT_DIR$/test_create_file.py" />
         <option value="$PROJECT_DIR$/raffle.py" />
+        <option value="$PROJECT_DIR$/models.py" />
+        <option value="$PROJECT_DIR$/.env" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/217e0776-cd6f-4174-80d8-f8aff6e1c51e/console.sql" />
+        <option value="$PROJECT_DIR$/agg_posts.py" />
       </list>
     </option>
   </component>
@@ -265,10 +293,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="40" />
+    <option name="x" value="1" />
     <option name="y" value="23" />
-    <option name="width" value="1958" />
-    <option name="height" value="1099" />
+    <option name="width" value="1953" />
+    <option name="height" value="1065" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -278,7 +306,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -286,15 +313,11 @@
               <item name="talkbeer_orig" type="b2602c69:ProjectViewProjectNode" />
               <item name="talkbeer" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="talkbeer_orig" type="b2602c69:ProjectViewProjectNode" />
-              <item name="talkbeer" type="462c0819:PsiDirectoryNode" />
-              <item name="logs" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -424,7 +447,14 @@
       <workItem from="1554504596374" duration="7130000" />
       <workItem from="1555105944098" duration="2884000" />
       <workItem from="1555189937353" duration="12849000" />
-      <workItem from="1556063298734" duration="82520000" />
+      <workItem from="1556063298734" duration="84238000" />
+      <workItem from="1557182732412" duration="31000" />
+      <workItem from="1557182779010" duration="122000" />
+      <workItem from="1557183394821" duration="2418000" />
+      <workItem from="1557445542832" duration="9389000" />
+      <workItem from="1557697769033" duration="148000" />
+      <workItem from="1557699725970" duration="327000" />
+      <workItem from="1557700284957" duration="6820000" />
     </task>
     <task id="LOCAL-00001" summary="PyCharm setup">
       <created>1552531676519</created>
@@ -510,11 +540,18 @@
       <option name="project" value="LOCAL" />
       <updated>1556391803073</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="added relationships to sqlalchemy models">
+      <created>1556512672821</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1556512672821</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="126886000" />
+    <option name="totallyTimeSpent" value="147859000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -526,30 +563,31 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="40" y="23" width="1958" height="1099" extended-state="0" />
+    <frame x="1" y="23" width="1953" height="1065" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18006264" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18942961" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="SQL Generator" weight="0.3299075" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49782372" weight="0.3286991" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49782372" weight="0.327852" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49727964" weight="0.32876712" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32876712" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="8" sideWeight="0.5102853" visible="true" weight="0.23634557" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.5102853" weight="0.24460432" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50497675" side_tool="true" weight="0.32876712" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49502322" weight="0.30983117" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49502322" weight="0.30935252" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Database Changes" order="12" sideWeight="0.4983678" weight="0.32876712" />
-      <window_info anchor="bottom" id="Database Console" order="13" sideWeight="0.49891186" weight="0.32876712" />
+      <window_info anchor="bottom" id="Database Changes" order="12" sideWeight="0.4983678" weight="0.327852" />
+      <window_info anchor="bottom" id="Database Console" order="13" sideWeight="0.49891186" weight="0.327852" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" visible="true" weight="0.13622129" />
+      <window_info active="true" anchor="right" id="Database" order="3" visible="true" weight="0.1789639" />
       <window_info anchor="right" id="SciView" order="4" />
     </layout>
   </component>
@@ -569,7 +607,8 @@
     <MESSAGE value="more agg_posts refactoring for sqlalchemy, before find/replace conn_tbdb" />
     <MESSAGE value="all agg_posts.py cloud select statements work" />
     <MESSAGE value="more refactoring, added docstrings, started parsing into logical pieces" />
-    <option name="LAST_COMMIT_MESSAGE" value="more refactoring, added docstrings, started parsing into logical pieces" />
+    <MESSAGE value="added relationships to sqlalchemy models" />
+    <option name="LAST_COMMIT_MESSAGE" value="added relationships to sqlalchemy models" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/talkbeer_orig$scrapetb.coverage" NAME="scrapetb Coverage Results" MODIFIED="1556067383637" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -600,7 +639,7 @@
     <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/schema/main/table/users">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true" text="username = 'lanesvfire'">
+          <filtering>
             <filter text="username = 'lanesvfire'" />
           </filtering>
         </state>
@@ -609,7 +648,7 @@
     <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/schema/main/table/biffers">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true" text="thread_name = &quot;SSF16&quot; and my_sender is null">
+          <filtering>
             <filter text="thread_name = &quot;SSF16&quot; and my_sender is null" />
             <filter text="thread_name = &quot;SSF16&quot;" />
             <filter text="thread_name = &quot;SSF16&quot; and my_sender isnull" />
@@ -620,24 +659,13 @@
     <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/schema/main/table/posts">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true" text="thread_name = &quot;SSF16&quot; and lower(text) like '%fantome%'">
+          <filtering>
             <filter text="thread_name = &quot;SSF16&quot; and lower(text) like '%fantome%'" />
           </filtering>
         </state>
       </provider>
     </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/errors">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="" />
-          </filtering>
-          <column-attributes>
-            <column name="ctid" enabled="false" />
-          </column-attributes>
-        </state>
-      </provider>
-    </entry>
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/errors" />
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -648,28 +676,16 @@
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/likes">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true">
+          <filtering>
             <filter text="" />
           </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/region_map">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="" />
-          </filtering>
-          <column-attributes>
-            <column name="ctid" enabled="false" />
-          </column-attributes>
         </state>
       </provider>
     </entry>
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/users">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true">
+          <filtering>
             <filter text="" />
           </filtering>
         </state>
@@ -678,7 +694,7 @@
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/posts_soup">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true">
+          <filtering>
             <filter text="" />
           </filtering>
         </state>
@@ -702,22 +718,11 @@
     <entry file="file://$PROJECT_DIR$/participation stats by user.sql">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/urls">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="" />
-          </filtering>
-          <column-attributes>
-            <column name="ctid" enabled="false" />
-          </column-attributes>
-        </state>
-      </provider>
-    </entry>
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/urls" />
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/sys/table/output_options">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true">
+          <filtering>
             <filter text="" />
           </filtering>
         </state>
@@ -726,7 +731,7 @@
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/posts">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true">
+          <filtering>
             <filter text="" />
           </filtering>
         </state>
@@ -752,30 +757,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/migrate_sqlite.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="43" selection-start-line="43" selection-end-line="43" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.env">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tbcred.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -786,7 +767,7 @@
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/sys/table/urls">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true">
+          <filtering>
             <filter text="" />
           </filtering>
         </state>
@@ -795,7 +776,7 @@
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/errors">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true">
+          <filtering>
             <filter text="" />
           </filtering>
           <column-attributes>
@@ -814,19 +795,8 @@
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/thread_page">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true">
+          <filtering>
             <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/biffers">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="" />
-            <filter text="thread_name = 'SSF16'" />
-            <filter text="thread_name = SSF16" />
           </filtering>
         </state>
       </provider>
@@ -834,18 +804,38 @@
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/threads">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
-          <filtering enabled="true">
+          <filtering>
             <filter text="" />
           </filtering>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models.py">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/fd42b6f2-cd1e-48f0-a92d-e37254ec8004/console_1.sql">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/biffers">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="88684f21-58cd-473a-9739-be62dc832bd8">
+          <filtering>
+            <filter text="" />
+            <filter text="thread_name = 'SSF16'" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/region_map">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="88684f21-58cd-473a-9739-be62dc832bd8">
+          <filtering />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raffle.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
+        <state relative-caret-position="345">
+          <caret line="30" selection-start-line="30" selection-end-line="30" />
           <folding>
-            <element signature="e#0#75#0" expanded="true" />
+            <element signature="e#214#228#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -853,54 +843,154 @@
     <entry file="file://$PROJECT_DIR$/test_create_file.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/agg_posts.py">
+    <entry file="file://$PROJECT_DIR$/.env">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="986">
-          <caret line="1296" selection-start-line="1296" selection-end-line="1296" />
+        <state relative-caret-position="30">
+          <caret line="2" column="17" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tbcred.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/biffers">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/raw/table/errors">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/raw/table/posts_soup">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/posts.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="23" lean-forward="true" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/likes">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/217e0776-cd6f-4174-80d8-f8aff6e1c51e/console.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="33" selection-start-column="33" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/raw/table/thread_page">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/migrate_sqlite.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="16" column="36" lean-forward="true" selection-start-line="16" selection-start-column="36" selection-end-line="16" selection-end-column="36" />
           <folding>
-            <element signature="e#235#264#0" expanded="true" />
-            <element signature="e#1411#1443#0" />
-            <element signature="e#1533#1582#0" />
-            <element signature="e#1684#1814#0" />
-            <element signature="e#1857#2047#0" />
-            <element signature="e#2125#2284#0" />
-            <element signature="e#2221#2288#0" />
-            <element signature="e#2310#2481#0" />
-            <element signature="e#2510#2755#0" />
-            <element signature="e#2777#2968#0" />
-            <element signature="e#3104#3277#0" />
-            <element signature="e#3757#4543#0" />
-            <element signature="e#4695#5163#0" />
-            <element signature="e#5225#5801#0" />
-            <element signature="e#5871#6405#0" />
-            <element signature="e#6305#7139#0" />
-            <element signature="e#7167#7691#0" />
-            <element signature="e#8198#8790#0" />
-            <element signature="e#8814#9079#0" />
-            <element signature="e#9107#10682#0" />
-            <element signature="e#11441#11512#0" />
-            <element signature="e#10823#11648#0" />
-            <element signature="e#12794#14547#0" />
-            <element signature="e#14578#16220#0" />
-            <element signature="e#16344#17520#0" />
-            <element signature="e#17571#17895#0" />
-            <element signature="e#18208#28791#0" />
-            <element signature="e#28941#34648#0" />
-            <element signature="e#34578#35278#0" />
-            <element signature="e#35331#36018#0" />
-            <element signature="e#36398#40530#0" />
-            <element signature="e#40516#41523#0" />
-            <element signature="e#41616#41676#0" />
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raffle.py">
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/users">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/threads">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="41" lean-forward="true" selection-start-line="14" selection-end-line="17" selection-end-column="41" />
+        <state relative-caret-position="150">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
           <folding>
-            <element signature="e#214#228#0" expanded="true" />
+            <element signature="e#0#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/agg_posts.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="349" lean-forward="true" selection-start-line="349" selection-end-line="349" />
+          <folding>
+            <element signature="e#296#325#0" expanded="true" />
+            <element signature="e#1540#1626#0" />
+            <element signature="e#1662#1772#0" />
+            <element signature="e#1813#1946#0" />
+            <element signature="e#1986#2243#0" />
+            <element signature="e#2253#2458#0" />
+            <element signature="e#2479#2618#0" />
+            <element signature="e#2640#2922#0" />
+            <element signature="e#2951#3316#0" />
+            <element signature="e#3338#3622#0" />
+            <element signature="e#3647#4542#0" />
+            <element signature="e#4585#5070#0" />
+            <element signature="e#5115#5721#0" />
+            <element signature="e#5761#6388#0" />
+            <element signature="e#6421#7601#0" />
+            <element signature="e#7633#8366#0" />
+            <element signature="e#8395#9162#0" />
+            <element signature="e#9186#9603#0" />
+            <element signature="e#9640#11319#0" />
+            <element signature="e#11354#11533#0" />
+            <element signature="e#11582#12115#0" />
+            <element signature="e#12042#12460#0" />
+            <element signature="e#12593#12977#0" />
+            <element signature="e#13007#13371#0" />
+            <element signature="e#15794#16971#0" />
+            <element signature="e#17018#17617#0" />
+            <element signature="e#17654#28162#0" />
+            <element signature="e#28200#33929#0" />
+            <element signature="e#33961#34780#0" />
+            <element signature="e#32865#37281#0" />
+            <element signature="e#39772#40887#0" />
+            <element signature="e#40980#41118#0" />
           </folding>
         </state>
       </provider>
