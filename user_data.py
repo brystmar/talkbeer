@@ -1,6 +1,6 @@
 """
 Collects location and join dates for all users from html pages.
-    talkbeer.threads schema: [name, page, url, html, last_post_num, last_post_id]
+    talkbeer.threads schema: [name, page_number, url, html, last_post_num, last_post_id]
     talkbeer.biffers schema: [thread_name, username, user_id, my_sender, target, partner]
     talkbeer.users   schema: [id, username, location, joindate, url]
     talkbeer.posts   schema: [id, username, message, timestamp, pics_gif, pics_other, other_media, num, thread_name, thread_page, url, user_id]
@@ -115,7 +115,7 @@ filename = name + '.html'
 conn_tbdb = sqlite3.connect('talkbeer3.sqlite')
 tbdb = conn_tbdb.cursor()
 
-tbdb.execute('SELECT distinct html FROM threads order by page')
+tbdb.execute('SELECT distinct html FROM threads order by page_number')
 pages = tbdb.fetchall()
 
 for p in pages:
