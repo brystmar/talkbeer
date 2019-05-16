@@ -1,4 +1,4 @@
-"""Parses data from posts on each page of a thread, then cleans & writes this data to the database.
+"""Parses data from posts on each page_number of a thread, then cleans & writes this data to the database.
 
 Also:
 * Identifies & adds users not currently in the database.
@@ -36,6 +36,19 @@ print(" Start:", time_start.strftime("%Y-%m-%d %H:%M:%S"))
 print("***** ***** **** ***** *****\n")
 logger.info('\n\n***** ***** **** ***** ***** |||| ***** ***** **** ***** *****\n')
 logger.info('START agg_posts.py @ {}'.format(time_start.strftime("%Y-%m-%d %H:%M:%S")))
+
+# Set the path for loading local variables from the .env file
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
+
+
+class Config(object):
+    db_user = os.environ.get('DB_USER')
+    db_pw = os.environ.get('DB_PW')
+    db_name = os.environ.get('DB_NAME')
+    db_instance = os.environ.get('DB_INSTANCE')
+    tb_credentials = {'login': os.environ.get('TB_USER'), 'password': os.environ.get('TB_PW')}
+    api_key_random_org = os.environ.get('API_KEY_RANDOM_ORG')
 
 
 def pause():
@@ -113,7 +126,7 @@ def pd(items):
 
 def stop(reason):
     """Shortcut to the final steps of the module: generate an html file, update likes, raffle, and commit/close dbs."""
-    global name, ongoing
+    global name, ongoing, http_session
 
     logger.info('Entered the stop() function because: {}'.format(reason))
     update_file(name)
@@ -125,6 +138,7 @@ def stop(reason):
     commit(dbsql)
     close_db(db)
     close_db(dbsql)
+    http_session.close()
 
     time_end_stop = datetime.datetime.now()
 
@@ -192,13 +206,13 @@ def remove_newlines(html_input):
 
 
 def find_last_post(html):
-    """Given an html page input, return page metadata in list form: [last_post, last_post_id, page]"""
+    """Given an html page_number input, return page_number metadata in list form: [last_post, last_post_id, page_number]"""
     logger.debug("Starting find_last_post()")
 
     lp_soup = BeautifulSoup(html, 'html.parser')
     # focus on the specific div
     all_posts = lp_soup('div', class_="publicControls")
-    # carve out info about the last post on the page
+    # carve out info about the last post on the page_number
     last_post_info = all_posts[len(all_posts)-1].find('a', title='Permalink')
     # user-facing number for the last post
     last_post = int(last_post_info.text.replace('#', '').strip())
@@ -210,8 +224,8 @@ def find_last_post(html):
         page_number = re.findall('href=\"(.+?)\"', page_number)[0]
         if page_number[-1] == '/':
             page_number = 1
-        elif re.search('/page-\d+', page_number):
-            page_number = int(re.findall('/page-(\d+)', page_number)[0])
+        elif re.search('/page_number-\d+', page_number):
+            page_number = int(re.findall('/page_number-(\d+)', page_number)[0])
         else:
             page_number = None
 
@@ -329,8 +343,9 @@ def replace_goto(goto_input):
 def remove_ols(html_input):
     """Replace all <ol> tags with <ul> tags."""
     output = str(html_input)
-    while '<ol>' in output or '<ul>' in output:
-        output.replace('</ol>', '</ul>')
+    while '<ol>' in output or '</ol>' in output:
+        output = output.replace('<ol>', '<ul>')
+        output = output.replace('</ol>', '</ul>')
     return output
 
 
@@ -385,7 +400,7 @@ def get_user_data(uid):
     """Given a user_id, return a dictionary with their user data."""
     logger.debug("Starting get_user_data() with: {}".format(uid))
 
-    # read & soupify the html for this user's page
+    # read & soupify the html for this user's page_number
     user_page_url = db.query(URLs.user_page).first()[0] + str(uid)
     user_soup = make_soup(s.get(user_page_url).text)
 
@@ -460,12 +475,12 @@ def update_file(thread_name):
     user_option_text = output_options[user_option].option
     logger.debug('User selected option {opt}: {val}'.format(opt=user_option, val=user_option_text))
 
-    # get the first page of the thread
+    # get the first page_number of the thread
     query = text('SELECT html FROM raw.thread_page WHERE name = :n and page = 0')
     result = dbsql.execute(query, n=thread_name)
     html = return_first_value(result.fetchone())
 
-    # find the max page number we've recorded
+    # find the max page_number number we've recorded
     query = text('SELECT max(page) FROM raw.thread_page WHERE name = :n')
     result = dbsql.execute(query, n=thread_name)
     maxpage = return_first_value(result.fetchone())
@@ -489,11 +504,11 @@ def update_file(thread_name):
     if soup.find('div', id="loginBar") is not None:
         soup.find('div', id="loginBar").decompose()
 
-    # find current max page, replace with the new max page
+    # find current max page_number, replace with the new max page_number
     html = str(soup)  # soup re-arranges some of the tag attributes, which wouldn't work for replace() below
     html = html.replace('data-last="' + str(current_maxpage) + '"', 'data-last="' + str(maxpage) + '"')
     html = html.replace('Page ' + str(current_page) + ' of ' + str(current_maxpage), 'Page ' + str(current_page) + ' of ' + str(maxpage))
-    html = html.replace('page-'  + str(current_maxpage), 'page-' + str(maxpage))
+    html = html.replace('page_number-'  + str(current_maxpage), 'page_number-' + str(maxpage))
     html = html.replace('>' + str(current_maxpage) + '<', '>' + str(maxpage) + '<')
     html = html.replace('<div id="headerMover">', '<br/>')
 
@@ -675,14 +690,10 @@ def update_likes(thread_name):
 
     # Ensure our session is logged in
     global login_status
-    if login_status is False:
+    if not login_status:
         logger.debug("beetsbot must log into talkbeer.com")
 
-        # log in using the provided credentials
-        global url_login, tb_credentials
-        s.post(url_login, data=tb_credentials)
-        login_status = True
-        logger.debug("beetsbot successfully logged into talkbeer.com")
+        login_status = login_to_talkbeer()
 
     # get post_id & timestamp for the most recently-recorded 'liked' post
     query = text("""SELECT post_id, max(timestamp)
@@ -811,7 +822,7 @@ def read_likes(post_id):
 
 
 def determine_thread():
-    """Return the thread name and the highest page number that's been scraped & stored in the raw.thread_page table."""
+    """Return the thread name and the highest page_number number that's been scraped & stored in the raw.thread_page table."""
     logger.debug('Start of determine_thread()')
 
     # If there's only one thread with new posts scraped, pick that one by default
@@ -830,7 +841,7 @@ def determine_thread():
     logger.debug('to_agg={}'.format(to_agg))
 
     # if there's only one thread name returned, use that thread name and don't prompt the user
-    global page, ongoing
+    global page_number, ongoing
     thread_name = None
     if to_agg is None or len(to_agg) != 1:  # prompt user for the thread to parse
         # retrieve list of all thread nicknames
@@ -890,17 +901,17 @@ def determine_thread():
     elif lp_threads == lp_posts:
         stop("No new posts found for {}".format(thread_name))
     elif lp_posts is None:
-        page = 1  # no post data recorded for this thread yet
+        page_number = 1  # no post data recorded for this thread yet
     elif lp_threads > lp_posts:
         # found new posts that we need to parse
-        # find the page containing the first post that's not in the db
+        # find the page_number containing the first post that's not in the db
         result = db.execute(text('SELECT distinct thread_page, num FROM public.posts WHERE id = :a', a=lp_posts))
         check_posts_on_page = result.fetchone()
-        # if this is the 20th post on the page, skip to the next page
+        # if this is the 20th post on the page_number, skip to the next page_number
         if check_posts_on_page[1] % 20 == 0:
-            page = check_posts_on_page[0] + 1
+            page_number = check_posts_on_page[0] + 1
         else:
-            page = check_posts_on_page[0]
+            page_number = check_posts_on_page[0]
     else:
         stop("More posts exist in the posts table than raw thread html.  Re-scrape the thread for {}".format(thread_name))
 
@@ -947,57 +958,84 @@ def before_cursor_execute(conn, cursor, statement, parameters, context, executem
     pass
 
 
-# Set the path for loading local variables from the .env file
-basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'))
+def connect_to_db():
+    """Connect to the CloudSQL database, returning both the ORM connection (db) and a cursor (dbsql)."""
+    cloud_server = 'postgresql+psycopg2://{user}:{pw}@/{db_name}'.format(user=Config.db_user, pw=Config.db_pw,
+                                                                         db_name=Config.db_name)
+    cloud_server += '?host=/cloudsql/{db_instance}'.format(db_instance=Config.db_instance)
+    logger.debug('Cloud DB: {}'.format(cloud_server))
 
-db_user = os.environ.get('DB_USER')
-db_pw = os.environ.get('DB_PW')
-db_name = os.environ.get('DB_NAME')
-db_instance = os.environ.get('DB_INSTANCE')
+    # create the structural SQLAlchemy objects
+    cloud_engine = create_engine(cloud_server, echo=True)
 
-cloud_server = 'postgresql+psycopg2://{user}:{pw}@/{db_name}'.format(user=db_user, pw=db_pw, db_name=db_name)
-cloud_server += '?host=/cloudsql/{db_instance}'.format(db_instance=db_instance)
-logger.debug('Cloud DB: {}'.format(cloud_server))
+    # add debug logging for each query before & after execution
+    event.listen(cloud_engine, "before_cursor_execute", before_cursor_execute)
 
-# create the structural SQLAlchemy objects
-cloud_engine = create_engine(cloud_server, echo=True)
+    Session = sessionmaker(bind=cloud_engine)
+    logger.debug('DB session object created')
 
-# add debug logging for each query before & after execution
-event.listen(cloud_engine, "before_cursor_execute", before_cursor_execute)
+    return [Session(), cloud_engine.connect()]
 
-Session = sessionmaker(bind=cloud_engine)
-db = Session()
-dbsql = cloud_engine.connect()
 
-logger.debug('DB session object created')
+def initialize_http_session():
+    """Open & initialize an http session to talkbeer.com
 
-# open & initialize the http session
-s = requests.session()
+    Although Gene gave me his blessing to scrape data from tb, the talkbeer forum software doesn't
+    # allow scraping by default.  We need to mask the request as a different user agent.
+    """
+    # requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # suppress SSL warning messages
+    new_http_session = requests.session()
 
-# Although Gene gave me his blessing to scrape data from tb, the talkbeer forum software doesn't
-#  allow scraping by default.  We need to mask the request as a different user agent.
-s.headers.update({'User-Agent': 'Mozilla/66.0.2'})
-s.verify = False  # disable SSL verification
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # suppress SSL warning messages
-logger.debug('HTTP session created & configured')
+    new_http_session.headers.update({'User-Agent': 'Mozilla/66.0.2'})
+    new_http_session.verify = False  # disable SSL verification
+    logger.debug('HTTP session created & configured')
 
-# set the beetsbot account credentials in case we need to log in later
-tb_credentials = {'login': os.environ.get('DB_USER'), 'password': os.environ.get('DB_PW')}
-url_login = db.query(URLs.login).first()[0]
-login_status = False
+    return new_http_session
+
+
+def login_to_talkbeer(session, credentials):
+    """Log into talkbeer using the provided credentials."""
+    logger.debug("Attempting to talkbeer login for user {}".format(credentials['login']))
+    global db
+
+    login_url = db.query(URLs.login).first()[0]
+    request = session.post(login_url, data=credentials)
+
+    if request.ok:
+        logger.debug("{} successfully logged into talkbeer.com".format(credentials['login']))
+        return True
+    else:
+        logger.debug("Login unsuccessful using credentials: {}".format(credentials))
+        logger.debug(request.json)
+        logger.debug("Terminating session.")
+
+        session.close()
+        close_db(db)
+        close_db(dbsql)
+        quit()
+
+
+# connect to the db; separate out each connection
+database_connections = connect_to_db()
+db = database_connections[0]
+dbsql = database_connections[1]
+
+http_session = initialize_http_session()
+login_status = False  # since we haven't logged in yet
 
 # initialize global variables
-page = 0
-ongoing = False  # same with this variable
-ulist = list()
+page_number = 0
+ongoing = False
+ulist = []
 
 # determine which thread to parse
-name = determine_thread()  # sets the global name & page variables
+name = determine_thread()  # sets the global name & page_number variables
 
 # get html for the thread pages we want to parse and the thread's base URL
-sql = text('SELECT distinct page, html FROM raw.thread_page WHERE name = :n and page >= :p ORDER BY page')
-data = dbsql.execute(sql, n=name, p=page)  # returns a list of tuples
+pages = db.query(Thread_Page).filter(Thread_Page.name == name, Thread_Page.page >= page_number)
+
+# sql = text('SELECT distinct page, html FROM raw.thread_page WHERE name = :n and page >= :p ORDER BY page')
+# data = dbsql.execute(sql, n=name, p=page_number)  # returns a list of tuples
 
 # get the thread's base url
 sql = text('SELECT distinct url FROM raw.thread_page WHERE name = :n and page = 1 LIMIT 1')
@@ -1010,21 +1048,21 @@ biffers_list = dbsql.execute(sql, tn=name)
 
 # iterate through the thread pages to extract data about each post
 page_counter = 1
-for d in data:
+for d in pages:
     # if d[0] > 1: break
-    print("Parsing page", d[0], "(" + str(page_counter), "of", str(len(data)) + ")")  # + ". Users:", len(ulist))
-    # read, soup-ify the page
+    print("Parsing page_number", d[0], "(" + str(page_counter), "of", str(len(data)) + ")")  # + ". Users:", len(ulist))
+    # read, soup-ify the page_number
     soup = make_soup(d[1])
-    page = d[0]
+    page_number = d[0]
 
     posts = soup.find_all('li')  # class_="message   ")
-    # loop through each post on this page
+    # loop through each post on this page_number
     for p in posts:
         # get the post_id
         try:
             post_id = int(re.findall('post-(\d+)', p['id'])[0])
         except Exception:
-            logger.debug("Couldn't retrieve the post_id for a post on page {}".format(page_counter))
+            logger.debug("Couldn't retrieve the post_id for a post on page_number {}".format(page_counter))
             continue
 
         # replace any <ol>s with <ul>s
@@ -1041,17 +1079,16 @@ for d in data:
 
         pnhpot_class = "item muted postNumber hashPermalink OverlayTrigger"
         post_num = int(p.find('a', class_=pnhpot_class).text.replace('#','').strip())
-        if page == 1:
+        if page_number == 1:
             if post_num == 1:
                 post_url = url
             else:
                 post_url = url + '#post-' + str(post_id)
         else:
-            post_url = url + 'page-' + str(page) + '#post-' + str(post_id)
+            post_url = url + 'page_number-' + str(page_number) + '#post-' + str(post_id)
 
         username = p.find('h3', class_="userText").a.text
         user_id = int(re.findall('/.+\.(\d+?)/\"', str(p.find('h3', class_="userText")))[0])
-        # print("Post #" + post_num)
 
         # date & time are displayed in one of two ways
         time_blob = p.find('a', class_="datePermalink")
@@ -1193,7 +1230,7 @@ for d in data:
         # write the post's html to the db
         write_post_raw(post_id, name, remove_newlines(p))
 
-        write_post(post_id, username, message, timestamp, gifs, pic_counter, media_counter, post_num, page,
+        write_post(post_id, username, message, timestamp, gifs, pic_counter, media_counter, post_num, page_number,
                    name, post_url, user_id, hint)
 
         # iterate through user data for everyone who posted
@@ -1220,7 +1257,7 @@ for d in data:
         if user not in ulist:
             ulist.append(user)
 
-    # commit after each page
+    # commit after each page_number
     commit(db)
     page_counter += 1
     # pause()
@@ -1229,21 +1266,21 @@ for d in data:
 write_users(ulist)
 commit(db)
 
-# update the single-page html file
+# update the single-page_number html file
 update_file(name)
 if ongoing:
     update_likes(name)
 
 # update user data
-if login_status is False:
-    s.post(url_login, data=tb_credentials)  # log in with the provided credentials
-    login_status = True
+if not login_status:
+    login_status = login_to_talkbeer(http_session, Config.tb_credentials)
 
 # run_raffle(1, name)
 commit(db)
 commit(dbsql)
 close_db(db)
 close_db(dbsql)
+http_session.close()
 
 time_end = datetime.datetime.now()
 

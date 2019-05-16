@@ -28,7 +28,7 @@ def make_soup(html_to_soupify):
 
 
 def next_link(base_url, num):
-    return base_url + 'page-' + str(num)
+    return base_url + 'page_number-' + str(num)
 
 
 def delete_url(url_to_delete):
@@ -156,16 +156,16 @@ def find_last_post(html):
     soup = make_soup(html)
     # focus on the specific div
     posts = soup('div', class_="publicControls")
-    # carve out info about the last post on the page
+    # carve out info about the last post on the page_number
     lpinfo = posts[len(posts)-1].find('a', title='Permalink')
     # user-facing number for the last post
     last_post_num = int(lpinfo.text.replace('#','').strip())
     # system id for the last post
     last_post_id = int(re.findall('#post-(\d+)', lpinfo.get('href'))[0])
-    return [last_post_num, last_post_id, page]
+    return [last_post_num, last_post_id, page_number]
 
 
-def first_post_data(html):  # returns the post date and user_id for the first post on a page
+def first_post_data(html):  # returns the post date and user_id for the first post on a page_number
     soup = make_soup(html)
     first_post = soup('ol', class_="messageList")[0]('li')[0]  # returns first post from <ol> parent of the post <li>s
     data = soup('div', class_="titleBar")[0]
@@ -177,15 +177,15 @@ def first_post_data(html):  # returns the post date and user_id for the first po
 
 def write_thread(name, page, url, html, last_post):
     # validation
-    write_thread_query = 'SELECT page, url, last_post_num, last_post_id FROM thread_page WHERE page = ? and url = ?'
+    write_thread_query = 'SELECT page_number, url, last_post_num, last_post_id FROM thread_page WHERE page_number = ? and url = ?'
     tbdb.execute(write_thread_query, (page, url))
     val = tbdb.fetchone()
 
     if val is not None:
         # delete if already exists
-        tbdb.execute('DELETE FROM thread_page WHERE name = ? and page = ?', (name, page))
+        tbdb.execute('DELETE FROM thread_page WHERE name = ? and page_number = ?', (name, page))
 
-    write_thread_query = 'INSERT INTO thread_page (name, page, url, html, last_post_num, last_post_id) VALUES '
+    write_thread_query = 'INSERT INTO thread_page (name, page_number, url, html, last_post_num, last_post_id) VALUES '
     write_thread_query += qmarks(6)
     tbdb.execute(write_thread_query, (name, page, url, html, last_post[0], last_post[1]))
 
@@ -240,7 +240,7 @@ def add_biffers(thread_name, biffers):  # adds new BIF participants to the biffe
         i += 1
 
 
-def find_biffers(thread_name, html):  # finds the post with the most users tagged (first page only)
+def find_biffers(thread_name, html):  # finds the post with the most users tagged (first page_number only)
     # find the post and store the users in a variable
     soup = make_soup(html)
     lis = soup.find('ol', class_="messageList").find_all('li')  # collect all <li>s underneath the primary <ol>
@@ -307,13 +307,13 @@ def write_users(ulist):
 
 
 def get_userdata(user):
-    # read & soupify the html for this user's page
+    # read & soupify the html for this user's page_number
     url = 'https://www.talkbeer.com/community/members/' + user[1].replace(' ', '-').lower().strip() + '.' + str(user[0]) + '/'
     html = s.get(url).text
     soup = make_soup(html)
     joindate = None  # there's no easy way to find the join date
 
-    # some users restrict who can view their profile page
+    # some users restrict who can view their profile page_number
     try:
         jointext = soup.find('div', class_="section infoBlock").find_all('dd')
         for j in jointext:
@@ -406,15 +406,15 @@ else:  # at least one ongoing thread
 # convert to the thread's base URL
 if url[-1] == "/":
     pass
-elif re.search('/page-\d+', url):
-    url = url.replace(re.findall('/(page-.+)', url)[0], '')
+elif re.search('/page_number-\d+', url):
+    url = url.replace(re.findall('/(page_number-.+)', url)[0], '')
 else:
-    stop("Unable to determine page# from url: " + url)
+    stop("Unable to determine page_number# from url: " + url)
 
-page = 1
+page_number = 1
 
 # see if thread data already exists in the db
-query = "SELECT distinct last_post_num, last_post_id, page, html FROM thread_page "
+query = "SELECT distinct last_post_num, last_post_id, page_number, html FROM thread_page "
 query += "WHERE last_post_num = (SELECT max(last_post_num) FROM thread_page WHERE name = ?)"
 tbdb.execute(query, (name,))
 last_post_data = tbdb.fetchone()
@@ -442,11 +442,11 @@ else:
         current_url = next_link(url, current_page)
     html = remove_panelscroller_notices(s.get(current_url).text)
 
-# read, soup-ify the page
+# read, soup-ify the page_number
 soup = BeautifulSoup(html, 'html.parser')
 
-# does this thread have more than 1 page?
-if soup.find('span', class_="pageNavHeader") is None: stop("This is a single-page thread.")
+# does this thread have more than 1 page_number?
+if soup.find('span', class_="pageNavHeader") is None: stop("This is a single-page_number thread.")
 
 # determine the current & max pages
 page_range = soup.find_all('span', class_="pageNavHeader")[0].text.strip()
@@ -459,20 +459,20 @@ while current_page <= max_page:
     delete_url(current_url)
     html = remove_panelscroller_notices(s.get(current_url).text)
 
-    # if this is a new thread, create an html entry for page 0
+    # if this is a new thread, create an html entry for page_number 0
     if new_thread and current_page == 1:
         # add to the master thread table
         new_thread = False
         html0 = html[:html.index('<ol class="messageList"')]
         html0 += '<ol class="messageList" id="messageList">\n</ol>\n<hr>\n\n</form>\n<i>fin</i>\n</body>\n</html>'
-        tbdb.execute('INSERT into thread_page (name, page, html) VALUES (?,?,?)', (name, 0, html0))  # write page 0
+        tbdb.execute('INSERT into thread_page (name, page_number, html) VALUES (?,?,?)', (name, 0, html0))  # write page_number 0
 
         if first is True:
             with open("first_post_debug.html", 'w') as file:
                 file.write(html)
             first = False
 
-        write_thread_master(name, url, html)  # write page 1
+        write_thread_master(name, url, html)  # write page_number 1
         commit(conn_tbdb)
         print("Wrote pages 0 & 1")
         find_biffers(name, html)
@@ -484,7 +484,7 @@ while current_page <= max_page:
             print("Needs biffers!")
             find_biffers(name, html)"""
 
-    print("Reading page", current_page, "of", max_page)
+    print("Reading page_number", current_page, "of", max_page)
     write_thread(name, current_page, current_url, html, find_last_post(html))
 
     if count % 25 == 0:  # don't scrape the world
