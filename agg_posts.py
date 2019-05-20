@@ -6,28 +6,27 @@ Also:
 * Allows users to select a templated option for writing an html file.
 """
 
+from global_logger import glogger
+import logging
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+from models import Biffers, Likes, Posts, Threads, Users
+from models import Posts_Soup, Thread_Page
+from models import URLs, Output_Options
+from sqlalchemy import create_engine, event  # engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import text
+from urllib3.exceptions import InsecureRequestWarning
 import datetime
 import dateutil.parser
-import logging as logging_util
 import os
 import re
 import requests
 # import sqlite3
-from sqlalchemy import create_engine, event  # engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql import text
-from models import Biffers, Likes, Posts, Region_Map, Threads, Users
-from models import Errors, Posts_Soup, Thread_Page
-from models import URLs, Output_Options
-from dotenv import load_dotenv
-from urllib3.exceptions import InsecureRequestWarning
 
 # initialize logging
-logfile = 'logs/{}.log'.format(__file__)
-logging_util.basicConfig(filename=logfile, filemode='w', level=logging_util.DEBUG, datefmt='%H:%M:%S',
-                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging_util.getLogger(__name__)
+logger = glogger
+logger.setLevel(logging.DEBUG)
 
 time_start = datetime.datetime.now()
 # time_start = time_start.isoformat(timespec='seconds')
