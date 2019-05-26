@@ -6,20 +6,20 @@ Also:
 * Allows users to select a templated option for writing an html file.
 """
 
-from global_logger import glogger
+from global_logger import glogger, local
 import logging
 from bs4 import BeautifulSoup
-from dotenv import load_dotenv
+from env_tools import apply_env
 from models import Biffer, Like, Post, Thread, User
 from models import Post_Soup, Thread_Page
 from models import URLs, Output_Options
+from os import path, environ
 from sqlalchemy import create_engine, event  # engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from urllib3.exceptions import InsecureRequestWarning
 import datetime
 import dateutil.parser
-import os
 import re
 import requests
 # import sqlite3
@@ -37,17 +37,30 @@ logger.info('START agg_posts.py @ {}'.format(time_start.strftime("%Y-%m-%d %H:%M
 
 
 class Config(object):
-    """Store all credentials in a single module."""
-    # Set the path for loading local variables from the .env file
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    load_dotenv(os.path.join(basedir, '.env'))
+    """Store all credentials in this Config class."""
+    if local:
+        from env_tools import apply_env
+        apply_env()
+        logger.info("Applied .env variables using env_tools")
 
-    db_user = os.environ.get('DB_USER')
-    db_pw = os.environ.get('DB_PW')
-    db_name = os.environ.get('DB_NAME')
-    db_instance = os.environ.get('DB_INSTANCE')
-    tb_credentials = {'login': os.environ.get('TB_USER'), 'password': os.environ.get('TB_PW')}
-    api_key_random_org = os.environ.get('API_KEY_RANDOM_ORG')
+        db_user = environ.get('DB_USER')
+        db_pw = environ.get('DB_PW')
+        db_name = environ.get('DB_NAME')
+        db_instance = environ.get('DB_INSTANCE')
+        talkbeer_credentials = {'login': environ.get('TB_USER'), 'password': environ.get('TB_PW')}
+        api_key_random_org = environ.get('API_KEY_RANDOM_ORG')
+
+    else:
+        from google.cloud import firestore
+        # logging to stdout in the cloud is automatically routed to a useful monitoring tool
+        logger.debug("JSON file exists? {}".format(path.isfile('talkbeer-prod.json')))
+
+        # supplying the private (prod) key to explicitly use credentials for the default service acct
+        fire = firestore.Client().from_service_account_json('talkbeer-prod.json')
+
+        # this call should work now
+        fire_credentials = fire.collection('environment_vars').document('prod').get()
+        logger.info("Fire_credentials GCP bucket: {}".format("config TBD..."))  # fc._data['SECRET_NAME']))
 
 
 def pause():
@@ -127,12 +140,11 @@ def stop(reason):
     """Shortcut to the final steps of the module: generate an html file, update likes, raffle, and commit/close dbs."""
     global name, ongoing, http_session
 
-    logger.info('Entered the stop() function because: {}'.format(reason))
+    logger.info('Entered the stop() function w/reason: {}'.format(reason))
     update_file(name)
     if ongoing:
         update_likes(name)
 
-    # run_raffle(1, name)
     commit(db)
     commit(dbsql)
     close_db(db)
@@ -205,7 +217,7 @@ def remove_newlines(html_input):
 
 
 def find_last_post(html):
-    """Given an html page_number input, return page_number metadata in list form: [last_post, last_post_id, page_number]"""
+    """Given an html page_number input, return page# metadata in list form: [last_post, last_post_id, page_number]"""
     logger.debug("Starting find_last_post()")
 
     lp_soup = BeautifulSoup(html, 'html.parser')
@@ -348,18 +360,15 @@ def remove_ols(html_input):
     return output
 
 
-def write_post_raw(post):
+def write_post_raw(post_soup):
     """Write raw Post data to the database."""
-    logger.debug("Starting write_post_raw() for {name} id={id}".format(name=post.thread_name, id=post.id))
+    logger.debug("Starting write_post_raw() for {name} id={id}".format(name=post_soup.thread_name, id=post_soup.id))
     global db
 
-    # create a Post_Soup object
-    ps = Post_Soup(id=post.id, thread_name=post.thread_name, soup=post.soup)
-
     # add/update post data
-    db.add(ps)
-    logger.debug('Added/updated post_soup for {thread} id={id}'.format(id=post.id, thread=post.thread_name))
-    print('Added/updated post_soup for {thread} id={id}'.format(id=post.id, thread=post.thread_name))
+    db.add(post_soup)
+    logger.debug('Added/updated post_soup for {thread} id={id}'.format(id=post_soup.id, thread=post_soup.thread_name))
+    print('Added/updated post_soup for {thread} id={id}'.format(id=post_soup.id, thread=post_soup.thread_name))
 
 
 def write_post(post):
@@ -374,14 +383,17 @@ def write_post(post):
 
 
 def write_users(user_list):
-    """Add users to the database.  If a user already exists, update their data."""
+    """Add/update users in the database."""
     logger.debug("Starting write_users() with: {}".format(user_list))
     global db
 
-    for u in user_list:
-        db.add(u)
-        print('Added/updated user {user}, id: {id}'.format(user=u.username, id=u.id))
-        logger.debug('Added/updated user {user}, id: {id}'.format(user=u.username, id=u.id))
+    if isinstance(user_list, list):
+        for u in user_list:
+            db.add(u)
+            print('Added/updated user {user}, id: {id}'.format(user=u.username, id=u.id))
+            logger.debug('Added/updated user {user}, id: {id}'.format(user=u.username, id=u.id))
+    else:
+        logger.debug("Input is type {}, not list.  Ending write_users().".format(type(user_list)))
 
 
 def write_likes(like):
@@ -529,7 +541,6 @@ def update_file(thread_name):
                             AND p.hint = 1
                             AND p.user_id <> 456
                         ORDER BY p.username, r.id""")
-        data = dbsql.execute(query, n=thread_name).fetchall()
 
     elif user_option == 1:  # all posts, in sequential order
         query = text("""SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
@@ -537,7 +548,6 @@ def update_file(thread_name):
                         JOIN public.post p ON r.id = p.id
                         WHERE p.thread_name = :n AND r.soup is not null
                         ORDER BY r.id""")
-        data = dbsql.execute(query, n=thread_name).fetchall()
 
     elif user_option == 2:  # known hauls only, in sequential order
         query = text("""SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
@@ -547,7 +557,6 @@ def update_file(thread_name):
                     WHERE p.thread_name = :n
                         AND r.soup is not null
                     ORDER BY r.id""")
-        data = dbsql.execute(query, n=thread_name).fetchall()
 
     elif user_option == 3:  # derived hauls only, in sequential order (2+ pics or 2+ non-quoted instagram posts)
         query = text("""SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
@@ -557,23 +566,11 @@ def update_file(thread_name):
                         AND r.soup is not null
                         AND (p.pics >= 2 OR p.text like '%\n[instagram]%\n[instagram]%')
                     ORDER BY r.id""")
-        data = dbsql.execute(query, n=thread_name).fetchall()
-
-    elif user_option == 5:  # BYO SQL
-        last_query = """SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
-                    FROM raw.post_soup r
-                    JOIN public.post p ON r.id = p.id
-                    WHERE p.thread_name = '{name}'
-                      AND """.format(name=thread_name).replace("                    ", "")
-        user_query = input("Complete this query:\n{}\n".format(last_query))
-        query = text(last_query + user_query.replace('"', "'"))
-        logger.debug('Running user-entered query:\n{}'.format(query))
-        data = dbsql.execute(query).fetchall()
-
     elif user_option == 0:
         return None
 
     # data = result.fetchall()
+    data = dbsql.execute(query, n=thread_name).fetchall()
 
     # validation
     if data is None:
@@ -692,7 +689,7 @@ def update_likes(thread_name):
     if not login_status:
         logger.debug("beetsbot must log into talkbeer.com")
 
-        login_status = login_to_talkbeer()
+        login_status = log_into_talkbeer()
 
     # get post_id & timestamp for the most recently-recorded 'liked' post
     query = text("""SELECT post_id, max(timestamp)
@@ -821,7 +818,7 @@ def read_likes(post_id):
 
 
 def determine_thread():
-    """Return the thread name and the highest page_number number that's been scraped & stored in the raw.thread_page table."""
+    """Return the thread name and the max page_number number scraped & stored in the raw.thread_page table."""
     logger.debug('Start of determine_thread()')
 
     # If there's only one thread with new posts scraped, pick that one by default
@@ -992,7 +989,7 @@ def initialize_http_session():
     return new_http_session
 
 
-def login_to_talkbeer(session, credentials):
+def log_into_talkbeer(session, credentials):
     """Log into talkbeer using the provided credentials."""
     logger.debug("Attempting to talkbeer login for user {}".format(credentials['login']))
     global db
@@ -1286,7 +1283,7 @@ if ongoing:
 
 # update user data
 if not login_status:
-    login_status = login_to_talkbeer(http_session, Config.tb_credentials)
+    login_status = log_into_talkbeer(http_session, Config.talkbeer_credentials)
 
 commit(db)
 commit(dbsql)

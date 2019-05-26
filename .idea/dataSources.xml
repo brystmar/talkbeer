@@ -21,7 +21,7 @@
       <synchronize>true</synchronize>
       <remarks>Test db for talkbeer BIFs</remarks>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://35.235.119.195:5432/bifs</jdbc-url>
+      <jdbc-url>jdbc:postgresql://35.235.119.195:5432/bifs_test</jdbc-url>
     </data-source>
   </component>
 </project>

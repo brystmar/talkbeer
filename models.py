@@ -31,6 +31,14 @@ class Biffer(PublicMixin, Base):
     def __repr__(self):
         return "<Biffer(thread='%s', user='%s', user_id='%s')>" % (self.thread_name, self.username, self.user_id)
 
+    """
+    def __init__(self, thread_name, username, user_id):
+        # Allows initialization of the class on a single line: foo = Biffer(user_id=123, thread_name=SSF16, [...]).
+        self.thread_name = thread_name
+        self.username = username
+        self.user_id = user_id
+    """
+
 
 class Like(PublicMixin, Base):
     post_id = Column(Integer, ForeignKey('public.posts.id'), primary_key=True)
@@ -39,6 +47,13 @@ class Like(PublicMixin, Base):
 
     def __repr__(self):
         return "<Like(post_id='%s', user_id='%s')>" % (self.post_id, self.user_id)
+
+    """
+    def __init__(self, post_id, user_id, timestamp):
+        self.post_id = post_id
+        self.user_id = user_id
+        self.timestamp = timestamp
+    """
 
 
 class Post(PublicMixin, Base):
@@ -60,6 +75,17 @@ class Post(PublicMixin, Base):
 
     def __repr__(self):
         return "<Post(id='%s', user='%s')>" % (self.id, self.username)
+
+    """
+    def __init__(self, id, username, user_id, num, thread_page, thread_name, url):
+        self.id = id
+        self.username = username
+        self.user_id = user_id
+        self.num = num
+        self.thread_page = thread_page
+        self.thread_name = thread_name
+        self.url = url
+    """
 
 
 class Region_Map(PublicMixin, Base):
