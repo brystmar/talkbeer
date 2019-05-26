@@ -18,12 +18,11 @@ logger = glogger
 logger.setLevel(logging.DEBUG)
 
 time_start = datetime.datetime.now()
-time_start = time_start.isoformat(timespec='seconds')
-time_start = str(time_start).replace("T", " ")
-print("***** ***** **** ***** *****")
-print(" Start:", time_start)
-print("***** ***** **** ***** *****")
-print("")
+print("\n***** ***** **** ***** *****")
+print(" Start:", time_start.strftime("%Y-%m-%d %H:%M:%S"))
+print("***** ***** **** ***** *****\n")
+logger.info('\n\n***** ***** **** ***** ***** |||| ***** ***** **** ***** *****\n')
+logger.info('START agg_posts.py @ {}'.format(time_start.strftime("%Y-%m-%d %H:%M:%S")))
 filename = __file__
 
 

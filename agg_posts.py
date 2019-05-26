@@ -29,19 +29,19 @@ logger = glogger
 logger.setLevel(logging.DEBUG)
 
 time_start = datetime.datetime.now()
-# time_start = time_start.isoformat(timespec='seconds')
 print("\n***** ***** **** ***** *****")
 print(" Start:", time_start.strftime("%Y-%m-%d %H:%M:%S"))
 print("***** ***** **** ***** *****\n")
 logger.info('\n\n***** ***** **** ***** ***** |||| ***** ***** **** ***** *****\n')
 logger.info('START agg_posts.py @ {}'.format(time_start.strftime("%Y-%m-%d %H:%M:%S")))
 
-# Set the path for loading local variables from the .env file
-basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'))
-
 
 class Config(object):
+    """Store all credentials in a single module."""
+    # Set the path for loading local variables from the .env file
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    load_dotenv(os.path.join(basedir, '.env'))
+
     db_user = os.environ.get('DB_USER')
     db_pw = os.environ.get('DB_PW')
     db_name = os.environ.get('DB_NAME')
@@ -1030,7 +1030,7 @@ ulist = []
 # determine which thread to parse
 name = determine_thread()  # sets the global name & page_number variables
 
-# get html for the thread pages we want to parse and the thread's base URL
+# get html for the thread pages we wish to parse
 pages = db.query(Thread_Page).filter(Thread_Page.name == name, Thread_Page.page >= page_number)
 
 # sql = text('SELECT distinct page, html FROM raw.thread_page WHERE name = :n and page >= :p ORDER BY page')
@@ -1041,80 +1041,87 @@ sql = text('SELECT distinct url FROM raw.thread_page WHERE name = :n and page = 
 result = dbsql.execute(sql, n=name)
 url = return_first_value(result.fetchone)
 
-# user_id list of all BIF participants
-sql = text('SELECT distinct user_id FROM public.biffers WHERE thread_name = :tn ORDER BY 1')
-biffers_list = dbsql.execute(sql, tn=name)
+# get a list of all BIF participants
+# sql = text('SELECT distinct user_id FROM public.biffers WHERE thread_name = :tn ORDER BY 1')
+# biffers_list = dbsql.execute(sql, tn=name)
+biffers_list = db.query(Biffers).filter(Biffers.thread_name == name)
 
 # iterate through the thread pages to extract data about each post
 page_counter = 1
-for d in pages:
-    # if d[0] > 1: break
-    print("Parsing page_number", d[0], "(" + str(page_counter), "of", str(len(data)) + ")")  # + ". Users:", len(ulist))
-    # read, soup-ify the page_number
-    soup = make_soup(d[1])
-    page_number = d[0]
+for page in pages:
+    # if page[0] > 1: break
+    logger.info("Parsing page {n} ({c} of {t})".format(n=page.page, c=page_counter, t=len(pages)))
+    print("Parsing page {n} ({c} of {t})".format(n=page.page, c=page_counter, t=len(pages)))
 
-    posts = soup.find_all('li')  # class_="message   ")
-    # loop through each post on this page_number
-    for p in posts:
+    # parse each individual post
+    posts_raw = make_soup(page.html).find_all('li')  # class_="message   ")
+
+    for post_raw in posts_raw:
+        post = Posts(thread_name=name)
+        post_soup = Posts_Soup(thread_name=name)
+        user = Users()
+
         # get the post_id
         try:
-            post_id = int(re.findall('post-(\d+)', p['id'])[0])
+            post.id = int(re.findall('post-(\d+)', post_raw['id'])[0])
+            post_soup = post.id
         except Exception:
-            logger.debug("Couldn't retrieve the post_id for a post on page_number {}".format(page_counter))
+            logger.debug("Couldn't retrieve the post_id for a post on page {}".format(page_counter))
             continue
 
         # replace any <ol>s with <ul>s
-        p = make_soup(remove_ols(p))
+        post_raw = make_soup(remove_ols(post_raw))
 
         # tb-native thumbnails need to be adjusted to use a similar schema to tb-hosted images
-        p = thumbnail_fix(p)
+        post_raw = thumbnail_fix(post_raw)
 
         # create a slice that contains user data
-        ud = p.find('div', class_="messageUserInfo")
+        ud = post_raw.find('div', class_="messageUserInfo")
         # extract the post_id
-        temp = str(p)[:str(p).find('>') + 1]
+        temp = str(post_raw)[:str(post_raw).find('>') + 1]
         hint = 0
 
-        pnhpot_class = "item muted postNumber hashPermalink OverlayTrigger"
-        post_num = int(p.find('a', class_=pnhpot_class).text.replace('#','').strip())
-        if page_number == 1:
+        hash_link_blurb = "item muted postNumber hashPermalink OverlayTrigger"
+        post_num = int(post_raw.find('a', class_=hash_link_blurb).text.replace('#', '').strip())
+        if page.page == 1:
             if post_num == 1:
-                post_url = url
+                post.url = url
             else:
-                post_url = url + '#post-' + str(post_id)
+                post.url = '{url}#post-{id}'.format(url=url, id=post.id)
         else:
-            post_url = url + 'page_number-' + str(page_number) + '#post-' + str(post_id)
+            post.url = '{url}page_number-{page}#post-{id}'.format(url=url, page=page.page, id=post.id)
 
-        username = p.find('h3', class_="userText").a.text
-        user_id = int(re.findall('/.+\.(\d+?)/\"', str(p.find('h3', class_="userText")))[0])
+        username = post_raw.find('h3', class_="userText").a.text
+        user_id = int(re.findall('/.+\.(\d+?)/\"', str(post_raw.find('h3', class_="userText")))[0])
 
         # date & time are displayed in one of two ways
-        time_blob = p.find('a', class_="datePermalink")
+        time_blob = post_raw.find('a', class_="datePermalink")
         if '<abbr' in str(time_blob):
             timestamp = to_timestamp(time_blob.text.strip())
         else:
             timestamp = to_timestamp(re.findall('title=\"(.+)\"', str(time_blob.find('span', class_="DateTime")))[0])
 
         # remove user signature, if applicable
-        try: p.find('div', class_="baseHtml signature messageText ugc").decompose()
-        except Exception: pass
+        try:
+            post_raw.find('div', class_="baseHtml signature messageText ugc").decompose()
+        except Exception:
+            pass
 
         # create a variable to store the post without any quotes for proper gifs/pics/media counting
-        p_noquotes = p.find('div', class_="messageInfo primaryContent")
+        p_noquotes = post_raw.find('div', class_="messageInfo primaryContent")
         qblocks = p_noquotes.find_all('div', class_="bbCodeBlock bbCodeQuote")
 
         # replace the goto links in quoted posts with local, relative anchors
-        p = replace_goto(p)  # function returns a string
+        post_raw = replace_goto(post_raw)  # function returns a string
         p_noquotes = str(p_noquotes)
 
         # add anchor tags for each post
-        p = '<div id="' + str(post_id) + '"><a name="' + str(post_id) + '"></a>\n' + str(p) + '\n</div>'
+        post_raw = '<div id="' + str(post.id) + '"><a name="' + str(post.id) + '"></a>\n' + str(post_raw) + '\n</div>'
 
         # if there are images, append a text link to the image before the image itself
-        p = make_soup(p)  # can't be consolidated into the next line since BS re-arranges the attributes in each tag
-        pics = p.find('blockquote', class_="messageText SelectQuoteContainer ugc baseHtml").find_all('img')
-        p = str(p)
+        post_raw = make_soup(post_raw)  # can't be merged into the next line since BS re-arranges attributes in each tag
+        pics = post_raw.find('blockquote', class_="messageText SelectQuoteContainer ugc baseHtml").find_all('img')
+        post_raw = str(post_raw)
 
         # remove quotes from the message body in the noquotes variable
         i = 0
@@ -1128,6 +1135,7 @@ for d in pages:
         while i < len(pics):  # iterate through the pics
             # need a string for regex and find/replace
             pic_blob = str(pics[i])
+            pic_link = None
             # ignore smilies & other pics without a full source URL
             if 'data-url' not in pic_blob and 'src="https://www.talkbeer.com/community/attachments/' not in pic_blob:
                 # tb-native pics are stored differently
@@ -1140,7 +1148,9 @@ for d in pages:
                 pic_link = pics[i].get('data-url')
             elif 'src="https://www.talkbeer.com/community/attachments/' in pic_blob:
                 pic_link = pics[i].get('src')
-            p = p.replace(pic_blob, pic_link + '\n' + '<div id="pic_blob">' + pic_blob + '</div>')  # p is str
+            # post_raw is str
+            replacement = '{l}\n<div id="pic_blob">{b}</div>'.format(l=pic_link, b=pic_blob)
+            post_raw = post_raw.replace(pic_blob, replacement)
 
             i += 1
 
@@ -1151,9 +1161,9 @@ for d in pages:
         pic_counter = pic_counter - gifs
 
         # if there are youtube video embeds, add a text link to the video before the video itself
-        p = make_soup(p)  # can't be consolidated into the next line since BS re-arranges the attributes in each tag
-        media = p.find('div', class_="messageContent").find_all('iframe')
-        p = str(p)
+        post_raw = make_soup(post_raw)  # can't be merged into the next line (BS re-arranges the attributes in each tag)
+        media = post_raw.find('div', class_="messageContent").find_all('iframe')
+        post_raw = str(post_raw)
 
         m = 0
         media_counter = 0
@@ -1170,7 +1180,6 @@ for d in pages:
             # youtube videos are an iframe within a distinct <span>
             #  instagram posts are entirely enclosed in an iframe, no <span>
             #  gfycat embeds are a mix
-            # adding a try/except (ugh) to cover these scenarios
             try:
                 media_type = re.findall('mediaembed=\"(.+?)\"', media_blob)[0]
             except Exception:
@@ -1192,15 +1201,18 @@ for d in pages:
                     media_type = media_type + ' iframe pic'
                     pic_counter += 1
             else:
-                if media_link in p_noquotes: media_counter += 1
+                if media_link in p_noquotes:
+                    media_counter += 1
 
-            p = p.replace(media_blob, '[' + media_type + '] ' + media_link + '\n' + '<div id="media_blob">' + media_blob + '</div>')  # p is still a string here
+            # post_raw is still a string here
+            replacement = '[{t}] {l}\n<div id="media_blob">{b}</div>'.format(t=media_type, l=media_link, b=media_blob)
+            post_raw = post_raw.replace(media_blob, replacement)
             m += 1
 
         # if there are quotes, add ASCII formatting for quoted text
-        p = make_soup(p)  # can't be consolidated into the next line since BS re-arranges the attributes in each tag
-        quotes = p.find_all('aside')
-        p = str(p)
+        post_raw = make_soup(post_raw)  # can't be merged into the next line (BS re-arranges the attributes in each tag)
+        quotes = post_raw.find_all('aside')
+        post_raw = str(post_raw)
 
         q = 0
         while q < len(quotes):
@@ -1212,13 +1224,14 @@ for d in pages:
             newquote = newquote.replace('&#62; <div class="attribution type">', '<div class="attribution type">')
 
             # add an extra newline after the last quote
-            if q == len(quotes) - 1: newquote = newquote + '\n &nbsp; '
+            if q == len(quotes) - 1:
+                newquote = newquote + '\n &nbsp; '
 
-            p = p.replace(quote_blob, newquote)  # p is still a string here
+            post_raw = post_raw.replace(quote_blob, newquote)  # post_raw is still a string here
             q += 1
 
         # extract the post's text into two variables: one with quoted posts, one without
-        message = remove_newlines(str(make_soup(p).find('blockquote', class_="messageText SelectQuoteContainer ugc baseHtml").text).strip()).replace('Click to expand...', '')
+        message = remove_newlines(str(make_soup(post_raw).find('blockquote',class_="messageText SelectQuoteContainer ugc baseHtml").text).strip()).replace('Click to expand...', '')
         message_nq = remove_newlines(str(make_soup(p_noquotes).find('blockquote', class_="messageText SelectQuoteContainer ugc baseHtml").text).strip()).replace('Click to expand...', '').lower()
 
         if 'hint' in message_nq or 'target' in message_nq:
@@ -1227,10 +1240,9 @@ for d in pages:
                     hint = 1
 
         # write the post's html to the db
-        write_post_raw(post_id, name, remove_newlines(p))
+        write_post_raw(post.id, name, remove_newlines(post_raw))
 
-        write_post(post_id, username, message, timestamp, gifs, pic_counter, media_counter, post_num, page_number,
-                   name, post_url, user_id, hint)
+        write_post(post)
 
         # iterate through user data for everyone who posted
         fields = ud.find_all('dd')  # returns a tuple: [text-based date, location]
@@ -1256,7 +1268,7 @@ for d in pages:
         if user not in ulist:
             ulist.append(user)
 
-    # commit after each page_number
+    # commit after each page
     commit(db)
     page_counter += 1
     # pause()
@@ -1265,7 +1277,7 @@ for d in pages:
 write_users(ulist)
 commit(db)
 
-# update the single-page_number html file
+# update the html file
 update_file(name)
 if ongoing:
     update_likes(name)
@@ -1274,7 +1286,6 @@ if ongoing:
 if not login_status:
     login_status = login_to_talkbeer(http_session, Config.tb_credentials)
 
-# run_raffle(1, name)
 commit(db)
 commit(dbsql)
 close_db(db)
