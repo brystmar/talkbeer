@@ -2,8 +2,9 @@
 
 Part of this were hastily written and partially discarded.  Consider it a work in progress.
 """
+from global_logger import glogger
+import logging
 import certifi
-import logging as logging_util
 import json
 import os
 import urllib3
@@ -12,10 +13,8 @@ from dotenv import load_dotenv
 from models import User, Post, Post_Soup
 
 # initialize logging
-logfile = 'logs/{}.log'.format(__file__)
-logging_util.basicConfig(filename=logfile, filemode='w', level=logging_util.DEBUG, datefmt='%H:%M:%S',
-                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging_util.getLogger(__name__)
+logger = glogger
+logger.setLevel(logging.DEBUG)
 
 
 class Guess(object):
