@@ -9,7 +9,7 @@ import os
 import urllib3
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from models import Users, Posts, Posts_Soup
+from models import User, Post, Post_Soup
 
 # initialize logging
 logfile = 'logs/{}.log'.format(__file__)
@@ -20,7 +20,7 @@ logger = logging_util.getLogger(__name__)
 
 class Guess(object):
     """Stores all pertinent info about each guess submitted as a LIF entry."""
-    def __init__(self, user=Users(), post=Posts(), soup=Posts_Soup(), number_guessed=None, order=None):
+    def __init__(self, user=User(), post=Post(), soup=Post_Soup(), number_guessed=None, order=None):
         # Allows initialization of the Guess class on a single line: foo = Guess(user=SomeUser, post=Post123, [...]).
         self.user = user
         self.post = post

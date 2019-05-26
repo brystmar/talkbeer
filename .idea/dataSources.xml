@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="talkbeer.sqlite" uuid="f52eb3cc-2d32-4331-9274-9f7e6e92102a">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/talkbeer.sqlite</jdbc-url>
+      <driver-properties>
+        <property name="enable_load_extension" value="true" />
+      </driver-properties>
+    </data-source>
+    <data-source source="LOCAL" name="GCP: trivialib.bifs" uuid="fd42b6f2-cd1e-48f0-a92d-e37254ec8004">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://35.235.119.195:5432/bifs</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="GCP: trivialib.bifs_test" uuid="217e0776-cd6f-4174-80d8-f8aff6e1c51e">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <remarks>Test db for talkbeer BIFs</remarks>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://35.235.119.195:5432/bifs</jdbc-url>
+    </data-source>
+  </component>
+</project>

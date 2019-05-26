@@ -10,8 +10,8 @@ from global_logger import glogger
 import logging
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from models import Biffers, Likes, Posts, Threads, Users
-from models import Posts_Soup, Thread_Page
+from models import Biffer, Like, Post, Thread, User
+from models import Post_Soup, Thread_Page
 from models import URLs, Output_Options
 from sqlalchemy import create_engine, event  # engine
 from sqlalchemy.orm import sessionmaker
@@ -353,8 +353,8 @@ def write_post_raw(post):
     logger.debug("Starting write_post_raw() for {name} id={id}".format(name=post.thread_name, id=post.id))
     global db
 
-    # create a Posts_Soup object
-    ps = Posts_Soup(id=post.id, thread_name=post.thread_name, soup=post.soup)
+    # create a Post_Soup object
+    ps = Post_Soup(id=post.id, thread_name=post.thread_name, soup=post.soup)
 
     # add/update post data
     db.add(ps)
@@ -475,12 +475,12 @@ def update_file(thread_name):
     logger.debug('User selected option {opt}: {val}'.format(opt=user_option, val=user_option_text))
 
     # get the first page_number of the thread
-    query = text('SELECT html FROM raw.thread_page WHERE name = :n and page = 0')
+    query = text('SELECT html FROM raw.thread_page WHERE name = :n and number = 0')
     result = dbsql.execute(query, n=thread_name)
     html = return_first_value(result.fetchone())
 
     # find the max page_number number we've recorded
-    query = text('SELECT max(page) FROM raw.thread_page WHERE name = :n')
+    query = text('SELECT max(number) FROM raw.thread_page WHERE name = :n')
     result = dbsql.execute(query, n=thread_name)
     maxpage = return_first_value(result.fetchone())
 
@@ -520,9 +520,9 @@ def update_file(thread_name):
             stop("Possible sender data for brystmar only exists for SSF14+")
 
         query = text("""SELECT DISTINCT r.id, r.soup, p.username, p.timestamp, p.thread_page
-                        FROM raw.posts_soup r
-                        JOIN public.posts p ON r.id = p.id
-                        JOIN public.biffers b ON p.user_id = b.user_id AND p.thread_name = b.thread_name
+                        FROM raw.post_soup r
+                        JOIN public.post p ON r.id = p.id
+                        JOIN public.biffer b ON p.user_id = b.user_id AND p.thread_name = b.thread_name
                         WHERE p.thread_name = :n
                             AND r.soup is not null
                             AND b.my_sender is null
@@ -533,17 +533,17 @@ def update_file(thread_name):
 
     elif user_option == 1:  # all posts, in sequential order
         query = text("""SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
-                        FROM raw.posts_soup r
-                        JOIN public.posts p ON r.id = p.id
+                        FROM raw.post_soup r
+                        JOIN public.post p ON r.id = p.id
                         WHERE p.thread_name = :n AND r.soup is not null
                         ORDER BY r.id""")
         data = dbsql.execute(query, n=thread_name).fetchall()
 
     elif user_option == 2:  # known hauls only, in sequential order
         query = text("""SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
-                    FROM raw.posts_soup r
-                    JOIN public.posts p ON r.id = p.id
-                    JOIN public.biffers b ON p.id = b.haul_id AND p.thread_name = b.thread_name
+                    FROM raw.post_soup r
+                    JOIN public.post p ON r.id = p.id
+                    JOIN public.biffer b ON p.id = b.haul_id AND p.thread_name = b.thread_name
                     WHERE p.thread_name = :n
                         AND r.soup is not null
                     ORDER BY r.id""")
@@ -551,8 +551,8 @@ def update_file(thread_name):
 
     elif user_option == 3:  # derived hauls only, in sequential order (2+ pics or 2+ non-quoted instagram posts)
         query = text("""SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
-                    FROM raw.posts_soup r
-                    JOIN public.posts p ON r.id = p.id
+                    FROM raw.post_soup r
+                    JOIN public.post p ON r.id = p.id
                     WHERE p.thread_name = :n
                         AND r.soup is not null
                         AND (p.pics >= 2 OR p.text like '%\n[instagram]%\n[instagram]%')
@@ -561,8 +561,8 @@ def update_file(thread_name):
 
     elif user_option == 5:  # BYO SQL
         last_query = """SELECT r.id, r.soup, p.username, p.timestamp, p.thread_page
-                    FROM raw.posts_soup r
-                    JOIN public.posts p ON r.id = p.id
+                    FROM raw.post_soup r
+                    JOIN public.post p ON r.id = p.id
                     WHERE p.thread_name = '{name}'
                       AND """.format(name=thread_name).replace("                    ", "")
         user_query = input("Complete this query:\n{}\n".format(last_query))
@@ -696,10 +696,10 @@ def update_likes(thread_name):
 
     # get post_id & timestamp for the most recently-recorded 'liked' post
     query = text("""SELECT post_id, max(timestamp)
-                FROM public.likes
+                FROM public.like
                 WHERE post_id = (SELECT max(l.post_id) as maxpost 
-                                FROM public.likes l
-                                JOIN public.posts p on l.post_id = p.id
+                                FROM public.like l
+                                JOIN public.post p on l.post_id = p.id
                                 WHERE p.thread_name = :tn)
                 GROUP BY post_id""")
     result = dbsql.execute(query, tn=thread_name)
@@ -729,7 +729,7 @@ def update_likes(thread_name):
             # user entered a post_id
             logger.debug("Detected a post_id")
             query = text("""SELECT DISTINCT id, timestamp
-                        FROM public.posts
+                        FROM public.post
                         WHERE id >= :i
                             AND thread_name = :tn
                         ORDER BY id
@@ -740,7 +740,7 @@ def update_likes(thread_name):
             logger.debug("Detected a number of days")
             cutoff_date = str(datetime.datetime.now() + datetime.timedelta(-starting_post))[:10]
             query = text("""SELECT DISTINCT id, timestamp
-                        FROM public.posts
+                        FROM public.post
                         WHERE timestamp >= :ts
                             AND thread_name = :tn
                         ORDER BY id LIMIT 1500""")
@@ -751,7 +751,7 @@ def update_likes(thread_name):
             # user entered a timestamp
             logger.debug("Detected a timestamp")
             query = text("""SELECT DISTINCT id, timestamp
-                        FROM public.posts
+                        FROM public.post
                         WHERE timestamp >= :ts
                             AND thread_name = :tn
                         ORDER BY id
@@ -783,8 +783,8 @@ def update_likes(thread_name):
 
     # if any unknown users were added to the 'likes' table, add them to the 'users' table too
     query = text("""SELECT distinct user_id
-                    FROM public.likes
-                    WHERE user_id not in (SELECT distinct id FROM public.users)
+                    FROM public.like
+                    WHERE user_id not in (SELECT distinct id FROM public.user)
                     ORDER BY user_id""")
     result = dbsql.execute(query)
     users = result.fetchall()
@@ -828,7 +828,7 @@ def determine_thread():
     query = text("""WITH tp_maxpost as
                         (SELECT name, max(last_post_id) as last_post FROM raw.thread_page GROUP BY 1 ORDER BY 1),
                     p_maxpost as
-                        (SELECT thread_name as name, max(id) as last_post FROM public.posts GROUP BY 1 ORDER BY 1)
+                        (SELECT thread_name as name, max(id) as last_post FROM public.post GROUP BY 1 ORDER BY 1)
                     
                     SELECT distinct tp.name
                     FROM tp_maxpost tp
@@ -880,12 +880,12 @@ def determine_thread():
     result = dbsql.execute(query, a=thread_name)
     lp_threads = return_first_value(result.fetchone())
 
-    query = text('SELECT max(id) FROM public.posts WHERE thread_name = :a')
+    query = text('SELECT max(id) FROM public.post WHERE thread_name = :a')
     result = dbsql.execute(query, a=thread_name)
     lp_posts = return_first_value(result.fetchone())
 
     # is this thread ongoing?
-    query = text('SELECT distinct name FROM public.threads WHERE name = :a and ongoing = :b')
+    query = text('SELECT distinct name FROM public.thread WHERE name = :a and ongoing = :b')
     result = dbsql.execute(query, a=thread_name, b='Y')
     ongoing = return_first_value(result.fetchone())
 
@@ -904,7 +904,7 @@ def determine_thread():
     elif lp_threads > lp_posts:
         # found new posts that we need to parse
         # find the page_number containing the first post that's not in the db
-        result = db.execute(text('SELECT distinct thread_page, num FROM public.posts WHERE id = :a', a=lp_posts))
+        result = db.execute(text('SELECT distinct thread_page, num FROM public.post WHERE id = :a', a=lp_posts))
         check_posts_on_page = result.fetchone()
         # if this is the 20th post on the page_number, skip to the next page_number
         if check_posts_on_page[1] % 20 == 0:
@@ -1031,35 +1031,35 @@ ulist = []
 name = determine_thread()  # sets the global name & page_number variables
 
 # get html for the thread pages we wish to parse
-pages = db.query(Thread_Page).filter(Thread_Page.name == name, Thread_Page.page >= page_number)
+pages = db.query(Thread_Page).filter(Thread_Page.name == name, Thread_Page.number >= page_number)
 
 # sql = text('SELECT distinct page, html FROM raw.thread_page WHERE name = :n and page >= :p ORDER BY page')
 # data = dbsql.execute(sql, n=name, p=page_number)  # returns a list of tuples
 
 # get the thread's base url
-sql = text('SELECT distinct url FROM raw.thread_page WHERE name = :n and page = 1 LIMIT 1')
+sql = text('SELECT distinct url FROM raw.thread_page WHERE name = :n and number = 1 LIMIT 1')
 result = dbsql.execute(sql, n=name)
 url = return_first_value(result.fetchone)
 
 # get a list of all BIF participants
-# sql = text('SELECT distinct user_id FROM public.biffers WHERE thread_name = :tn ORDER BY 1')
+# sql = text('SELECT distinct user_id FROM public.biffer WHERE thread_name = :tn ORDER BY 1')
 # biffers_list = dbsql.execute(sql, tn=name)
-biffers_list = db.query(Biffers).filter(Biffers.thread_name == name)
+biffers_list = db.query(Biffer).filter(Biffer.thread_name == name)
 
 # iterate through the thread pages to extract data about each post
 page_counter = 1
 for page in pages:
     # if page[0] > 1: break
-    logger.info("Parsing page {n} ({c} of {t})".format(n=page.page, c=page_counter, t=len(pages)))
-    print("Parsing page {n} ({c} of {t})".format(n=page.page, c=page_counter, t=len(pages)))
+    logger.info("Parsing page {n} ({c} of {t})".format(n=page.number, c=page_counter, t=len(pages)))
+    print("Parsing page {n} ({c} of {t})".format(n=page.number, c=page_counter, t=len(pages)))
 
     # parse each individual post
     posts_raw = make_soup(page.html).find_all('li')  # class_="message   ")
 
     for post_raw in posts_raw:
-        post = Posts(thread_name=name)
-        post_soup = Posts_Soup(thread_name=name)
-        user = Users()
+        post = Post(thread_name=name)
+        post_soup = Post_Soup(thread_name=name)
+        user = User()
 
         # get the post_id
         try:
@@ -1083,13 +1083,13 @@ for page in pages:
 
         hash_link_blurb = "item muted postNumber hashPermalink OverlayTrigger"
         post_num = int(post_raw.find('a', class_=hash_link_blurb).text.replace('#', '').strip())
-        if page.page == 1:
+        if page.number == 1:
             if post_num == 1:
                 post.url = url
             else:
                 post.url = '{url}#post-{id}'.format(url=url, id=post.id)
         else:
-            post.url = '{url}page_number-{page}#post-{id}'.format(url=url, page=page.page, id=post.id)
+            post.url = '{url}page_number-{page}#post-{id}'.format(url=url, page=page.number, id=post.id)
 
         username = post_raw.find('h3', class_="userText").a.text
         user_id = int(re.findall('/.+\.(\d+?)/\"', str(post_raw.find('h3', class_="userText")))[0])
@@ -1243,6 +1243,8 @@ for page in pages:
         write_post_raw(post.id, name, remove_newlines(post_raw))
 
         write_post(post)
+        # write_post(post_id, username, message, timestamp, gifs, pic_counter, media_counter, post_num, page_number,
+        #            name, post_url, user_id, hint)
 
         # iterate through user data for everyone who posted
         fields = ud.find_all('dd')  # returns a tuple: [text-based date, location]
