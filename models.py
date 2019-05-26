@@ -14,7 +14,7 @@ class PublicMixin(object):
     __table_args__ = {'schema': 'public'}
 
 
-class Biffers(PublicMixin, Base):
+class Biffer(PublicMixin, Base):
     thread_name = Column(String, ForeignKey('public.threads.name'), primary_key=True)
     username = Column(String)
     user_id = Column(Integer, ForeignKey('public.users.id'), primary_key=True)
@@ -32,7 +32,7 @@ class Biffers(PublicMixin, Base):
         return "<Biffer(thread='%s', user='%s', user_id='%s')>" % (self.thread_name, self.username, self.user_id)
 
 
-class Likes(PublicMixin, Base):
+class Like(PublicMixin, Base):
     post_id = Column(Integer, ForeignKey('public.posts.id'), primary_key=True)
     user_id = Column(Integer, ForeignKey('public.users.id'), primary_key=True)
     timestamp = Column(TIMESTAMP)
@@ -41,7 +41,7 @@ class Likes(PublicMixin, Base):
         return "<Like(post_id='%s', user_id='%s')>" % (self.post_id, self.user_id)
 
 
-class Posts(PublicMixin, Base):
+class Post(PublicMixin, Base):
     id = Column(Integer, primary_key=True)
     username = Column(String)
     user_id = Column(Integer, ForeignKey('public.users.id'))
@@ -56,7 +56,7 @@ class Posts(PublicMixin, Base):
     hint = Column(Integer)
     url = Column(String)
 
-    soup = relationship('Posts_Soup', back_populates='post_info', lazy='dynamic')
+    soup = relationship('Post_Soup', back_populates='post_info', lazy='dynamic')
 
     def __repr__(self):
         return "<Post(id='%s', user='%s')>" % (self.id, self.username)
@@ -71,7 +71,7 @@ class Region_Map(PublicMixin, Base):
         return "<Region_Map(state='%s', region='%s')>" % (self.state, self.region)
 
 
-class Threads(PublicMixin, Base):
+class Thread(PublicMixin, Base):
     name = Column(String, primary_key=True)
     id = Column(Integer)
     url = Column(String)
@@ -84,7 +84,7 @@ class Threads(PublicMixin, Base):
         return "<Thread(name='%s', id='%s'>" % (self.name, self.id)
 
 
-class Users(PublicMixin, Base):
+class User(PublicMixin, Base):
     id = Column(Integer, primary_key=True)
     username = Column(String)
     location = Column(String)
@@ -131,12 +131,12 @@ class RawMixin(object):
     __table_args__ = {'schema': 'raw'}
 
 
-class Posts_Soup(RawMixin, Base):
+class Post_Soup(RawMixin, Base):
     id = Column(Integer, ForeignKey('public.posts.id'), primary_key=True)
     thread_name = Column(String)
     soup = Column(String)
 
-    post_info = relationship('Posts', back_populates='soup', lazy='dynamic')
+    post_info = relationship('Post', back_populates='soup', lazy='dynamic')
 
     def __repr__(self):
         return "<Post_Soup(id='%s', thread='%s')>" % (self.id, self.thread_name)
@@ -144,7 +144,7 @@ class Posts_Soup(RawMixin, Base):
 
 class Thread_Page(RawMixin, Base):
     name = Column(String)
-    page = Column(String)
+    number = Column(String)
     url = Column(String)
     html = Column(String, primary_key=True)
     last_post_num = Column(Integer)

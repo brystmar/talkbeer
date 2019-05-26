@@ -92,16 +92,16 @@ def write_users(ulist):
     # ulist is a dictionary with attributes: id, username, location, joindate, url
     for u in ulist:
         # validation
-        tbdb.execute('SELECT distinct id, username, joindate, url FROM users WHERE id = ?', (u['id'],))
+        tbdb.execute('SELECT distinct id, username, joindate, url FROM "user" WHERE id = ?', (u['id'],))
         val = tbdb.fetchone()
 
         if val == None:
-            tbdb.execute('INSERT INTO users (id, username, location, joindate, url) VALUES ' + qmarks(5), (u['id'], u['username'], u['location'], u['joindate'], u['url']))
+            tbdb.execute('INSERT INTO "user" (id, username, location, joindate, url) VALUES ' + qmarks(5), (u['id'], u['username'], u['location'], u['joindate'], u['url']))
         elif None in val:
             if u['location'] != None:
-                tbdb.execute('UPDATE users SET username = ?, location = ?, joindate = ?, url = ? WHERE id = ?', (u['username'], u['location'], u['joindate'], u['url'], u['id']))
+                tbdb.execute('UPDATE "user" SET username = ?, location = ?, joindate = ?, url = ? WHERE id = ?', (u['username'], u['location'], u['joindate'], u['url'], u['id']))
             else:
-                tbdb.execute('UPDATE users SET username = ?, joindate = ?, url = ? WHERE id = ?', (u['username'], u['joindate'], u['url'], u['id']))
+                tbdb.execute('UPDATE "user" SET username = ?, joindate = ?, url = ? WHERE id = ?', (u['username'], u['joindate'], u['url'], u['id']))
         else: print("User", u['username'] + ", id:", u['id'], "already exists.")
 
 ulist = list()
@@ -115,7 +115,7 @@ filename = name + '.html'
 conn_tbdb = sqlite3.connect('talkbeer3.sqlite')
 tbdb = conn_tbdb.cursor()
 
-tbdb.execute('SELECT distinct html FROM threads order by page_number')
+tbdb.execute('SELECT distinct html FROM thread order by page_number')
 pages = tbdb.fetchall()
 
 for p in pages:

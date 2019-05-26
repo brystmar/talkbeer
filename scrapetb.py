@@ -4,8 +4,9 @@
 
 from global_logger import glogger
 import logging
+
 # from agg_posts import get_user_data, write_users
-from models import Biffers, Posts, Threads, Users
+from models import Biffer, Post, Thread, User
 from models import Thread_Page, URLs
 from bs4 import BeautifulSoup
 import datetime
@@ -185,15 +186,15 @@ def first_post_data(html):  # returns the post date and user_id for the first po
 
 def write_thread(name, page, url, html, last_post):
     # validation
-    write_thread_query = 'SELECT page, url, last_post_num, last_post_id FROM raw.thread_page WHERE page = ? and url = ?'
-    tbdb.execute(write_thread_query, (page, url))
+    query = 'SELECT number, url, last_post_num, last_post_id FROM raw.thread_page WHERE number = ? and url = ?'
+    tbdb.execute(query, (page, url))
     val = tbdb.fetchone()
 
     if val is not None:
         # delete if already exists
-        tbdb.execute('DELETE FROM raw.thread_page WHERE name = ? and page = ?', (name, page))
+        tbdb.execute('DELETE FROM raw.thread_page WHERE name = ? and number = ?', (name, page))
 
-    write_thread_query = 'INSERT INTO raw.thread_page (name, page, url, html, last_post_num, last_post_id) VALUES '
+    write_thread_query = 'INSERT INTO raw.thread_page (name, number, url, html, last_post_num, last_post_id) VALUES '
     write_thread_query += qmarks(6)
     tbdb.execute(write_thread_query, (name, page, url, html, last_post[0], last_post[1]))
 
@@ -201,7 +202,7 @@ def write_thread(name, page, url, html, last_post):
 def write_thread_master(name, url, html):
     thread_id = int(re.findall('http.*\.(\d+)\/', url)[0])
     thread_data = first_post_data(html)
-    write_thread_query = 'INSERT INTO public.threads (name, id, url, ongoing, start_date, organizer_id) VALUES '
+    write_thread_query = 'INSERT INTO public.thread (name, id, url, ongoing, start_date, organizer_id) VALUES '
     write_thread_query += qmarks(6)
     tbdb.execute(write_thread_query, (name, thread_id, url, 'Y', thread_data[0], thread_data[1]))
 
@@ -224,20 +225,20 @@ def add_biffers(thread_name, biffers):  # adds new BIF participants to the biffe
     i = 1
     for b in biffers:
         # validation
-        tbdb.execute('SELECT count(*) FROM public.biffers WHERE thread_name = ? and user_id = ?', (thread_name, b[0]))
+        tbdb.execute('SELECT count(*) FROM public.biffer WHERE thread_name = ? and user_id = ?', (thread_name, b[0]))
         val = db_value(tbdb.fetchone())
         if val == 1:  # user is already marked as BIF participant
             print("User is already in this BIF:", b)
             continue
 
         # write to db
-        add_biffers_query = 'INSERT INTO public.biffers (thread_name, user_id, username, partner, partner_id, list_order) '
-        add_biffers_query += 'VALUES ' + qmarks(6)
-        tbdb.execute(add_biffers_query, (thread_name, b[0], b[1], b[2], b[3], b[4]))
+        query = 'INSERT INTO public.biffer (thread_name, user_id, username, partner, partner_id, list_order) '
+        query += 'VALUES ' + qmarks(6)
+        tbdb.execute(query, (thread_name, b[0], b[1], b[2], b[3], b[4]))
         print("Added biffer:", b)
 
         # check if user already exists in the users table
-        tbdb.execute('SELECT distinct id FROM public.users WHERE id = ?', (b[0],))
+        tbdb.execute('SELECT distinct id FROM public.user WHERE id = ?', (b[0],))
         val = db_value(tbdb.fetchone())
 
         if val is None:  # need to add this user
@@ -301,17 +302,20 @@ def write_users(ulist):
     # ulist is a dictionary with attributes: id, username, location, joindate
     for u in ulist:
         # validation
-        tbdb.execute('SELECT distinct id, username, joindate FROM public.users WHERE id = ?', (u['id'],))
+        tbdb.execute('SELECT distinct id, username, joindate FROM public.user WHERE id = ?', (u['id'],))
         val = tbdb.fetchone()
 
         if val is None:
-            tbdb.execute('INSERT INTO public.users (id, username, location, joindate) VALUES ' + qmarks(4), (u['id'], u['username'], u['location'], u['joindate']))
+            tbdb.execute('INSERT INTO public.user (id, username, location, joindate) VALUES ' + qmarks(4),
+                         (u['id'], u['username'], u['location'], u['joindate']))
             print("Added user", u['username'] + ", id:", u['id'])
         elif None in val:
             if u['location'] is not None:
-                tbdb.execute('UPDATE public.users SET username = ?, location = ?, joindate = ? WHERE id = ?', (u['username'], u['location'], u['joindate'], u['id']))
+                tbdb.execute('UPDATE public.user SET username = ?, location = ?, joindate = ? WHERE id = ?',
+                             (u['username'], u['location'], u['joindate'], u['id']))
             else:
-                tbdb.execute('UPDATE public.users SET username = ?, joindate = ? WHERE id = ?', (u['username'], u['joindate'], u['id']))
+                tbdb.execute('UPDATE public.user SET username = ?, joindate = ? WHERE id = ?',
+                             (u['username'], u['joindate'], u['id']))
 
 
 def get_userdata(user):
@@ -359,12 +363,12 @@ conn_tbdb = sqlite3.connect('talkbeer.sqlite')
 tbdb = conn_tbdb.cursor()
 
 # if there are ongoing threads, automatically scrape those instead of prompting for a thread to update
-tbdb.execute('SELECT distinct name, url FROM public.threads WHERE ongoing = ? order by start_date', ('Y',))
+tbdb.execute('SELECT distinct name, url FROM public.thread WHERE ongoing = ? order by start_date', ('Y',))
 toscrape = tbdb.fetchall()
 
 if len(toscrape) == 0:  # no ongoing threads
     # retrieve list of all thread nicknames
-    tbdb.execute('SELECT distinct name FROM public.threads order by 1')
+    tbdb.execute('SELECT distinct name FROM public.thread order by 1')
     thread_names = remlist(tbdb.fetchall())  # returns a list of strings (instead of a list of tuples)
     new_thread = False
 
@@ -380,7 +384,7 @@ if len(toscrape) == 0:  # no ongoing threads
     elif 'http' in toscrape:  # user entered a URL
         url = toscrape
         # does this URL already have a nickname?
-        tbdb.execute('SELECT distinct name FROM public.threads WHERE url = ? order by 1', (url,))
+        tbdb.execute('SELECT distinct name FROM public.thread WHERE url = ? order by 1', (url,))
         oldname = remlist(tbdb.fetchall())  # returns a list of strings
         if oldname is None:  # new thread, so it needs a nickname
             new_thread = True
@@ -401,7 +405,7 @@ if len(toscrape) == 0:  # no ongoing threads
         tbdb.execute('SELECT min(url) FROM raw.thread_page WHERE url is not null AND url <> "" AND name = ?', (name,))
         url = db_value(tbdb.fetchone())
         if url is None:  # new thread that hasn't been scraped yet
-            tbdb.execute('SELECT min(url) FROM public.threads WHERE name = ?', (name,))
+            tbdb.execute('SELECT min(url) FROM public.thread WHERE name = ?', (name,))
             url = db_value(tbdb.fetchone())
         elif 'http' not in url: stop('Invalid URL from the db: ' + str(url))
     else:
@@ -423,7 +427,7 @@ else:
 page_number = 1
 
 # see if thread data already exists in the db
-query = "SELECT distinct last_post_num, last_post_id, page, html FROM raw.thread_page "
+query = "SELECT distinct last_post_num, last_post_id, number, html FROM raw.thread_page "
 query += "WHERE last_post_num = (SELECT max(last_post_num) FROM raw.thread_page WHERE name = ?)"
 tbdb.execute(query, (name,))
 last_post_data = tbdb.fetchone()
@@ -455,7 +459,8 @@ else:
 soup = BeautifulSoup(html, 'html.parser')
 
 # does this thread have more than 1 page_number?
-if soup.find('span', class_="pageNavHeader") is None: stop("This is a single-page_number thread.")
+if soup.find('span', class_="pageNavHeader") is None:
+    stop("This is a single-page_number thread.")
 
 # determine the current & max pages
 page_range = soup.find_all('span', class_="pageNavHeader")[0].text.strip()
@@ -474,7 +479,8 @@ while current_page <= max_page:
         new_thread = False
         html0 = html[:html.index('<ol class="messageList"')]
         html0 += '<ol class="messageList" id="messageList">\n</ol>\n<hr>\n\n</form>\n<i>fin</i>\n</body>\n</html>'
-        tbdb.execute('INSERT INTO raw.thread_page (name, page, html) VALUES (?,?,?)', (name, 0, html0))  # write page_number 0
+        tbdb.execute('INSERT INTO raw.thread_page (name, number, html) VALUES (?,?,?)',
+                     (name, 0, html0))  # write page_number 0
 
         if first is True:
             with open("first_post_debug.html", 'w') as file:
@@ -486,7 +492,7 @@ while current_page <= max_page:
         print("Wrote pages 0 & 1")
         find_biffers(name, html)
 
-        """tbdb.execute('SELECT count(distinct user_id) FROM public.biffers WHERE thread_name = ' + name)
+        """tbdb.execute('SELECT count(distinct user_id) FROM public.biffer WHERE thread_name = ' + name)
         bcount = return_first_value(tbdb.fetchone())
 
         if bcount is None or bcount == 0:
