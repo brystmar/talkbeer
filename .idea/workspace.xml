@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f7beec6f-2a3a-42f1-9a9b-d8f6c8deba15" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/global_logger.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/agg_posts.py" beforeDir="false" afterPath="$PROJECT_DIR$/agg_posts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scrapetb.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrapetb.py" afterDir="false" />
     </list>
     <ignored path="tbcred.py" />
@@ -108,56 +109,138 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/scrapetb.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/agg_posts.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
+            <state relative-caret-position="254">
+              <caret line="1258" lean-forward="true" selection-start-line="1258" selection-end-line="1258" />
               <folding>
-                <element signature="e#175#208#0" expanded="true" />
+                <element signature="e#303#336#0" expanded="true" />
+                <element signature="e#1277#1768#0" />
+                <element signature="e#1823#1909#0" />
+                <element signature="e#1945#2055#0" />
+                <element signature="e#2096#2229#0" />
+                <element signature="e#2269#2526#0" />
+                <element signature="e#2552#2757#0" />
+                <element signature="e#2622#2667#0" />
+                <element signature="e#2778#2917#0" />
+                <element signature="e#2939#3221#0" />
+                <element signature="e#3068#3106#0" />
+                <element signature="e#3250#3615#0" />
+                <element signature="e#3505#3603#0" />
+                <element signature="e#3637#3921#0" />
+                <element signature="e#3757#3895#0" />
+                <element signature="e#3946#4880#0" />
+                <element signature="e#4923#5408#0" />
+                <element signature="e#5131#5254#0" />
+                <element signature="e#5453#6059#0" />
+                <element signature="e#5639#5720#0" />
+                <element signature="e#5738#5901#0" />
+                <element signature="e#5932#6059#0" />
+                <element signature="e#6099#6726#0" />
+                <element signature="e#6258#6279#0" />
+                <element signature="e#6290#6321#0" />
+                <element signature="e#6759#7981#0" />
+                <element signature="e#7527#7830#0" />
+                <element signature="e#8013#8746#0" />
+                <element signature="e#8775#9542#0" />
+                <element signature="e#9566#9983#0" />
+                <element signature="e#10020#11699#0" />
+                <element signature="e#10020#10186#1" />
+                <element signature="e#10453#11606#0" />
+                <element signature="e#10552#10697#0" />
+                <element signature="e#10724#10813#0" />
+                <element signature="e#11336#11364#0" />
+                <element signature="e#11734#11971#0" />
+                <element signature="e#11864#11953#0" />
+                <element signature="e#12004#12533#0" />
+                <element signature="e#12562#12980#0" />
+                <element signature="e#13015#13399#0" />
+                <element signature="e#13211#13399#0" />
+                <element signature="e#13429#13793#0" />
+                <element signature="e#13824#15008#0" />
+                <element signature="e#14506#14616#0" />
+                <element signature="e#14561#14616#0" />
+                <element signature="e#15055#15653#0" />
+                <element signature="e#15055#15295#1" />
+                <element signature="e#15436#15589#0" />
+                <element signature="e#15690#26247#0" />
+                <element signature="e#16053#16174#0" />
+                <element signature="e#16269#16686#0" />
+                <element signature="e#16286#16410#0" />
+                <element signature="e#16378#16410#0" />
+                <element signature="e#19283#20102#0" />
+                <element signature="e#19461#20039#0" />
+                <element signature="e#20173#20529#0" />
+                <element signature="e#20186#20466#0" />
+                <element signature="e#20607#21067#0" />
+                <element signature="e#20620#21004#0" />
+                <element signature="e#21190#21643#0" />
+                <element signature="e#21203#21580#0" />
+                <element signature="e#21691#22262#0" />
+                <element signature="e#21704#21944#0" />
+                <element signature="e#22316#22342#0" />
+                <element signature="e#22390#22502#0" />
+                <element signature="e#24234#24610#0" />
+                <element signature="e#24353#24556#0" />
+                <element signature="e#24460#24505#0" />
+                <element signature="e#24678#24763#0" />
+                <element signature="e#24832#24923#0" />
+                <element signature="e#24982#25099#0" />
+                <element signature="e#26084#26225#0" />
+                <element signature="e#26285#31817#0" />
+                <element signature="e#26625#26755#0" />
+                <element signature="e#26818#26883#0" />
+                <element signature="e#27042#27137#0" />
+                <element signature="e#27230#27583#0" />
+                <element signature="e#27726#27818#0" />
+                <element signature="e#27837#28231#0" />
+                <element signature="e#28502#29593#0" />
+                <element signature="e#28652#29062#0" />
+                <element signature="e#28749#28986#0" />
+                <element signature="e#29089#29593#0" />
+                <element signature="e#29297#29518#0" />
+                <element signature="e#29624#30296#0" />
+                <element signature="e#29769#30190#0" />
+                <element signature="e#29870#30115#0" />
+                <element signature="e#30217#30296#0" />
+                <element signature="e#30430#31066#0" />
+                <element signature="e#30548#31066#0" />
+                <element signature="e#30630#30851#0" />
+                <element signature="e#30886#31066#0" />
+                <element signature="e#31241#31425#0" />
+                <element signature="e#31592#31774#0" />
+                <element signature="e#31849#32668#0" />
+                <element signature="e#32264#32627#0" />
+                <element signature="e#32699#37160#0" />
+                <element signature="e#32970#33501#0" />
+                <element signature="e#33877#34843#0" />
+                <element signature="e#34414#34843#0" />
+                <element signature="e#34534#34669#0" />
+                <element signature="e#34769#34843#0" />
+                <element signature="e#34879#35025#0" />
+                <element signature="e#36317#36356#0" />
+                <element signature="e#37197#38307#0" />
+                <element signature="e#37678#38231#0" />
+                <element signature="e#38400#38538#0" />
+                <element signature="e#38566#39410#0" />
+                <element signature="e#39448#40063#0" />
+                <element signature="e#39448#39697#1" />
+                <element signature="e#40115#40773#0" />
+                <element signature="e#40408#40513#0" />
+                <element signature="e#40532#40773#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/agg_posts.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" selection-start-line="7" selection-end-line="7" />
+            <state relative-caret-position="2295">
+              <caret line="153" column="76" selection-start-line="153" selection-start-column="76" selection-end-line="153" selection-end-column="76" />
               <folding>
-                <element signature="e#303#336#0" expanded="true" />
-                <element signature="e#1708#2017#0" />
-                <element signature="e#1540#1626#0" />
-                <element signature="e#1662#1772#0" />
-                <element signature="e#1813#1946#0" />
-                <element signature="e#1986#2243#0" />
-                <element signature="e#2253#2458#0" />
-                <element signature="e#2479#2618#0" />
-                <element signature="e#2640#2922#0" />
-                <element signature="e#2951#3316#0" />
-                <element signature="e#3338#3622#0" />
-                <element signature="e#4585#5070#0" />
-                <element signature="e#5115#5721#0" />
-                <element signature="e#5761#6388#0" />
-                <element signature="e#6421#7601#0" />
-                <element signature="e#7633#8366#0" />
-                <element signature="e#8395#9162#0" />
-                <element signature="e#9186#9603#0" />
-                <element signature="e#9640#11319#0" />
-                <element signature="e#11354#11533#0" />
-                <element signature="e#11582#12115#0" />
-                <element signature="e#12042#12460#0" />
-                <element signature="e#12593#12977#0" />
-                <element signature="e#13007#13371#0" />
-                <element signature="e#15794#16971#0" />
-                <element signature="e#17018#17617#0" />
-                <element signature="e#26376#32104#0" />
-                <element signature="e#33961#34780#0" />
-                <element signature="e#32865#37281#0" />
-                <element signature="e#39772#40887#0" />
-                <element signature="e#40980#41118#0" />
-                <element signature="e#40049#40682#0" />
+                <element signature="e#0#75#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -174,36 +257,6 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.env">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" selection-start-line="8" selection-end-line="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tbcred.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" selection-start-line="7" selection-end-line="7" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="29" selection-start-line="29" selection-end-line="29" />
-              <folding>
-                <element signature="e#0#75#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -215,17 +268,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>urls</find>
-      <find>apik</find>
-      <find>env</find>
-      <find>db_pw</find>
-      <find>elkhunter(</find>
-      <find>return 0</find>
-      <find>urls.</find>
-      <find>add_ques</find>
-      <find>to_timesta</find>
-      <find>to_timestamp</find>
-      <find>quote_id</find>
       <find>replace_got</find>
       <find>write_post_raw</find>
       <find>attr</find>
@@ -239,12 +281,23 @@
       <find>quit</find>
       <find>ulist</find>
       <find>from thread_page</find>
-      <find>page_number</find>
       <find>update</find>
       <find>into</find>
       <find>FROM users</find>
       <find>FROM</find>
       <find>posts_so</find>
+      <find>filename</find>
+      <find>config(</find>
+      <find>basedir</find>
+      <find>os.env</find>
+      <find>data-url</find>
+      <find>page_number</find>
+      <find>page[0]</find>
+      <find>page[1]</find>
+      <find>post_url</find>
+      <find>post_id</find>
+      <find>temp</find>
+      <find>pnhpot_class</find>
     </findStrings>
     <replaceStrings>
       <replace>#</replace>
@@ -260,6 +313,7 @@
       <replace>return None</replace>
       <replace>FROM raw.thread_page</replace>
       <replace>FROM public.users</replace>
+      <replace>page.page</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -280,28 +334,19 @@
         <option value="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell" />
         <option value="$PROJECT_DIR$/test_create_file.py" />
         <option value="$PROJECT_DIR$/raffle.py" />
-        <option value="$PROJECT_DIR$/models.py" />
         <option value="$PROJECT_DIR$/.env" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/217e0776-cd6f-4174-80d8-f8aff6e1c51e/console.sql" />
-        <option value="$PROJECT_DIR$/agg_posts.py" />
         <option value="$PROJECT_DIR$/scrapetb.py" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectConfigurationFiles">
-    <option name="files">
-      <list>
-        <option value="$PROJECT_DIR$/.idea/misc.xml" />
-        <option value="$PROJECT_DIR$/.idea/dataSources.xml" />
-        <option value="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+        <option value="$PROJECT_DIR$/models.py" />
+        <option value="$PROJECT_DIR$/agg_posts.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="267" />
+    <option name="x" value="65" />
     <option name="y" value="23" />
-    <option name="width" value="1731" />
-    <option name="height" value="1063" />
+    <option name="width" value="1540" />
+    <option name="height" value="1027" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -311,30 +356,31 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="talkbeer_orig" type="b2602c69:ProjectViewProjectNode" />
+              <item name="talkbeer" type="b2602c69:ProjectViewProjectNode" />
               <item name="talkbeer" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="DatabaseDriversLRU" value="sqlite&#10;postgresql" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="database.console.LAST_STATE" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -582,27 +628,27 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="267" y="23" width="1731" height="1063" extended-state="0" />
+    <frame x="65" y="23" width="1540" height="1027" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17880403" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20078999" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="SQL Generator" weight="0.3299075" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49782372" weight="0.327852" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49440423" weight="0.38181818" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49727964" weight="0.32876712" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32876712" />
-      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.5102853" weight="0.24460432" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50497675" side_tool="true" weight="0.32876712" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49502322" visible="true" weight="0.3099897" />
+      <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49967083" weight="0.32834226" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.4990125" weight="0.24385026" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5055958" side_tool="true" weight="0.3272727" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49440423" weight="0.3090909" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="12" sideWeight="0.4983678" weight="0.327852" />
       <window_info anchor="bottom" id="Database Console" order="13" sideWeight="0.49891186" weight="0.327852" />
+      <window_info anchor="bottom" id="SQL Generator" order="14" weight="0.3299075" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -641,51 +687,13 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/first_post_debug.html" />
     <entry file="file://$PROJECT_DIR$/saugus_dbfix.py" />
-    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/collation/RTRIM">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/collation/NOCASE">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/collation/BINARY">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/f52eb3cc-2d32-4331-9274-9f7e6e92102a/console.sql">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/schema/main/table/users">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="username = 'lanesvfire'" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/schema/main/table/biffers">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="thread_name = &quot;SSF16&quot; and my_sender is null" />
-            <filter text="thread_name = &quot;SSF16&quot;" />
-            <filter text="thread_name = &quot;SSF16&quot; and my_sender isnull" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/schema/main/table/posts">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="thread_name = &quot;SSF16&quot; and lower(text) like '%fantome%'" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
+    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/collation/RTRIM" />
+    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/collation/NOCASE" />
+    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/collation/BINARY" />
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/f52eb3cc-2d32-4331-9274-9f7e6e92102a/console.sql" />
+    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/schema/main/table/users" />
+    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/schema/main/table/biffers" />
+    <entry file="das://f52eb3cc-2d32-4331-9274-9f7e6e92102a/schema/main/table/posts" />
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/errors" />
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
@@ -694,33 +702,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/likes">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/users">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/posts_soup">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/likes" />
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/users" />
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/posts_soup" />
     <entry file="file://$PROJECT_DIR$/user_data.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-2114" />
@@ -740,34 +724,12 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/urls" />
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/sys/table/output_options">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/posts">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/sys/table/output_options" />
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/posts" />
     <entry file="file://$PROJECT_DIR$/rng.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/fd42b6f2-cd1e-48f0-a92d-e37254ec8004/console.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="38" column="20" selection-start-line="38" selection-start-column="20" selection-end-line="38" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/fd42b6f2-cd1e-48f0-a92d-e37254ec8004/console.sql" />
     <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -775,62 +737,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/sys/table/urls">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/errors">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="" />
-          </filtering>
-          <column-attributes>
-            <column name="ctid" enabled="false" />
-          </column-attributes>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/thread_page.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="13" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/thread_page">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/threads">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/fd42b6f2-cd1e-48f0-a92d-e37254ec8004/console_1.sql">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/region_map">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state projectRestartId="88684f21-58cd-473a-9739-be62dc832bd8">
-          <filtering />
-        </state>
-      </provider>
-    </entry>
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/sys/table/urls" />
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/errors" />
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/thread_page.sql" />
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/thread_page" />
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/threads" />
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/fd42b6f2-cd1e-48f0-a92d-e37254ec8004/console_1.sql" />
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/region_map" />
     <entry file="file://$PROJECT_DIR$/raffle.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="345">
@@ -844,83 +757,15 @@
     <entry file="file://$PROJECT_DIR$/test_create_file.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/biffers">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/raw/table/errors">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/raw/table/posts_soup">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/posts.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="23" lean-forward="true" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/likes">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/217e0776-cd6f-4174-80d8-f8aff6e1c51e/console.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="33" selection-start-column="33" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/raw/table/thread_page">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/users">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/threads">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
-          <filtering>
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/biffers" />
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/raw/table/errors" />
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/raw/table/posts_soup" />
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/posts.sql" />
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/likes" />
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/217e0776-cd6f-4174-80d8-f8aff6e1c51e/console.sql" />
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/raw/table/thread_page" />
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/users" />
+    <entry file="das://217e0776-cd6f-4174-80d8-f8aff6e1c51e/database/bifs/schema/public/table/threads" />
     <entry file="file://$PROJECT_DIR$/migrate_sqlite.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -931,23 +776,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="29" selection-start-line="29" selection-end-line="29" />
-          <folding>
-            <element signature="e#0#75#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tbcred.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/tbcred.py" />
+    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/biffers" />
+    <entry file="file://$PROJECT_DIR$/.env" />
     <entry file="file://$PROJECT_DIR$/global_logger.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -957,70 +788,145 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/biffers">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state projectRestartId="85253efe-c5c1-4a81-ab71-2e6cd5c01cb9">
-          <filtering>
-            <filter text="thread_name = 'SSF16'" />
-            <filter text="" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.env">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scrapetb.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
+        <state relative-caret-position="-418">
+          <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
           <folding>
             <element signature="e#175#208#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2295">
+          <caret line="153" column="76" selection-start-line="153" selection-start-column="76" selection-end-line="153" selection-end-column="76" />
+          <folding>
+            <element signature="e#0#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/agg_posts.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        <state relative-caret-position="254">
+          <caret line="1258" lean-forward="true" selection-start-line="1258" selection-end-line="1258" />
           <folding>
             <element signature="e#303#336#0" expanded="true" />
-            <element signature="e#1708#2017#0" />
-            <element signature="e#1540#1626#0" />
-            <element signature="e#1662#1772#0" />
-            <element signature="e#1813#1946#0" />
-            <element signature="e#1986#2243#0" />
-            <element signature="e#2253#2458#0" />
-            <element signature="e#2479#2618#0" />
-            <element signature="e#2640#2922#0" />
-            <element signature="e#2951#3316#0" />
-            <element signature="e#3338#3622#0" />
-            <element signature="e#4585#5070#0" />
-            <element signature="e#5115#5721#0" />
-            <element signature="e#5761#6388#0" />
-            <element signature="e#6421#7601#0" />
-            <element signature="e#7633#8366#0" />
-            <element signature="e#8395#9162#0" />
-            <element signature="e#9186#9603#0" />
-            <element signature="e#9640#11319#0" />
-            <element signature="e#11354#11533#0" />
-            <element signature="e#11582#12115#0" />
-            <element signature="e#12042#12460#0" />
-            <element signature="e#12593#12977#0" />
-            <element signature="e#13007#13371#0" />
-            <element signature="e#15794#16971#0" />
-            <element signature="e#17018#17617#0" />
-            <element signature="e#26376#32104#0" />
-            <element signature="e#33961#34780#0" />
-            <element signature="e#32865#37281#0" />
-            <element signature="e#39772#40887#0" />
-            <element signature="e#40980#41118#0" />
-            <element signature="e#40049#40682#0" />
+            <element signature="e#1277#1768#0" />
+            <element signature="e#1823#1909#0" />
+            <element signature="e#1945#2055#0" />
+            <element signature="e#2096#2229#0" />
+            <element signature="e#2269#2526#0" />
+            <element signature="e#2552#2757#0" />
+            <element signature="e#2622#2667#0" />
+            <element signature="e#2778#2917#0" />
+            <element signature="e#2939#3221#0" />
+            <element signature="e#3068#3106#0" />
+            <element signature="e#3250#3615#0" />
+            <element signature="e#3505#3603#0" />
+            <element signature="e#3637#3921#0" />
+            <element signature="e#3757#3895#0" />
+            <element signature="e#3946#4880#0" />
+            <element signature="e#4923#5408#0" />
+            <element signature="e#5131#5254#0" />
+            <element signature="e#5453#6059#0" />
+            <element signature="e#5639#5720#0" />
+            <element signature="e#5738#5901#0" />
+            <element signature="e#5932#6059#0" />
+            <element signature="e#6099#6726#0" />
+            <element signature="e#6258#6279#0" />
+            <element signature="e#6290#6321#0" />
+            <element signature="e#6759#7981#0" />
+            <element signature="e#7527#7830#0" />
+            <element signature="e#8013#8746#0" />
+            <element signature="e#8775#9542#0" />
+            <element signature="e#9566#9983#0" />
+            <element signature="e#10020#11699#0" />
+            <element signature="e#10020#10186#1" />
+            <element signature="e#10453#11606#0" />
+            <element signature="e#10552#10697#0" />
+            <element signature="e#10724#10813#0" />
+            <element signature="e#11336#11364#0" />
+            <element signature="e#11734#11971#0" />
+            <element signature="e#11864#11953#0" />
+            <element signature="e#12004#12533#0" />
+            <element signature="e#12562#12980#0" />
+            <element signature="e#13015#13399#0" />
+            <element signature="e#13211#13399#0" />
+            <element signature="e#13429#13793#0" />
+            <element signature="e#13824#15008#0" />
+            <element signature="e#14506#14616#0" />
+            <element signature="e#14561#14616#0" />
+            <element signature="e#15055#15653#0" />
+            <element signature="e#15055#15295#1" />
+            <element signature="e#15436#15589#0" />
+            <element signature="e#15690#26247#0" />
+            <element signature="e#16053#16174#0" />
+            <element signature="e#16269#16686#0" />
+            <element signature="e#16286#16410#0" />
+            <element signature="e#16378#16410#0" />
+            <element signature="e#19283#20102#0" />
+            <element signature="e#19461#20039#0" />
+            <element signature="e#20173#20529#0" />
+            <element signature="e#20186#20466#0" />
+            <element signature="e#20607#21067#0" />
+            <element signature="e#20620#21004#0" />
+            <element signature="e#21190#21643#0" />
+            <element signature="e#21203#21580#0" />
+            <element signature="e#21691#22262#0" />
+            <element signature="e#21704#21944#0" />
+            <element signature="e#22316#22342#0" />
+            <element signature="e#22390#22502#0" />
+            <element signature="e#24234#24610#0" />
+            <element signature="e#24353#24556#0" />
+            <element signature="e#24460#24505#0" />
+            <element signature="e#24678#24763#0" />
+            <element signature="e#24832#24923#0" />
+            <element signature="e#24982#25099#0" />
+            <element signature="e#26084#26225#0" />
+            <element signature="e#26285#31817#0" />
+            <element signature="e#26625#26755#0" />
+            <element signature="e#26818#26883#0" />
+            <element signature="e#27042#27137#0" />
+            <element signature="e#27230#27583#0" />
+            <element signature="e#27726#27818#0" />
+            <element signature="e#27837#28231#0" />
+            <element signature="e#28502#29593#0" />
+            <element signature="e#28652#29062#0" />
+            <element signature="e#28749#28986#0" />
+            <element signature="e#29089#29593#0" />
+            <element signature="e#29297#29518#0" />
+            <element signature="e#29624#30296#0" />
+            <element signature="e#29769#30190#0" />
+            <element signature="e#29870#30115#0" />
+            <element signature="e#30217#30296#0" />
+            <element signature="e#30430#31066#0" />
+            <element signature="e#30548#31066#0" />
+            <element signature="e#30630#30851#0" />
+            <element signature="e#30886#31066#0" />
+            <element signature="e#31241#31425#0" />
+            <element signature="e#31592#31774#0" />
+            <element signature="e#31849#32668#0" />
+            <element signature="e#32264#32627#0" />
+            <element signature="e#32699#37160#0" />
+            <element signature="e#32970#33501#0" />
+            <element signature="e#33877#34843#0" />
+            <element signature="e#34414#34843#0" />
+            <element signature="e#34534#34669#0" />
+            <element signature="e#34769#34843#0" />
+            <element signature="e#34879#35025#0" />
+            <element signature="e#36317#36356#0" />
+            <element signature="e#37197#38307#0" />
+            <element signature="e#37678#38231#0" />
+            <element signature="e#38400#38538#0" />
+            <element signature="e#38566#39410#0" />
+            <element signature="e#39448#40063#0" />
+            <element signature="e#39448#39697#1" />
+            <element signature="e#40115#40773#0" />
+            <element signature="e#40408#40513#0" />
+            <element signature="e#40532#40773#0" />
           </folding>
         </state>
       </provider>
