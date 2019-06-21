@@ -23,7 +23,7 @@ print("\n***** ***** **** ***** *****")
 print(" Start:", time_start.strftime("%Y-%m-%d %H:%M:%S"))
 print("***** ***** **** ***** *****\n")
 logger.info('\n\n***** ***** **** ***** ***** |||| ***** ***** **** ***** *****\n')
-logger.info('START agg_posts.py @ {}'.format(time_start.strftime("%Y-%m-%d %H:%M:%S")))
+logger.info(f'START agg_posts.py @ {time_start.strftime("%Y-%m-%d %H:%M:%S")}')
 filename = __file__
 
 
@@ -73,18 +73,30 @@ def pl_sorted(items):
 
 
 def month_to_num(m):
-    if m == 'Jan': return '01'
-    elif m == 'Feb': return '02'
-    elif m == 'Mar': return '03'
-    elif m == 'Apr': return '04'
-    elif m == 'May': return '05'
-    elif m == 'Jun': return '06'
-    elif m == 'Jul': return '07'
-    elif m == 'Aug': return '08'
-    elif m == 'Sep': return '09'
-    elif m == 'Oct': return '10'
-    elif m == 'Nov': return '11'
-    elif m == 'Dec': return '12'
+    if m == 'Jan':
+        return '01'
+    elif m == 'Feb':
+        return '02'
+    elif m == 'Mar':
+        return '03'
+    elif m == 'Apr':
+        return '04'
+    elif m == 'May':
+        return '05'
+    elif m == 'Jun':
+        return '06'
+    elif m == 'Jul':
+        return '07'
+    elif m == 'Aug':
+        return '08'
+    elif m == 'Sep':
+        return '09'
+    elif m == 'Oct':
+        return '10'
+    elif m == 'Nov':
+        return '11'
+    elif m == 'Dec':
+        return '12'
     else: return 'Month Error'
 
 
@@ -253,7 +265,7 @@ def find_biffers(thread_name, html):  # finds the post with the most users tagge
     # find the post and store the users in a variable
     soup = make_soup(html)
     lis = soup.find('ol', class_="messageList").find_all('li')  # collect all <li>s underneath the primary <ol>
-    max_users = 8  # the post we're looking for should have dozens of users tagged.  starting at 8 to ignore posts w/random user tagging
+    max_users = 8  # the post we're looking for should have dozens of users tagged.  starting at 8 to ignore random tags
     biffers = []
     ignore = [-1, 3611]  # ignore the 'mods' account
     teams = [[]]
