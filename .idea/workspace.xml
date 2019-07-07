@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f7beec6f-2a3a-42f1-9a9b-d8f6c8deba15" name="Default Changelist" comment="minor edits">
-      <change afterPath="$PROJECT_DIR$/data/biffers.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/thread.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/user-full.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/user.json" afterDir="false" />
+    <list default="true" id="f7beec6f-2a3a-42f1-9a9b-d8f6c8deba15" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/agg_posts.py" beforeDir="false" afterPath="$PROJECT_DIR$/agg_posts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/biffers.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/biffers.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/thread.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/thread.json" afterDir="false" />
     </list>
     <ignored path="tbcred.py" />
     <ignored path="talkbeer.sqlite" />
@@ -88,7 +86,7 @@
         <entry file="file://$PROJECT_DIR$/scrapetb.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="405">
-              <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+              <caret line="27" selection-start-line="27" selection-end-line="27" />
               <folding>
                 <element signature="e#175#208#0" expanded="true" />
                 <element signature="e#896#911#0" />
@@ -306,41 +304,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data/biffers.json">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data/user-full.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="145" column="21" lean-forward="true" selection-start-line="145" selection-start-column="21" selection-end-line="145" selection-end-column="21" />
+            <state relative-caret-position="149">
+              <caret line="147" column="10" selection-start-line="147" selection-start-column="10" selection-end-line="147" selection-end-column="10" />
               <folding>
                 <element signature="e#509#2370#0" />
                 <element signature="e#2567#3888#0" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="130" selection-start-line="130" selection-end-line="130" />
-              <folding>
-                <element signature="e#0#75#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.env">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" selection-start-line="7" selection-end-line="7" />
             </state>
           </provider>
         </entry>
@@ -356,18 +333,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>idea</find>
-      <find>user_data</find>
-      <find>user_id =</find>
-      <find>user_id = int</find>
-      <find>age.page</find>
-      <find>raw.thread</find>
-      <find>public.posts</find>
-      <find>work</find>
-      <find>.env</find>
-      <find>path</find>
-      <find>find_subst</find>
-      <find>strftime</find>
       <find>boto</find>
       <find>user_page</find>
       <find>urls.</find>
@@ -386,6 +351,18 @@
       <find>, '</find>
       <find>&quot;</find>
       <find>always</find>
+      <find>rng</find>
+      <find>raffle</find>
+      <find>run_raffle</find>
+      <find>log</find>
+      <find>import log</find>
+      <find>thread_pa</find>
+      <find>invalid ur</find>
+      <find>commit()</find>
+      <find>&quot;id&quot;</find>
+      <find>thread_id</find>
+      <find>&quot;thread_name_full&quot;: &quot;Sour, Saison, &amp; Funk: Round 14&quot;,</find>
+      <find>&quot;thread_name_full&quot;: &quot;Festivus 2018&quot;,</find>
     </findStrings>
     <replaceStrings>
       <replace>#</replace>
@@ -411,6 +388,7 @@
       <replace>&quot;thread_name_full&quot;</replace>
       <replace>{&quot;</replace>
       <replace>&quot;</replace>
+      <replace>&quot;thread_id&quot;</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -428,7 +406,6 @@
         <option value="$PROJECT_DIR$/migrate_sqlite.py" />
         <option value="$PROJECT_DIR$/test_create_file.py" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/217e0776-cd6f-4174-80d8-f8aff6e1c51e/console.sql" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/raffle.py" />
         <option value="$PROJECT_DIR$/.env" />
         <option value="$PROJECT_DIR$/LICENSE.txt" />
@@ -438,17 +415,20 @@
         <option value="$PROJECT_DIR$/models.py" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/fd42b6f2-cd1e-48f0-a92d-e37254ec8004/console_2.sql" />
-        <option value="$PROJECT_DIR$/data/biffers.json" />
         <option value="$PROJECT_DIR$/data/biffers.py" />
-        <option value="$PROJECT_DIR$/data/thread.json" />
         <option value="$PROJECT_DIR$/data/user.json" />
         <option value="$PROJECT_DIR$/data/user-full.json" />
         <option value="$PROJECT_DIR$/data/user-full-final.json" />
+        <option value="$PROJECT_DIR$/old_scraping/scrapetb.py" />
+        <option value="$PROJECT_DIR$/old_scraping/agg_posts.py" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/data/thread.json" />
+        <option value="$PROJECT_DIR$/data/biffers.json" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-1815" />
+    <option name="x" value="11" />
     <option name="y" value="23" />
     <option name="width" value="1723" />
     <option name="height" value="998" />
@@ -625,7 +605,7 @@
       <workItem from="1559277490804" duration="742000" />
       <workItem from="1559279204718" duration="2959000" />
       <workItem from="1559709218449" duration="17075000" />
-      <workItem from="1562366556045" duration="14038000" />
+      <workItem from="1562366556045" duration="16685000" />
     </task>
     <task id="LOCAL-00001" summary="PyCharm setup">
       <created>1552531676519</created>
@@ -753,11 +733,18 @@
       <option name="project" value="LOCAL" />
       <updated>1561149560720</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="More refactoring, plus created json data files for the NoSQL data model">
+      <created>1562535991630</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1562535991630</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="213169000" />
+    <option name="totallyTimeSpent" value="215816000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -769,7 +756,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1815" y="23" width="1723" height="998" extended-state="0" />
+    <frame x="11" y="23" width="1723" height="998" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49948508" visible="true" weight="0.17549078" />
@@ -784,7 +771,7 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49967083" weight="0.32834226" />
       <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.4990125" weight="0.30588236" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5055958" side_tool="true" weight="0.3272727" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5055958" side_tool="true" weight="0.32671082" />
       <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49440423" weight="0.30905077" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="12" sideWeight="0.4983678" weight="0.327852" />
@@ -819,7 +806,8 @@
     <MESSAGE value="changed db table names from plural to singular; updated VCS for .idea" />
     <MESSAGE value="standardized Config &amp; .env" />
     <MESSAGE value="minor edits" />
-    <option name="LAST_COMMIT_MESSAGE" value="minor edits" />
+    <MESSAGE value="More refactoring, plus created json data files for the NoSQL data model" />
+    <option name="LAST_COMMIT_MESSAGE" value="More refactoring, plus created json data files for the NoSQL data model" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/talkbeer_orig$scrapetb.coverage" NAME="scrapetb Coverage Results" MODIFIED="1556067383637" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -829,10 +817,6 @@
     <SUITE FILE_PATH="coverage/talkbeer_orig$agg_posts.coverage" NAME="agg_posts Coverage Results" MODIFIED="1556069313144" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/posts" />
-    <entry file="file://$PROJECT_DIR$/rng.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/errors" />
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/raw/table/thread_page.sql" />
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/threads" />
@@ -859,13 +843,6 @@
     <entry file="das://fd42b6f2-cd1e-48f0-a92d-e37254ec8004/database/bifs/schema/public/table/biffers" />
     <entry file="file://$PROJECT_DIR$/test_create_file.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tbcred.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/user_data.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -904,13 +881,6 @@
             <element signature="e#214#247#0" expanded="true" />
             <element signature="e#3352#4232#0" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
         </state>
       </provider>
     </entry>
@@ -1042,17 +1012,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="12" lean-forward="true" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scrapetb.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
-          <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
           <folding>
             <element signature="e#175#208#0" expanded="true" />
             <element signature="e#896#911#0" />
@@ -1125,13 +1088,6 @@
           <folding>
             <element signature="e#0#75#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/thread.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-896">
-          <caret line="12" column="5" lean-forward="true" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -1291,9 +1247,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/biffers.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/data/user-full.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
@@ -1301,16 +1254,67 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/tbcred.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="12" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/old_scraping/scrapetb.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="28" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
+          <folding>
+            <element signature="e#175#204#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/old_scraping/agg_posts.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="44" lean-forward="true" selection-start-line="44" selection-end-line="44" />
+          <folding>
+            <element signature="e#250#279#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/thread.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="6" lean-forward="true" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/data/user-full.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="145" column="21" lean-forward="true" selection-start-line="145" selection-start-column="21" selection-end-line="145" selection-end-column="21" />
+        <state relative-caret-position="149">
+          <caret line="147" column="10" selection-start-line="147" selection-start-column="10" selection-end-line="147" selection-end-column="10" />
           <folding>
             <element signature="e#509#2370#0" />
             <element signature="e#2567#3888#0" />
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/biffers.json">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>
