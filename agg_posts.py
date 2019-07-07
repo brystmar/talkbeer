@@ -801,7 +801,8 @@ def read_likes(post_id):
     logger.debug("Start of read_likes()")
 
     global s
-    likes_url = 'https://www.talkbeer.com/community/posts/{pid}/likes'.format(pid=post_id)
+    likes_url = db.query(URLs.post).first()[0]
+    likes_url = likes_url.replace('post_id', post_id)
     html = s.get(likes_url).text
     likes_soup = make_soup(html)
     # soup = make_soup(s.get(url).text)
@@ -834,7 +835,7 @@ def determine_thread():
                     ORDER BY 1""")
     result = dbsql.execute(query)
     to_agg = return_list_of_values(result.fetchall())
-    logger.debug('to_agg={}'.format(to_agg))
+    logger.debug(f'to_agg={to_agg}')
 
     # if there's only one thread name returned, use that thread name and don't prompt the user
     global page_number, ongoing
@@ -909,7 +910,7 @@ def determine_thread():
         else:
             page_number = check_posts_on_page[0]
     else:
-        stop("More posts exist in the posts table than raw thread html.  Re-scrape the thread for {}".format(thread_name))
+        stop(f"More posts exist in the posts table than raw thread html.  Re-scrape the thread for {thread_name}")
 
     logger.debug('End of determine_thread(), found thread: {}'.format(thread_name))
     print('End of determine_thread(), found thread: {}'.format(thread_name))
@@ -991,7 +992,7 @@ def initialize_http_session():
 
 def log_into_talkbeer(session, credentials):
     """Log into talkbeer using the provided credentials."""
-    logger.debug("Attempting to talkbeer login for user {}".format(credentials['login']))
+    logger.debug(f"Attempting to talkbeer login for user {credentials['login']}")
     global db
 
     login_url = db.query(URLs.login).first()[0]

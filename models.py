@@ -118,7 +118,7 @@ class User(PublicMixin, Base):
     joindate = Column(Date)
 
     def __repr__(self):
-        return "<User(name='%s', fullname='%s', nickname='%s')>" % (self.name, self.fullname, self.nickname)
+        return f"<User id={self.id}, username={self.username}>"
 
 
 # Schema: sys
@@ -135,9 +135,10 @@ class URLs(SysMixin, Base):
     user_page = Column(String, primary_key=True)
     gdrive = Column(String, primary_key=True)
     login = Column(String, primary_key=True)
+    likes = Column(String, primary_key=True)
 
     def __repr__(self):
-        return "<URL>"
+        return "<URLs>"
 
 
 class Output_Options(SysMixin, Base):
