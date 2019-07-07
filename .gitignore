@@ -10,6 +10,7 @@ venv/
 *.log
 */tbcred.py
 tbcred.py
+legacy-functional/
 
 
 # Created by https://www.gitignore.io/api/venv,macos,pycharm
