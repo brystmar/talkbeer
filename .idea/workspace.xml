@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f7beec6f-2a3a-42f1-9a9b-d8f6c8deba15" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/jsonSchemas.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/talkbeer_orig.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/talkbeer_orig.iml" afterDir="false" />
+    <list default="true" id="f7beec6f-2a3a-42f1-9a9b-d8f6c8deba15" name="Default Changelist" comment="Added nested bif data to users.json">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/agg_posts.py" beforeDir="false" afterPath="$PROJECT_DIR$/agg_posts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/biffers.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/biffers.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/users-base.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/users-full.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/users.json" afterDir="false" />
     </list>
     <ignored path="tbcred.py" />
     <ignored path="talkbeer.sqlite" />
@@ -305,21 +303,29 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/data/biffers.json">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_2.py">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data/threads.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="34" column="5" selection-start-line="34" selection-start-column="5" selection-end-line="34" selection-end-column="5" />
+            <state relative-caret-position="565">
+              <caret line="104" column="44" lean-forward="true" selection-start-line="104" selection-start-column="44" selection-end-line="104" selection-end-column="44" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/data/users.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="227">
+              <caret line="16130" column="23" lean-forward="true" selection-start-line="16130" selection-start-column="23" selection-end-line="16130" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data/biffers.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="7" column="52" lean-forward="true" selection-start-line="7" selection-start-column="52" selection-end-line="7" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -336,10 +342,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>1002646</find>
-      <find>1808,</find>
-      <find>137,</find>
-      <find>6700,</find>
       <find>target_username&quot;: &quot;Panda</find>
       <find>sender_username&quot;: &quot;Panda</find>
       <find>857,</find>
@@ -363,9 +365,13 @@
       <find>fest</find>
       <find>}]</find>
       <find>'</find>
-      <find>thread_name</find>
       <find>&quot;targets&quot;</find>
       <find>=</find>
+      <find>thread_name_full</find>
+      <find>thread_name</find>
+      <find>&quot;thread_name&quot;: &quot;SSF16&quot;,</find>
+      <find>&quot;thread_name&quot;: &quot;Fest18&quot;,</find>
+      <find>twowhee</find>
     </findStrings>
     <replaceStrings>
       <replace>#</replace>
@@ -432,7 +438,6 @@
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.json" />
         <option value="$PROJECT_DIR$/data/p27.html" />
         <option value="$PROJECT_DIR$/data/p26.html" />
-        <option value="$PROJECT_DIR$/data/users-full.json" />
         <option value="$PROJECT_DIR$/data/users-base.json" />
         <option value="$PROJECT_DIR$/data/biffers.json.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.json" />
@@ -442,6 +447,7 @@
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_2.py" />
         <option value="$PROJECT_DIR$/data/biffers.py" />
         <option value="$PROJECT_DIR$/data/biffers.json" />
+        <option value="$PROJECT_DIR$/data/users-full.json" />
       </list>
     </option>
   </component>
@@ -655,7 +661,7 @@
       <workItem from="1559277490804" duration="742000" />
       <workItem from="1559279204718" duration="2959000" />
       <workItem from="1559709218449" duration="17075000" />
-      <workItem from="1562366556045" duration="29479000" />
+      <workItem from="1562366556045" duration="35367000" />
     </task>
     <task id="LOCAL-00001" summary="PyCharm setup">
       <created>1552531676519</created>
@@ -804,11 +810,18 @@
       <option name="project" value="LOCAL" />
       <updated>1562617328719</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Sorted the bifs in sequential order">
+      <created>1562619736446</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1562619736446</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="228610000" />
+    <option name="totallyTimeSpent" value="234498000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -828,7 +841,7 @@
       <window_info id="Favorites" order="2" sideWeight="0.5005149" side_tool="true" weight="0.18058023" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49440423" weight="0.69098276" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49727964" visible="true" weight="0.32826748" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49727964" weight="0.32826748" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -873,7 +886,8 @@
     <MESSAGE value="More refactoring, plus created json data files for the NoSQL data model" />
     <MESSAGE value="Updated json data in the NoSQL model" />
     <MESSAGE value="Significant update to data &amp; structure of biffers.json" />
-    <option name="LAST_COMMIT_MESSAGE" value="Significant update to data &amp; structure of biffers.json" />
+    <MESSAGE value="Sorted the bifs in sequential order" />
+    <option name="LAST_COMMIT_MESSAGE" value="Sorted the bifs in sequential order" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/talkbeer_orig$scrapetb.coverage" NAME="scrapetb Coverage Results" MODIFIED="1556067383637" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -1151,7 +1165,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/users-full.json">
+    <entry file="file://$PROJECT_DIR$/data/users.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="9" column="32" lean-forward="true" selection-start-line="9" selection-start-column="32" selection-end-line="9" selection-end-column="32" />
@@ -1221,24 +1235,33 @@
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.json">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/users-full.json">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.json">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_2.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="10" lean-forward="true" selection-start-line="8" selection-start-column="10" selection-end-line="8" selection-end-column="10" />
+        <state relative-caret-position="15">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/users-base.json">
+    <entry file="file://$PROJECT_DIR$/data/json_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="311" column="31" selection-start-line="311" selection-start-column="31" selection-end-line="311" selection-end-column="31" />
+        <state relative-caret-position="30">
+          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+          <folding>
+            <element signature="e#0#34#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/threads.json">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_2.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/biffers.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="5" selection-start-line="34" selection-start-column="5" selection-end-line="34" selection-end-column="5" />
+        <state relative-caret-position="105">
+          <caret line="7" column="52" lean-forward="true" selection-start-line="7" selection-start-column="52" selection-end-line="7" selection-end-column="52" />
         </state>
       </provider>
     </entry>
@@ -1392,31 +1415,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_2.json">
+    <entry file="file://$PROJECT_DIR$/data/threads.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        <state relative-caret-position="565">
+          <caret line="104" column="44" lean-forward="true" selection-start-line="104" selection-start-column="44" selection-end-line="104" selection-end-column="44" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_2.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/json_test.py">
+    <entry file="file://$PROJECT_DIR$/data/users-base.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
-          <folding>
-            <element signature="e#0#34#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="115">
+          <caret line="3454" column="6" lean-forward="true" selection-start-line="3454" selection-start-column="6" selection-end-line="3454" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/biffers.json">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/data/users.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="16130" column="23" lean-forward="true" selection-start-line="16130" selection-start-column="23" selection-end-line="16130" selection-end-column="23" />
+        </state>
+      </provider>
     </entry>
   </component>
 </project>
