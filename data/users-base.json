@@ -3461,5 +3461,43 @@
 			"Fenyx"
 		],
 		"bifs":     []
+	},
+	{
+		"user_id":  5693,
+		"joindate": "2015-04-14",
+		"username": "Competicity",
+		"aliases":  [
+			"Competicity"
+		],
+		"bifs":     []
+	},
+	{
+		"user_id":  150,
+		"joindate": "2013-04-11",
+		"location": "MD",
+		"username": "Beerontwowheels",
+		"aliases":  [
+			"Beerontwowheels"
+		],
+		"bifs":     []
+	},
+	{
+		"user_id":  756,
+		"joindate": "2013-07-21",
+		"location": "Beer Hell, TN by way of Ohio",
+		"username": "Photekut",
+		"aliases":  [
+			"Photekut"
+		],
+		"bifs":     []
+	},
+	{
+		"user_id":  5864,
+		"joindate": "2015-05-12",
+		"username": "Marc",
+		"aliases":  [
+			"Marc"
+		],
+		"bifs":     []
 	}
 ]

@@ -136,6 +136,10 @@ def pd(items):
     print("")
 
 
+def sort_dictionary_list(items, key_to_sort_by, order=False):
+    return sorted(items, key=lambda k: k[key_to_sort_by], reverse=order)
+
+
 def stop(reason):
     """Shortcut to the final steps of the module: generate an html file, update likes, raffle, and commit/close dbs."""
     global name, ongoing, http_session
