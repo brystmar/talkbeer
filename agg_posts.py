@@ -6,8 +6,9 @@ Also:
 * Allows users to select a templated option for writing an html file.
 """
 
-from global_logger import glogger, local
-import logging
+from global_logger import logger, local
+from my_functions import make_soup, commit, to_timestamp, to_date, month_to_num, pause, pp, pd, pl, pl_sorted
+from my_functions import sort_list_of_dictionaries
 from bs4 import BeautifulSoup
 from env_tools import apply_env
 from models import Biffer, Like, Post, Thread, User
@@ -22,11 +23,6 @@ import datetime
 import dateutil.parser
 import re
 import requests
-# import sqlite3
-
-# initialize logging
-logger = glogger
-logger.setLevel(logging.DEBUG)
 
 time_start = datetime.datetime.now()
 print("\n***** ***** **** ***** *****")
@@ -63,26 +59,9 @@ class Config(object):
         logger.info("Fire_credentials GCP bucket: {}".format("config TBD..."))  # fc._data['SECRET_NAME']))
 
 
-def pause():
-    """Pause the program until the user is ready to continue."""
-    input("[==========]")
-
-
-def make_soup(html_to_soup):
-    """Convert an html chunk into a BeautifulSoup object."""
-    return BeautifulSoup(html_to_soup, 'html.parser')
-
-
 def find_substring(string, char):
     """Return the index of a given character within a substring."""
     return [st for st, letter in enumerate(string) if letter == char]
-
-
-def commit(database_connection):
-    """Commit changes to the provided database connection."""
-    logger.debug("Attempting to commit {}".format(database_connection.__repr__()))
-    database_connection.commit()
-    logger.debug("Commit successful for {}".format(database_connection.__repr__()))
 
 
 def close_db(db1):
@@ -92,52 +71,6 @@ def close_db(db1):
         logger.debug("Closed db")
     except Exception:
         logger.error("Error attempting to close db", exc_info=True)
-
-
-def pp(item):
-    """Print an item, then pause until the user is ready to proceed."""
-    print("")
-    print(item)
-    logger.debug("\n" + item)
-    pause()
-
-
-def pl(items):
-    """Print all items in a provided list/tuple, show the number of items in the list, then pause."""
-    for item in items:
-        print(item)
-        logger.debug(item)
-    print("Total items: {}".format(len(items)))
-    logger.debug("Total items: {}".format(len(items)))
-    pause()
-
-
-def pl_sorted(items):
-    """Sort the provided list, print all items, show the number of items in the list, then pause."""
-    new_list = list()
-    dict_items = set(items)
-    for di in dict_items:
-        new_list.append(di)
-
-    new_list.sort()
-
-    for nl in new_list:
-        print(items.count(nl), nl)
-        logger.debug("{count} {n}".format(count=items.count(nl), n=nl))
-    pause()
-
-
-def pd(items):
-    """Print all items in a provided dict, then pause until the user is ready to proceed."""
-    for item in items:
-        print("{item}: {value}".format(item=item, value=items[item]))
-        logger.debug("{item}: {value}".format(item=item, value=items[item]))
-    pause()
-    print("")
-
-
-def sort_dictionary_list(items, key_to_sort_by, reverse=False):
-    return sorted(items, key=lambda k: k[key_to_sort_by], reverse=reverse)
 
 
 def stop(reason):

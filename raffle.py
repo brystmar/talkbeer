@@ -1,20 +1,14 @@
 """Framework for running a raffle/LIF based on the contents of a forum post.  Originally for SSF15's #elkhunter LIF.
 
-Part of this were hastily written and partially discarded.  Consider it a work in progress.
+Portions of this were hastily written and partially discarded.  Consider it a work in progress.
 """
-from global_logger import glogger
-import logging
+from global_logger import logger
+from models import User, Post, Post_Soup
+from my_functions import make_soup
 import certifi
 import json
 import os
 import urllib3
-from bs4 import BeautifulSoup
-from dotenv import load_dotenv
-from models import User, Post, Post_Soup
-
-# initialize logging
-logger = glogger
-logger.setLevel(logging.DEBUG)
 
 
 class Guess(object):
@@ -26,11 +20,6 @@ class Guess(object):
         self.soup = soup
         self.number_guessed = number_guessed
         self.order = order
-
-
-def make_soup(html_to_soup):
-    """Convert an html chunk into a BeautifulSoup object."""
-    return BeautifulSoup(html_to_soup, 'html.parser')
 
 
 def compile_guesses(elk_data, thread_name, post_info):
@@ -124,9 +113,10 @@ def return_random_nums(qty, min_val, max_val):
         print("Invalid random.org query: too many numbers requested ({}).".format(qty))
         quit()
 
-    # set path for loading local .env variables
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    load_dotenv(os.path.join(basedir, '.env'))
+    # import environment variables
+    from env_tools import apply_env
+    apply_env()
+    logger.info("Applied .env variables using env_tools")
 
     http = urllib3.PoolManager(timeout=3.0, cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
@@ -159,17 +149,17 @@ def return_random_nums(qty, min_val, max_val):
     # encode the request
     encoded_data = json.dumps(request).encode("utf-8")
     # call the API
-    r = http.request("POST", endpoint, body=encoded_data, headers=headers)
+    response = http.request("POST", endpoint, body=encoded_data, headers=headers)
     # unpack & decode the response
-    response = json.loads(r.data.decode("utf-8"))
+    response_decoded = json.loads(response.data.decode("utf-8"))
 
-    if 'error' in response.keys():
-        print("Random request failed:", "\n", response['error'])
+    if 'error' in response_decoded.keys():
+        print("Random request failed:", "\n", response_decoded['error'])
         return None
-    elif 'result' in response.keys():
+    elif 'result' in response_decoded.keys():
         # response_timestamp = response['result']['random']['completionTime']
         # print("Random request completed at", response_timestamp)
-        return response['result']['random']['data']
+        return response_decoded['result']['random']['data']
     else:
-        print("Unexpected response structure from random.org API:", "\n", response)
+        print("Unexpected response structure from random.org API:", "\n", response_decoded)
         return None

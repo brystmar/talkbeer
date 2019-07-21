@@ -1,11 +1,7 @@
-#########################################################
-# Stores posts from a talkbeer.com thread in a local db #
-#########################################################
+"""Scrapes posts from a talkbeer.com thread, stores them in a local sqlite db."""
 
-from global_logger import glogger
-import logging
-
-# from agg_posts import get_user_data, write_users
+from global_logger import logger
+from my_functions import make_soup, commit, to_timestamp, to_date, month_to_num, pause, pp, pl, pl_sorted
 from models import Biffer, Post, Thread, User
 from models import Thread_Page, URLs
 from bs4 import BeautifulSoup
@@ -13,10 +9,6 @@ import datetime
 import re
 import requests
 import sqlite3
-
-# initialize logging
-logger = glogger
-logger.setLevel(logging.DEBUG)
 
 time_start = datetime.datetime.now()
 print("\n***** ***** **** ***** *****")
@@ -27,99 +19,12 @@ logger.info(f'START agg_posts.py @ {time_start.strftime("%Y-%m-%d %H:%M:%S")}')
 filename = __file__
 
 
-def pause():
-    input("[====]")
-
-
-def make_soup(html_to_soupify):
-    return BeautifulSoup(html_to_soupify, 'html.parser')
-
-
-def next_link(base_url, num):
-    return base_url + 'page_number-' + str(num)
-
-
 def delete_url(url_to_delete):
     tbdb.execute('DELETE FROM raw.thread_page WHERE url = ? and html is null', (url_to_delete, ))
 
 
-def commit(db):
-    db.commit()
-    return 0
-
-
-def pp(item):
-    print("")
-    print(item)
-    pause()
-
-
-def pl(items):
-    for i in items:
-        print(i)
-    print("Total items:", len(items))
-    pause()
-
-
-def pl_sorted(items):
-    newlist = list()
-    ditems = set(items)
-    for d in ditems:
-        newlist.append(d)
-    newlist.sort()
-    for n in newlist:
-        print(items.count(n), n)
-    pause()
-
-
-def month_to_num(m):
-    if m == 'Jan':
-        return '01'
-    elif m == 'Feb':
-        return '02'
-    elif m == 'Mar':
-        return '03'
-    elif m == 'Apr':
-        return '04'
-    elif m == 'May':
-        return '05'
-    elif m == 'Jun':
-        return '06'
-    elif m == 'Jul':
-        return '07'
-    elif m == 'Aug':
-        return '08'
-    elif m == 'Sep':
-        return '09'
-    elif m == 'Oct':
-        return '10'
-    elif m == 'Nov':
-        return '11'
-    elif m == 'Dec':
-        return '12'
-    else: return 'Month Error'
-
-
-def to_timestamp(ds):
-    # converts a text date/time sting to ISO-8601 formatting: 'Mar 26, 2018 at 9:48 PM' --> '2018-03-26 21:48:00'
-    year = int(re.findall(', (20\d\d) at', ds)[0])
-    month = int(month_to_num(ds[:3]))
-    day = int(re.findall(' (\d+),', ds)[0])
-    minute = int(re.findall(' at \d+:(\d+) ', ds)[0])
-    hour = int(re.findall(' at (\d+):', ds)[0])
-    # update to 24-hour time
-    if ds[-2].lower() == 'p' and hour != 12: hour += 12
-    elif ds[-2].lower() == 'a' and hour == 12: hour -= 12
-    else: pass
-    return datetime.datetime(year, month, day, hour, minute)
-
-
-def to_date(ds):
-    # converts a text date string to ISO-8601 formatting: 'Mar 26, 2018' --> '2018-03-26'
-    year = int(re.findall(', (20\d\d)', ds)[0])
-    month = int(month_to_num(ds[:3]))
-    day = int(re.findall(' (\d+),', ds)[0])
-    return datetime.datetime(year, month, day)
+def next_link(base_url, num):
+    return base_url + 'page_number-' + str(num)
 
 
 def qmarks(num):
